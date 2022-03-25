@@ -14,32 +14,46 @@ class StaffInGroup extends Component {
     
     async componentDidMount() {
         let groups = []
-        let initialStaff = []
         await axios.get("http://localhost:8081/api/v1/group").then(res => {
             const data = res.data.result
             for (const i in data) {
                 groups.push(data[i].groupName)
             }
         })
-        
-        await axios.get("http://localhost:8081/api/v1/user?filterBy=no_group").then(res => {
+
+        const initialStaff = await this.filterStaffByGroup()
+
+        this.setState({groupList: groups, staffList:  initialStaff})
+    }
+
+    async filterStaffByGroup(groupName = "no_group") {
+        let staff = []
+        const filter = groupName == "no_group" ? "filterBy=no_group" : `filterBy=group&filterValue=${groupName}`
+        await axios.get(`http://localhost:8081/api/v1/user?${filter}`).then(res => {
             const data = res.data.result
             if (data.currentPageContent) {
-                const staff = data.currentPageContent.filter(s => s.role == "Staff")
+                const st = data.currentPageContent.filter(s => s.role == "Staff")
                 let i = 1
-                staff.forEach((s) =>
-                    initialStaff.push({
-                        no: i++,
-                        username: s.username,
-                        name: s.name,
-                        role: s.role,
-                        office: ""
-                    })
-                )
+                if (st.length > 0) {
+                    st.forEach((s) =>
+                        staff.push({
+                            no: i++,
+                            username: s.username,
+                            name: s.name,
+                            role: s.role,
+                            office: ""
+                        })
+                    )
+                }
             }
         })
-    
-        this.setState({groupList: groups, staffList: initialStaff})
+        return staff
+    }
+
+    handleGroupSelect = async (e) => {
+        const groupName = e.target.value
+        const staff = await this.filterStaffByGroup(groupName)
+        this.setState({staffList: staff})
     }
 
     groupListOptions() {
@@ -80,7 +94,7 @@ class StaffInGroup extends Component {
                             <Col md="12" className="my-2">
                                 <Form.Group className="float-right">
                                     <Form.Label>STAFF GROUP</Form.Label>
-                                    <Form.Control id="group-filter" as="select" defaultValue="no_group" className="mx-auto">
+                                    <Form.Control id="group-filter" as="select" defaultValue="no_group" className="mx-auto" onChange={this.handleGroupSelect}>
                                         <option value="no_group">No Group</option>
                                         {this.groupListOptions()}
                                     </Form.Control>
@@ -89,10 +103,12 @@ class StaffInGroup extends Component {
                         </Row>
                         <Row>
                             <Col md="12" className="my-2">
-                                <Form.Group className="float-right form-inline">
-                                    <Form.Label>SEARCH: &nbsp;</Form.Label>
-                                    <Form.Control type="text" className="w-auto" />
-                                </Form.Group>
+                                <Form>
+                                    <Form.Group className="float-right form-inline">
+                                        <Form.Label>SEARCH: &nbsp;</Form.Label>
+                                        <Form.Control type="text" className="w-auto" />
+                                    </Form.Group>
+                                </Form>
                             </Col>
                         </Row>
                         <Row>
