@@ -9,7 +9,6 @@ export async function getBazaarItem(isPaginated, currentPage, itemPerPage, isAdm
             isAdmin: isAdmin
         }})
         .then((response=> {
-            console.log('getBazaarItem', response)
             if(response) {        
                 return response.data
             }

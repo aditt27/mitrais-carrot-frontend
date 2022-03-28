@@ -65,8 +65,6 @@ class Bazaar extends React.Component {
             justifyContent: 'center'
         }
 
-        console.log('data', this.props.data)
-
         return(
             <div>
                 <Container>
