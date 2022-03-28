@@ -2,9 +2,11 @@ import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 import logger from './middleware/logger'
 import bazaarItemReducer from "./bazaarItem";
+import authReducer from './auth';
 
 const rootReducer = combineReducers({
-    bazaarItemReducer
+    bazaarItemReducer,
+    authReducer
 })
 
 const store = configureStore({

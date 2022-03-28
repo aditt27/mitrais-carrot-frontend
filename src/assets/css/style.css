@@ -1,0 +1,22 @@
+.btn-mitrais{
+  font-size: 80% !important;
+  border-radius: 5rem !important;
+  letter-spacing: .1rem !important;
+  font-weight: bold !important;
+  padding: 1rem !important;
+  transition: all 0.2s !important;
+  color: white !important;
+  background-color: #6607C5 !important;
+}
+
+.form-label-group input {
+  border-radius: 2rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.card-signin {
+  border: 0 !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1) !important;
+}
