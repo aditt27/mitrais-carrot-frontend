@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import CarrotLayout from '../components/CarrotLayout'
 import Bazaar from '../pages/Bazaar'
 import Dashboard from '../pages/Dashboard'
+import StaffInGroup from '../components/StaffInGroup'
 
 class CarrotRouter extends React.Component {
 
@@ -16,6 +17,11 @@ class CarrotRouter extends React.Component {
             key: 2,
             path: 'bazaar',
             element: <Bazaar />
+        },
+        {
+            key: 3,
+            path: 'staff-in-group',
+            element: <StaffInGroup />
         }
     ]
 
