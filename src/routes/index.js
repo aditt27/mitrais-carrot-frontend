@@ -4,6 +4,7 @@ import CarrotLayout from '../components/CarrotLayout'
 import Bazaar from '../pages/Bazaar'
 import Dashboard from '../pages/Dashboard'
 import StaffInGroup from '../components/StaffInGroup'
+import StaffList from '../components/StaffList'
 
 class CarrotRouter extends React.Component {
 
@@ -22,6 +23,11 @@ class CarrotRouter extends React.Component {
             key: 3,
             path: 'staff-in-group',
             element: <StaffInGroup />
+        },
+        {
+            key: 4,
+            path: 'staff-list',
+            element: <StaffList />
         }
     ]
 

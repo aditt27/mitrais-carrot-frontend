@@ -1,4 +1,4 @@
-import { Tab, Container, Row, Col, Form, Card, Table } from 'react-bootstrap';
+import { Tab, Container, Row, Col, Form, Table } from 'react-bootstrap';
 import { Component } from 'react';
 import axios from 'axios';
 
@@ -56,12 +56,12 @@ class StaffInGroup extends Component {
         this.setState({staffList: staff})
     }
 
-    groupListOptions() {
+    GroupListOptions = () => {
         const { groupList } = this.state
         return groupList.map((g, i) => <option key={i} value={g}>{g}</option>)
     }
 
-    staffListRow() {
+    StaffListRow = () => {
         const { staffList } = this.state
         return staffList.map((staff, i) => {
             return (
@@ -95,7 +95,7 @@ class StaffInGroup extends Component {
                                 <Form.Label>STAFF GROUP</Form.Label>
                                 <Form.Control id="group-filter" as="select" defaultValue="no_group" className="mx-auto" onChange={this.handleGroupSelect}>
                                     <option value="no_group">No Group</option>
-                                    {this.groupListOptions()}
+                                    <this.GroupListOptions />
                                 </Form.Control>
                             </Form.Group>
                         </Col>
@@ -122,7 +122,9 @@ class StaffInGroup extends Component {
                                         <th>Office</th>
                                     </tr>
                                 </thead>
-                                <tbody>{this.staffListRow()}</tbody>
+                                <tbody>
+                                    <this.StaffListRow />
+                                </tbody>
                             </Table>
                         </Col>
                     </Row>

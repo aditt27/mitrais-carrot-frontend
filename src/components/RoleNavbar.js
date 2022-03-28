@@ -26,6 +26,11 @@ const RoleNavbar = (props)=> {
             key: 4,
             name: 'Staff In Group',
             href: 'staff-in-group'
+        },
+        {
+            key: 5,
+            name: 'Staff List',
+            href: 'staff-list'
         }
     ]
 
