@@ -1,6 +1,6 @@
 import React from 'react'
 import { Nav } from 'react-bootstrap'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 const RoleNavbar = (props)=> {
 
@@ -36,7 +36,7 @@ const RoleNavbar = (props)=> {
             {
                 roleNavbarItems.map(item=> {
                     return <Nav.Item as='li' style={roleNavbarStyle} key={item.key}>
-                        <Nav.Link href={item.href}>{item.name}</Nav.Link>
+                        <Nav.Link as={Link} to={item.href}>{item.name}</Nav.Link>
                     </Nav.Item>                  
                 })
             }
