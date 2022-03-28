@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Nav } from 'react-bootstrap'
-import { useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 const RoleNavbar = (props)=> {
 
-    const location = useLocation()
+    const [activeKey, setActiveKey] = useState(1)
 
     const roleNavbarItems = [ 
         {
@@ -24,6 +24,7 @@ const RoleNavbar = (props)=> {
         },
     ]
 
+
     const roleNavbarStyle = {
         fontWeight: 'bold',
         textTransform: 'uppercase',
@@ -31,13 +32,22 @@ const RoleNavbar = (props)=> {
         fontFamily: 'Verdana'
     }
 
+    const handleSelect = (eventKey) => setActiveKey(eventKey);
+
     return(
-        <Nav variant='pills' as='ul' defaultActiveKey={location.pathname}>
+        <Nav variant='pills' as='ul' activeKey={activeKey} onSelect={handleSelect}>
             {
                 roleNavbarItems.map(item=> {
-                    return <Nav.Item as='li' style={roleNavbarStyle} key={item.key}>
-                        <Nav.Link href={item.href}>{item.name}</Nav.Link>
-                    </Nav.Item>                  
+                    if(item.active) {
+                        return <Nav.Item as='li' style={roleNavbarStyle} key={item.key}>
+                            <Nav.Link className='active' as={Link} to={item.href} eventKey={item.key}>{item.name}</Nav.Link>
+                        </Nav.Item>
+                    } else {
+                        return <Nav.Item as='li' style={roleNavbarStyle} key={item.key}>
+                            <Nav.Link as={Link} to={item.href} eventKey={item.key}>{item.name}</Nav.Link>
+                        </Nav.Item>
+                    }
+                                      
                 })
             }
         </Nav>
