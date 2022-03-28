@@ -22,6 +22,11 @@ const RoleNavbar = (props)=> {
             name: 'Assign Role',
             href: '#assignrole'
         },
+        {
+            key: 4,
+            name: 'Group',
+            href: '/group'
+        }
     ]
 
     const roleNavbarStyle = {
