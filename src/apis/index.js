@@ -1,11 +1,7 @@
-import axiosClient from "./axiosClient";
+import axios from 'axios'
 
+const apiClient = axios.create({
+    baseURL: 'http://localhost:8081/api/v1'
+})
 
-const Api = {
-    login: (params) => {
-        const url = '/auth/login';
-        return axiosClient.get(url, params);
-    },
-}
-
-export default Api;
+export default apiClient
