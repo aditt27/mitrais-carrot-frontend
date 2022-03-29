@@ -15,6 +15,7 @@ import Harvest from '../pages/Harvest'
 import StaffInGroup from '../components/StaffInGroup'
 import StaffList from '../components/StaffList'
 import ShareCarrot from '../components/ShareCarrot'
+import ChangePassword from '../pages/ChangePassword'
 
 class CarrotRouter extends React.Component {
 
@@ -107,6 +108,7 @@ class CarrotRouter extends React.Component {
           <Route exact path='/login' element={<Login />} />
           <Route exact path='/logout' element={<Logout />} />
           <Route exact path='/forbidden' element={<Forbidden />} />
+          <Route exact path='/change-password' element={<ChangePassword />} />
           <Route exact path='' element={<RedirectRoute />} />
 
           <Route path='/admin' element={<CarrotLayout role={Admin} title='Title Here' />}>
@@ -137,7 +139,7 @@ class CarrotRouter extends React.Component {
 
           <Route path='/manager' element={<CarrotLayout role={Manager} title='Title Here' />}>
             {
-              this.routesMerchant.map(item => {
+              this.routesManager.map(item => {
                 return <Route
                   exact path={item.path} key={item.key}
                   element={<PrivateRoute>
