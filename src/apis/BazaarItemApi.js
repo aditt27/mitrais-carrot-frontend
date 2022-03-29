@@ -54,3 +54,18 @@ export async function deleteBazaarItem(id) {
         }))
         .catch(err => console.log(err))
 }
+
+export async function editBazaarItem(req) {
+    return apiClient
+        .patch(`/item/${req.id}`, {
+            name: req.name,
+            description: req.description,
+            stockAmount: req.stockAmount,
+            exchangeRate: req.exchangeRate,
+            expireDate: req.expireDate,
+            isAutoApprove: req.isAutoApprove,
+            isActive: req.isActive,
+            image: req.image,
+            userId: 5
+        })
+}
