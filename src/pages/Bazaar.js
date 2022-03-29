@@ -16,7 +16,10 @@ class Bazaar extends React.Component {
     }
 
     loadBazaarItem() {
-        getBazaarItem(true, 0, 8,false)
+        /*
+        @params:    isPaginated, currentPage, itemPerPage, isAdmin, userId(can be null)
+        */
+        getBazaarItem(true, 0, 8, false)
             .then(result=> {
                 this.props.saveItem(
                     result.result.currentPageContent,
