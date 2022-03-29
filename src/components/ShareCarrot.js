@@ -51,18 +51,18 @@ function RewardCarrotModal(props) {
                 </Modal.Header>
                 <Modal.Body className="mx-4">
                         <Form.Group className="pb-4">
-                            <Form.Label for="#receiver">RECIPIENT</Form.Label>
+                            <Form.Label htmlFor="#receiver">RECIPIENT</Form.Label>
                             <Form.Control as="select" name="receiver" id="receiver">
                                 <StaffListRow staffList={staffList} />
                             </Form.Control>
                         </Form.Group>
                         <Form.Group className="pb-4">
-                            <Form.Label for="#amount">CARROT AMOUNT</Form.Label>
+                            <Form.Label htmlFor="#amount">CARROT AMOUNT</Form.Label>
                             <Form.Control name="amount" id="amount" type="number" max="50" defaultValue="0" />
                             <small>Maximum share carrot allowed is 50</small>
                         </Form.Group>
                         <Form.Group className="pb-4">
-                            <Form.Label for="#note">NOTE</Form.Label>
+                            <Form.Label htmlFor="#note">NOTE</Form.Label>
                             <Form.Control as="textarea" rows="4" id="note" name="note"/>
                         </Form.Group>
                 </Modal.Body>

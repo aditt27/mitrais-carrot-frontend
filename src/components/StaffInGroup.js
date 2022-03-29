@@ -117,7 +117,7 @@ class StaffInGroup extends Component {
                     </Col>
                     <Col md="12" className="my-2">
                         <Form.Group className="float-right">
-                            <Form.Label>STAFF GROUP</Form.Label>
+                            <Form.Label htmlFor="#group-filter">STAFF GROUP</Form.Label>
                             <Form.Control id="group-filter" as="select" defaultValue="no_group" className="mx-auto" onChange={this.handleGroupSelect}>
                                 <option value="no_group">No Group</option>
                                 <this.GroupListOptions />

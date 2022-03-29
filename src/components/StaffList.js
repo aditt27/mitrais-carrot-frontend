@@ -69,7 +69,7 @@ class StaffList extends Component {
                     </Col>
                     <Col md="12" className="my-2">
                         <Form.Group className="float-right">
-                            <Form.Label>FILTER</Form.Label>
+                            <Form.Label htmlFor="#staff-filter">FILTER</Form.Label>
                             <Form.Control id="staff-filter" as="select" defaultValue="default" className="mx-auto" onChange={this.handleFilterChange}>
                                 <option value="default">Default</option>
                                 <option value="carrot">Carrot</option>
