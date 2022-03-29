@@ -4,7 +4,18 @@ import { Button, Modal, Form, Col } from "react-bootstrap";
 class GroupForm extends React.Component {
     constructor(props) {
         super(props)
+        this.state = {
+            groupName: '',
+            manager: '',
+            carrot: '',
+            notes: ''
+        }
     }
+
+    saveInput = () => {
+        this.props.getInput(this.state.name)
+    }
+
     render() {
         return (
             <Modal show={this.props.show}>
@@ -14,7 +25,7 @@ class GroupForm extends React.Component {
                 <Modal.Body>
                     <Form.Group >
                         <Form.Label>Name: </Form.Label>
-                        <Form.Control type="text" />
+                        <Form.Control type="text" onChange={(e) => this.setState({name: e.target.value})} />
                     </Form.Group>
                     <Form.Group>
                         <Form.Label>Manager: </Form.Label>
@@ -31,7 +42,7 @@ class GroupForm extends React.Component {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={this.props.toggle}>Close</Button>
-                    <Button variant="primary" onClick={this.props.toggle}>Save</Button>
+                    <Button variant="primary" onClick={this.saveInput}>Save</Button>
                 </Modal.Footer>
             </Modal>
         )

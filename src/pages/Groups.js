@@ -18,6 +18,10 @@ class Groups extends React.Component {
         this.setState({ showModal: !this.state.showModal });
     }
 
+    onModalInputChanged = (modalInput) => {
+        console.log('add new group : ', modalInput )
+    }
+
     async componentDidMount() {
         let groups = [];
         await axios.get("http://localhost:8081/api/v1/group").then(res => {
@@ -45,6 +49,10 @@ class Groups extends React.Component {
         alert("button clicked")
     }
 
+    logInput(name) {
+        console.log(name)
+    }
+
     groupListRow() {
         const { groupList } = this.state
         return groupList.map((group, i) => {
@@ -70,7 +78,11 @@ class Groups extends React.Component {
         return (
             <Tab.Content className="search-box">
                 <Card style={{ padding: "1.5em" }}>
-                    <GroupForm show={this.state.showModal} toggle={() => this.toggleModal()}  type={"Add"}/>
+                    <GroupForm 
+                        show={this.state.showModal} 
+                        toggle={() => this.toggleModal()}  
+                        type={"Add"}
+                        getInput={this.logInput}/>
                     <Row>
                         <Col md={12} className="align-self-start my-2">
                             <hr style={{
