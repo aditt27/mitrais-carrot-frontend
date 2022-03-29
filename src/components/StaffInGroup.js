@@ -15,7 +15,7 @@ class StaffInGroup extends Component {
     async componentDidMount() {
         let groups = []
         await axios.get("http://localhost:8081/api/v1/group").then(res => {
-            const data = res.data.result
+            const data = res.data.result.currentPageContent
             for (const i in data) {
                 groups.push(data[i].groupName)
             }

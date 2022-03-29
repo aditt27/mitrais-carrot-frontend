@@ -1,45 +1,117 @@
-import { Component } from 'react'
+import { Component, useEffect, useState } from 'react'
 import { Container, Row, Col, Form, Table, Modal, Button } from 'react-bootstrap'
-import Axios from 'axios'
+import { getAllUsers } from '../apis/user'
+import { createNewTransaction, getAllTransactions } from '../apis/transaction'
 
-class ShareCarrot extends Component {
+function StaffListRow(props) {
+    const { staffList } = props
+    return staffList.map((st, i) => {
+        return (
+            <option value={st.id} key={i}>{st.name}</option>
+        )
+    })
+}
+
+function RewardCarrotModal(props) {
+    const [staffList, setStaffList] = useState([])
     
-    state = {
-        showShareCarrotModal: false,
-        transactionList: [],
-        page: 0
+    useEffect(() => {
+        getAllUsers().then(res => {
+            setStaffList(res)
+        })
+    }, [])
+
+    const btnRewardStyle = {
+        fontWeight: "bold",
+        backgroundColor: "#FF5722",
+        boxShadow: "-2px 6px 33px -8px rgb(255 87 34)",
+        border: "1px solid #ff5722"
     }
 
-    componentDidMount() {
-        Axios.get(`http://localhost:8081/api/v1/transaction?page=${this.state.page}`).then(res => {
-            if (res.data.message === 'Success') {
-                const data = res.data.result
-                const tr = data.currentPageContent
-                let transactions = []
-                let i = 1
-                tr.forEach((t) => {
-                    transactions.push({
-                        no: i++,
-                        rewardedTo: t.receiver.name,
-                        carrot: t.amount,
-                        note: t.notes,
-                        rewardedAt: t.transactionDate
-                    })
-                })
-                this.setState({ transactionList: transactions })
+    function handleRewardCarrotSubmit(e) {
+        e.preventDefault()
+        const data = {
+            senderId: "7", // diding
+            receiverId: e.target.receiver.value,
+            amount: e.target.amount.value,
+            notes: e.target.note.value
+        }
+        createNewTransaction(data).then(res => {
+            if (res === "Success") {
+                props.onHideModal(false)
             }
         })
     }
 
-    handleShowShareCarrotModal = () => {
-        this.setState((prev) => {
-            return {showShareCarrotModal: !prev.showShareCarrotModal}
+    return (
+        <Modal show={props.showShareCarrotModal} backdrop="static" keyboard={false} centered>
+            <Form onSubmit={handleRewardCarrotSubmit}>
+                <Modal.Header className="m-4">
+                    <Modal.Title>REWARD CARROT</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="mx-4">
+                        <Form.Group className="pb-4">
+                            <Form.Label for="#receiver">RECIPIENT</Form.Label>
+                            <Form.Control as="select" name="receiver" id="receiver">
+                                <StaffListRow staffList={staffList} />
+                            </Form.Control>
+                        </Form.Group>
+                        <Form.Group className="pb-4">
+                            <Form.Label for="#amount">CARROT AMOUNT</Form.Label>
+                            <Form.Control name="amount" id="amount" type="number" max="50" defaultValue="0" />
+                            <small>Maximum share carrot allowed is 50</small>
+                        </Form.Group>
+                        <Form.Group className="pb-4">
+                            <Form.Label for="#note">NOTE</Form.Label>
+                            <Form.Control as="textarea" rows="4" id="note" name="note"/>
+                        </Form.Group>
+                </Modal.Body>
+                <Modal.Footer>
+                    <div className="float-right">
+                        <Button variant="link" className="m-2" onClick={() => props.onHideModal(true)}>CANCEL</Button>
+                        <Button type="submit" style={btnRewardStyle} className="m-2">REWARD NOW</Button>
+                    </div>
+                </Modal.Footer>
+            </Form>
+        </Modal>
+    )
+}
+class ShareCarrot extends Component {
+    
+    state = {
+        showShareCarrotModal: false,
+        transactionList: {
+            transactions: [],
+            currentPage: 0,
+            totalPages: 0
+        },
+        staffList: []
+    }
+
+    async componentDidMount() {
+        const { transactions, page, totalPages } = await getAllTransactions(0)
+        this.setState({transactionList: {
+            transactions: transactions,
+            currentPage: page,
+            totalPages: totalPages
+        }})
+    }
+
+    handleShowShareCarrotModal = async (isCancel) => {
+        const transactionList = this.state.transactionList
+        if (isCancel === false) {
+            const { transactions, page } = await getAllTransactions(0)
+            transactionList.transactions = transactions
+            transactionList.currentPage = page
+        }
+        this.setState(prev => {
+            return {showShareCarrotModal: !prev.showShareCarrotModal, transactionList: transactionList}
         })
     }
 
     TransactionListRow = () => {
-        const { transactionList } = this.state
-        return transactionList.map((tr, i) => {
+        const { transactions } = this.state.transactionList
+        return transactions.map((tr, i) => {
             return (
                 <tr key={i}>
                     <td>{tr.no}</td>
@@ -48,6 +120,15 @@ class ShareCarrot extends Component {
                     <td>{tr.note}</td>
                     <td>{tr.rewardedAt}</td>
                 </tr>
+            )
+        })
+    }
+
+    StaffListRow = () => {
+        const { staffList } = this.state
+        return staffList.map((st, i) => {
+            return (
+                <option value={st} key={i}>{st}</option>
             )
         })
     }
@@ -89,19 +170,8 @@ class ShareCarrot extends Component {
                 </Row>
                 <Row>
                     <Col md="12" className="my-2 text-center">
-                        <Button onClick={this.handleShowShareCarrotModal}>REWARD CARROT</Button>
-                        <Modal show={this.state.showShareCarrotModal} onHide={this.handleShowShareCarrotModal} centered>
-                            <Modal.Header>
-                                <Modal.Title>REWARD CARROT</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <Form>
-                                    <Form.Group>
-                                        <Form.Label>SEARCH: &nbsp;</Form.Label>
-                                    </Form.Group>
-                                </Form>
-                            </Modal.Body>
-                        </Modal>
+                        <Button onClick={() => this.handleShowShareCarrotModal(true)}>REWARD CARROT</Button>
+                        {this.state.showShareCarrotModal && <RewardCarrotModal showShareCarrotModal={true} onHideModal={this.handleShowShareCarrotModal} />}
                     </Col>
                 </Row>
                 <Row>
