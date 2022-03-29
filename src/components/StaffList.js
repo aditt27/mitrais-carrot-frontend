@@ -1,6 +1,6 @@
 import { Component } from 'react'
-import Axios from 'axios'
-import { Container, Col, Row, Table, Form } from 'react-bootstrap'
+import { Container, Col, Row, Table, Form, Pagination } from 'react-bootstrap'
+import { getUsersByFilter } from '../apis/user'
 
 class StaffList extends Component {
 
@@ -8,52 +8,19 @@ class StaffList extends Component {
 
     state = {
         staffList: [],
-        currentPage: 0
+        currentPage: 0,
+        totalPages: 0,
+        currentFilter: 'default'
     }
 
     componentDidMount() {
-        this.fetchStaff()
+        this.fetchStaff('default', 0)
     }
 
     fetchStaff(filter = 'default', page = 0) {
-        let url
-        switch (filter) {
-            case 'carrot': {
-                url = `${this.endpoint}?filterBy=carrot&page=${page}`
-                break
-            }
-            case 'most_spent': {
-                url = `${this.endpoint}/most_spent?page=${page}`
-                break
-            }
-            case 'most_earn_month': {
-                url = `${this.endpoint}/most_earn?period=month&page=${page}`
-                break
-            }
-            case 'most_earn_year': {
-                url = `${this.endpoint}/most_earn?period=year&page=${page}`
-                break
-            }
-            default:
-                url = `${this.endpoint}?page=${page}`
-                break
-        }
-        
-        Axios.get(url).then(res => {
-            if (res.data.message === "Success") {
-                const data = res.data.result
-                let i = 1
-                const staff = data.currentPageContent.length === 0 ? [] : data.currentPageContent.filter(st => st.id > 0).map(it => {
-                    return {
-                        no: i++,
-                        username: it.username,
-                        name: it.name,
-                        role: it.role,
-                        carrot: it.total !== undefined ? it.total : it.points
-                    }
-                })
-                this.setState({staffList: staff, currentPage: data.currentPage})
-            }
+        getUsersByFilter(filter, page).then(res => {
+            const { page, staffList, totalPages } = res
+            this.setState({staffList: staffList, currentPage: page, totalPages: totalPages, currentFilter: filter})
         }).catch(e => {})
     }
 
@@ -72,9 +39,20 @@ class StaffList extends Component {
         })
     }
 
+    PaginationItems = () => {
+        const { totalPages, currentPage } = this.state
+        let paginationItems = []
+        for (let i = 1; i <= totalPages; i++) {
+            paginationItems.push(
+                <Pagination.Item key={i} active={i === currentPage + 1} activeLabel="" onClick={() => this.fetchStaff(this.state.currentFilter, i - 1)}>{i}</Pagination.Item>
+            )
+        }
+        return paginationItems
+    }
+
     handleFilterChange = (e) => {
         const filter = e.target.value
-        this.fetchStaff(filter)
+        this.fetchStaff(filter, 0)
     }
 
     render() {
@@ -118,6 +96,11 @@ class StaffList extends Component {
                                 <this.StaffListRow />
                             </tbody>
                         </Table>
+                    </Col>
+                    <Col md="12">
+                        <Pagination className="float-right">
+                            <this.PaginationItems />
+                        </Pagination>
                     </Col>
                 </Row>
             </Container>
