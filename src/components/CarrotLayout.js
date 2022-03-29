@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Nav } from 'react-bootstrap'
+import { Container } from 'react-bootstrap'
 import { Outlet } from 'react-router-dom'
 import MainNavbar from './MainNavbar'
 import RoleNavbar from './RoleNavbar'
@@ -30,7 +30,7 @@ class CarrotLayout extends React.Component {
                 <MainNavbar />
                 <Container>
                     <h2 style={titleStyle}>{this.props.title}</h2>
-                    <RoleNavbar />
+                    <RoleNavbar role={this.props.role} />
                     <div className='my-3' style={contentStyle}>
                         <Outlet />
                     </div> 
