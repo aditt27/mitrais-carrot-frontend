@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Nav } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Admin, Merchant, Manager, Staff } from '../utils/Role'
 
 const RoleNavbar = (props) => {
 
   const [activeKey, setActiveKey] = useState(1)
+  const location = useLocation()
 
   const adminNavbarItems = [
     {
@@ -106,7 +107,6 @@ const RoleNavbar = (props) => {
 
   let roleNavbarItems = [];
 
-
   const roleNavbarStyle = {
     fontWeight: 'bold',
     textTransform: 'uppercase',
@@ -133,6 +133,11 @@ const RoleNavbar = (props) => {
     default:
       break;
   }
+
+  useEffect(() => {
+    const item = roleNavbarItems.filter(item=> item.href === location.pathname)[0]
+    setActiveKey(item.key)
+  }, [])
 
 
   return (
