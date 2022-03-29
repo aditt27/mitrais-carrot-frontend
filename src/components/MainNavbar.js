@@ -9,7 +9,7 @@ class MainNavbar extends React.Component {
         const navbarStyle = {
             borderBottom : '1px solid #d9d9d9'
         }
-        
+
         return(
             <Navbar bg="light" expand="lg" style={navbarStyle}>
                 <Navbar.Brand href="#home"> 
@@ -33,7 +33,7 @@ class MainNavbar extends React.Component {
                             <NavDropdown.Header>
                                 <strong>Aditya Budi Laksono</strong>
                                 <br />
-                                <a>Grade, Department</a>
+                                Grade, Department
                             </NavDropdown.Header>
                             <NavDropdown.Divider />
                             <NavDropdown.Item href='#Logout'>
