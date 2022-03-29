@@ -1,34 +1,37 @@
 import React from "react";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal, Form, Col } from "react-bootstrap";
 
-
-// const GroupForm = (props) => {
-//     return (
-//         <Modal show={props.show}>
-//             <Modal.Header closeButton>
-//                 <Modal.Title>Add Form</Modal.Title>
-//             </Modal.Header>
-//             <Modal.Body>test modal</Modal.Body>
-//             <Modal.Footer>
-//                 <Button variant="secondary" onClick={props.toggle}>Close</Button>
-//             </Modal.Footer>
-
-//         </Modal>
-//     )
-// }
 class GroupForm extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props)
     }
     render() {
         return (
             <Modal show={this.props.show}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Add Form</Modal.Title>
+                <Modal.Header>
+                    <Modal.Title>{this.props.type} Group</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>test modal</Modal.Body>
+                <Modal.Body>
+                    <Form.Group >
+                        <Form.Label>Name: </Form.Label>
+                        <Form.Control type="text" />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>Manager: </Form.Label>
+                        <Form.Control type="text" />
+                    </Form.Group>
+                    <Form.Group >
+                        <Form.Label>Carrot: </Form.Label>
+                        <Form.Control type="text" />
+                    </Form.Group>
+                    <Form.Group >
+                        <Form.Label>Notes: </Form.Label>
+                        <Form.Control as="textarea" rows={3} />
+                    </Form.Group>
+                </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" onClick={this.props.toggle}>Close</Button>
+                    <Button variant="secondary" onClick={this.props.toggle}>Close</Button>
+                    <Button variant="primary" onClick={this.props.toggle}>Save</Button>
                 </Modal.Footer>
             </Modal>
         )

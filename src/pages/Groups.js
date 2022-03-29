@@ -14,9 +14,8 @@ class Groups extends React.Component {
     }
 
     toggleModal() {
-        this.setState({ showModal: !this.state.showModal });
         console.log(this.state.showModal)
-
+        this.setState({ showModal: !this.state.showModal });
     }
 
     async componentDidMount() {
@@ -28,7 +27,8 @@ class Groups extends React.Component {
                 const group = data.currentPageContent
                 group.forEach(element => {
                     groups.push({
-                        id: no++,
+                        number: no++,
+                        groupId: element.id,
                         groupName: element.groupName,
                         manager: element.manager,
                         notes: element.notes,
@@ -37,6 +37,7 @@ class Groups extends React.Component {
                 });
             }
         })
+        console.log(groups)
         this.setState({ groupList: groups })
     }
 
@@ -49,7 +50,7 @@ class Groups extends React.Component {
         return groupList.map((group, i) => {
             return (
                 <tr key={i}>
-                    <td>{group.id}</td>
+                    <td>{group.number}</td>
                     <td>{group.groupName}</td>
                     <td>{group.manager}</td>
                     <td>{group.points}</td>
@@ -69,7 +70,7 @@ class Groups extends React.Component {
         return (
             <Tab.Content className="search-box">
                 <Card style={{ padding: "1.5em" }}>
-                    <GroupForm isOpen={this.state.showModal} toggle={this.toggleModal} />
+                    <GroupForm show={this.state.showModal} toggle={() => this.toggleModal()}  type={"Add"}/>
                     <Row>
                         <Col md={12} className="align-self-start my-2">
                             <hr style={{
