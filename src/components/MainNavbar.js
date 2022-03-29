@@ -1,6 +1,6 @@
 import React from 'react'
 import MCarrotLogo from '../assets/img/mitrais-logo.png'
-import { Button, Nav, Navbar, NavDropdown } from 'react-bootstrap'
+import { Button, Nav, Navbar, NavDropdown, DropdownButton, Dropdown } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Link } from 'react-router-dom'
 
@@ -26,10 +26,8 @@ class MainNavbar extends React.Component {
                         <NavDropdown title={<FontAwesomeIcon icon="bell" className='notif-icon' />}>
                             <NavDropdown.Item> Notification 1</NavDropdown.Item>
                             <NavDropdown.Divider />
-                            <NavDropdown.Item>
-                                <Link to='/notification'>
-                                  <Button>See All Notification</Button>
-                                </Link>
+                            <NavDropdown.Item href='/notification'>
+                              <Button>See All Notification</Button>
                             </NavDropdown.Item>
                         </NavDropdown>
                         <Nav.Link href="#guide"><FontAwesomeIcon icon="question-circle" className='help-icon'/></Nav.Link>
