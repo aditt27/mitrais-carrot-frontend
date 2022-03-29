@@ -5,16 +5,20 @@ import {
 } from "react-router-dom";
 import { getAccessToken } from '../utils/HelperFunctions';
 import jwt_decode from "jwt-decode";
+import { useDispatch } from "react-redux";
+import { setUserData} from '../stores/authThunk';
 
 function PrivateRoute({ children }) {
   const { roles } = children.props;
   const token = getAccessToken();
-  var decoded = token != null ? jwt_decode(token) : null;
+  var userData = token != null ? jwt_decode(token) : null;
   let location = useLocation();
+  const dispatch = useDispatch();
+  dispatch(setUserData({userData}))
 
-  if (decoded === null) {
+  if (userData === null) {
     return <Navigate to="/login" state={{ from: location }} replace />;
-  } else if (roles.some((role) => decoded.role === role) ) {
+  } else if (roles.some((role) => userData.role === role) ) {
     return children;
   }
   
