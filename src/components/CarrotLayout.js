@@ -30,7 +30,7 @@ class CarrotLayout extends React.Component {
                 <MainNavbar />
                 <Container>
                     <h2 style={titleStyle}>{this.props.title}</h2>
-                    <RoleNavbar role={this.props.role} />
+                    <RoleNavbar />
                     <div className='my-3' style={contentStyle}>
                         <Outlet />
                     </div> 
