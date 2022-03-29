@@ -67,8 +67,8 @@ class StaffInGroup extends Component {
 
     fetchStaff = (page) => {
         this.filterStaffByGroup(this.state.currentGroup, page).then(res => {
-            const { currentPage, staffList } = res
-            this.setState({staffList: staffList, currentPageStaff: currentPage})
+            const { currentPage, staffList, totalPages } = res
+            this.setState({staffList: staffList, currentPageStaff: currentPage, totalPageStaff: totalPages})
         }).catch(e => {})
     }
 

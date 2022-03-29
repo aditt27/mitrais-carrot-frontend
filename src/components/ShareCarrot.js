@@ -1,5 +1,5 @@
 import { Component, useEffect, useState } from 'react'
-import { Container, Row, Col, Form, Table, Modal, Button } from 'react-bootstrap'
+import { Container, Row, Col, Form, Table, Modal, Button, Pagination } from 'react-bootstrap'
 import { getAllUsers } from '../apis/user'
 import { createNewTransaction, getAllTransactions } from '../apis/transaction'
 
@@ -124,6 +124,19 @@ class ShareCarrot extends Component {
         })
     }
 
+    fetchTransaction = (page) => {
+        getAllTransactions(page).then(res => {
+            const { transactions, page, totalPages } = res
+            this.setState({
+                transactionList: {
+                    transactions: transactions,
+                    currentPage: page,
+                    totalPages: totalPages
+                }
+            })
+        })
+    }
+
     StaffListRow = () => {
         const { staffList } = this.state
         return staffList.map((st, i) => {
@@ -131,6 +144,17 @@ class ShareCarrot extends Component {
                 <option value={st} key={i}>{st}</option>
             )
         })
+    }
+
+    PaginationItems = () => {
+        const { totalPages, currentPage } = this.state.transactionList
+        let paginationItems = []
+        for (let i = 1; i <= totalPages; i++) {
+            paginationItems.push(
+                <Pagination.Item key={i} active={i === currentPage + 1} activeLabel="" onClick={() => this.fetchTransaction(i - 1)}>{i}</Pagination.Item>
+            )
+        }
+        return paginationItems
     }
 
     render() {
@@ -190,6 +214,11 @@ class ShareCarrot extends Component {
                                 <this.TransactionListRow />
                             </tbody>
                         </Table>
+                    </Col>
+                    <Col md="12">
+                        <Pagination className="float-right">
+                            <this.PaginationItems />
+                        </Pagination>
                     </Col>
                 </Row>
             </Container>
