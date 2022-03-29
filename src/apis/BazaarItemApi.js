@@ -69,4 +69,11 @@ export async function editBazaarItem(req) {
             image: req.image,
             userId: 5
         })
+        .then((response=> {
+            if(response) {        
+                return response.data
+            }
+            return false
+        }))
+        .catch(err => console.log(err))
 }

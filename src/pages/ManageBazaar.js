@@ -1,8 +1,9 @@
+import { Pagination } from '@mui/material'
 import React from 'react'
-import { Button, Form, Modal, Pagination, Table } from 'react-bootstrap'
+import { Button, Form, Modal, Table } from 'react-bootstrap'
 import { connect } from 'react-redux'
 import { addBazaarItem, deleteBazaarItem, editBazaarItem, getBazaarItem, updateActiveBazaarItem } from '../apis/BazaarItemApi'
-import { saveCurrentPage } from '../stores/bazaarItem'
+import { saveCurrentPage, updateItem } from '../stores/bazaarItem'
 
 class ManageBazaar extends React.Component {
 
@@ -10,6 +11,8 @@ class ManageBazaar extends React.Component {
         super(props)
 
         this.state = {
+            tableItemPerPage: 8,
+
             modalShow: false,
             modalTitle: '',
             modalType: '',
@@ -34,7 +37,7 @@ class ManageBazaar extends React.Component {
     }
 
     loadBazaarItem() {
-        getBazaarItem(true, 0, 2, true)
+        getBazaarItem(true, 0, this.state.tableItemPerPage, true)
             .then(result=> {
                 this.props.saveItem(
                     result.result.currentPageContent,
@@ -199,7 +202,6 @@ class ManageBazaar extends React.Component {
     handleItemToggle = (e, itemId = undefined)=> {
 
         let toggleValue = e.target.checked
-        console.log(toggleValue)
 
         switch(e.target.name) {
             case 'toggleActive':
@@ -225,6 +227,17 @@ class ManageBazaar extends React.Component {
             default:
                 break;
         }
+    }
+
+    handlePageChange = (e, page)=> {
+        getBazaarItem(true, page-1, this.state.tableItemPerPage, true)
+            .then(result=> {
+                this.props.saveItem(
+                    result.result.currentPageContent,
+                    result.result.currentPage,
+                    result.result.totalPages
+                )
+            })
     }
     
     render() {
@@ -361,13 +374,16 @@ class ManageBazaar extends React.Component {
                     }
                     </tbody>
                 </Table>
-                <Pagination style={{justifyContent: 'end'}}>
-                    <Pagination.Item>{`<`}</Pagination.Item>
-                    <Pagination.Item activeLabel='' active>{1}</Pagination.Item>
-                    <Pagination.Item activeLabel=''>{2}</Pagination.Item>
-                    <Pagination.Item activeLabel=''>{3}</Pagination.Item>
-                    <Pagination.Item>{`>`}</Pagination.Item>
-                </Pagination>
+                
+                <div style={{justifyContent:'end', display: 'flex'}} >
+                    <Pagination 
+                        color='primary'
+                        count={this.props.totalPages}
+                        page={this.props.currentPage + 1}
+                        onChange={(e, page)=> this.handlePageChange(e, page)}
+                    />
+                </div>
+                
 
                 <Modal show={modalShow} onHide={this.handleModalClose}>
                     <Modal.Header>
@@ -389,8 +405,8 @@ const mapStateToProps = (state)=> ({
 })
 
 const mapDispatchToProps = (dispatch)=> ({
-    saveItem: (data, currentPage, totalPage)=> dispatch(saveCurrentPage({
-        data, currentPage, totalPage
+    saveItem: (data, currentPage, totalPages)=> dispatch(saveCurrentPage({
+        data, currentPage, totalPages
     }))
 })
 
