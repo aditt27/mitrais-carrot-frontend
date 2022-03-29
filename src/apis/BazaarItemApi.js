@@ -1,12 +1,13 @@
 import apiClient from ".";
 
-export async function getBazaarItem(isPaginated, currentPage, itemPerPage, isAdmin) {
+export async function getBazaarItem(isPaginated, currentPage, itemPerPage, isAdmin, userId) {
     return apiClient
         .get('/item', { params: {
             isPaginated: isPaginated,
             page: currentPage,
             size: itemPerPage,
-            isAdmin: isAdmin
+            isAdmin: isAdmin,
+            userId: userId ? userId : null
         }})
         .then((response=> {
             if(response) {        

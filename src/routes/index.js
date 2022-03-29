@@ -10,6 +10,12 @@ import RedirectRoute from './RedirectRoute'
 import Forbidden from '../pages/Forbidden';
 import { Admin, Merchant, Manager, Staff } from '../utils/Role'
 import ManageBazaar from '../pages/ManageBazaar'
+import Groups from '../pages/Groups'
+import Harvest from '../pages/Harvest'
+import StaffInGroup from '../components/StaffInGroup'
+import StaffList from '../components/StaffList'
+import ShareCarrot from '../components/ShareCarrot'
+import ChangePassword from '../pages/ChangePassword'
 
 class CarrotRouter extends React.Component {
 
@@ -28,6 +34,26 @@ class CarrotRouter extends React.Component {
       key: 3,
       path: 'bazaar/manage',
       element: <ManageBazaar roles={[Admin]} />
+    },
+    {
+      key: 4,
+      path: 'group',
+      element: <Groups roles={[Admin]} />
+    },
+    {
+        key: 5,
+        path: 'barn',
+        element: <Harvest roles={[Admin]} />
+    },
+    {
+        key: 6,
+        path: 'staff-in-group',
+        element: <StaffInGroup roles={[Admin]} />
+    },
+    {
+        key: 7,
+        path: 'staff-list',
+        element: <StaffList roles={[Admin]} />
     }
   ]
 
@@ -54,6 +80,11 @@ class CarrotRouter extends React.Component {
       key: 2,
       path: 'bazaar',
       element: <Bazaar roles={[Manager]} />
+    },
+    {
+      key: 3,
+      path: 'share-carrot',
+      element: <ShareCarrot roles={[Manager]} />
     }
   ]
 
@@ -77,6 +108,7 @@ class CarrotRouter extends React.Component {
           <Route exact path='/login' element={<Login />} />
           <Route exact path='/logout' element={<Logout />} />
           <Route exact path='/forbidden' element={<Forbidden />} />
+          <Route exact path='/change-password' element={<ChangePassword />} />
           <Route exact path='' element={<RedirectRoute />} />
 
           <Route path='/admin' element={<CarrotLayout role={Admin} title='Title Here' />}>
@@ -107,7 +139,7 @@ class CarrotRouter extends React.Component {
 
           <Route path='/manager' element={<CarrotLayout role={Manager} title='Title Here' />}>
             {
-              this.routesMerchant.map(item => {
+              this.routesManager.map(item => {
                 return <Route
                   exact path={item.path} key={item.key}
                   element={<PrivateRoute>
