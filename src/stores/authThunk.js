@@ -15,3 +15,7 @@ export const logout = createAsyncThunk('auth/logout', async (payload) => {
     removeToken();
     payload.navigate('/login', {replace: true});
 });
+
+export const setUserData = createAsyncThunk('auth/setUserData', async (payload) => {
+  return payload.userData;
+});

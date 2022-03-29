@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { login, logout} from './authThunk';
+import { login, logout, setUserData} from './authThunk';
 
 const initialState = {
     userData: {}
@@ -16,6 +16,9 @@ export const authSlice = createSlice({
         [login.fulfilled]: (state, action) => {
             state.userData = action.payload;
         },
+        [setUserData.fulfilled]: (state, action) => {
+          state.userData = action.payload;
+      },
     },
 })
 
