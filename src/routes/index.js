@@ -3,7 +3,9 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import CarrotLayout from '../components/CarrotLayout'
 import Bazaar from '../pages/Bazaar'
 import Dashboard from '../pages/Dashboard'
+import GroupDetails from '../pages/GroupDetails'
 import Groups from '../pages/Groups'
+import Harvest from '../pages/Harvest'
 
 class CarrotRouter extends React.Component {
 
@@ -22,6 +24,12 @@ class CarrotRouter extends React.Component {
             key: 4,
             path: 'group',
             element: <Groups />
+        },
+        {
+            key: 5,
+            path: 'barn',
+            element: <Harvest />
+
         }
     ]
 

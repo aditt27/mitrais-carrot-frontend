@@ -26,6 +26,11 @@ const RoleNavbar = (props)=> {
             key: 4,
             name: 'Group',
             href: '/group'
+        },
+        {
+            key: 5,
+            name: 'Harvest',
+            href: '/barn'
         }
     ]
 
