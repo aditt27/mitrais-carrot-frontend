@@ -66,74 +66,72 @@ class Bazaar extends React.Component {
         }
 
         return(
-            <div>
-                <Container>
-                    <Row style={rowCardStyle}>
-                        <Col style={profileCardStyle} className=''>
-                            <Row>
-                                <Col xs={4}>
-                                    <Image
-                                        src={ProfilePicture} 
-                                        width={100}
-                                        alt='Profile'
-                                        roundedCircle
-                                    />
-                                </Col>
-                                <Col className='my-auto'>
-                                    <h4>Aditya Budi</h4>
-                                    <p>Grade, Department</p>
-                                </Col>
-                            </Row>
-                        </Col>
-                        <Col style={pointsCardStyle}>
-                            <Row>
-                                <Col xs={4}>
-                                    <Image
-                                        src={CarrotPicture} 
-                                        width={100}
-                                        alt='Carrot Points'
-                                        roundedCircle
-                                    />
-                                </Col>
-                                <Col className='my-auto'>
-                                    <h4>My Carrot Points:</h4>
-                                    <h4>500</h4>
-                                </Col>
-                            </Row>
-                        </Col>
-                        <Col style={transactionCardStyle}>
-                            <Row>
-                                <Col xs={4}>
-                                    <Image
-                                        src={CarrotTransPicture} 
-                                        width={100}
-                                        alt='Carrot Transaction'
-                                        roundedCircle
-                                    />
-                                </Col>
-                                <Col className='my-auto'>
-                                    <h4>Carrot Transaction History</h4>
-                                    <Button variant="secondary" size="sm">
-                                        View
-                                    </Button>
-                                </Col>
-                            </Row>
-                        </Col>
-                    </Row>  
-                    <div style={bazaarItemCardsStyle}>
-                        {
-                            this.props.data.map(item=> {
-                                return <BazaarItemCard
-                                    title={item.name}
-                                    price={item.exchangeRate}
-                                    image={item.image}
-                                    key={item.id}
+            <Container>
+                <Row style={rowCardStyle}>
+                    <Col style={profileCardStyle} className=''>
+                        <Row>
+                            <Col xs={4}>
+                                <Image
+                                    src={ProfilePicture} 
+                                    width={100}
+                                    alt='Profile'
+                                    roundedCircle
                                 />
-                            })
-                        }
-                    </div>
-                </Container>
-            </div>
+                            </Col>
+                            <Col className='my-auto'>
+                                <h4>Aditya Budi</h4>
+                                <p>Grade, Department</p>
+                            </Col>
+                        </Row>
+                    </Col>
+                    <Col style={pointsCardStyle}>
+                        <Row>
+                            <Col xs={4}>
+                                <Image
+                                    src={CarrotPicture} 
+                                    width={100}
+                                    alt='Carrot Points'
+                                    roundedCircle
+                                />
+                            </Col>
+                            <Col className='my-auto'>
+                                <h4>My Carrot Points:</h4>
+                                <h4>500</h4>
+                            </Col>
+                        </Row>
+                    </Col>
+                    <Col style={transactionCardStyle}>
+                        <Row>
+                            <Col xs={4}>
+                                <Image
+                                    src={CarrotTransPicture} 
+                                    width={100}
+                                    alt='Carrot Transaction'
+                                    roundedCircle
+                                />
+                            </Col>
+                            <Col className='my-auto'>
+                                <h4>Carrot Transaction History</h4>
+                                <Button variant="secondary" size="sm">
+                                    View
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Col>
+                </Row>  
+                <div style={bazaarItemCardsStyle}>
+                    {
+                        this.props.data.map(item=> {
+                            return <BazaarItemCard
+                                title={item.name}
+                                price={item.exchangeRate}
+                                image={item.image}
+                                key={item.id}
+                            />
+                        })
+                    }
+                </div>
+            </Container>
         )
     }
 }
