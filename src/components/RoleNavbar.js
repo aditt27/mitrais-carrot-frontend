@@ -11,17 +11,17 @@ const RoleNavbar = (props) => {
     {
       key: 1,
       name: 'Dashboard',
-      href: '/'
+      href: '/admin'
     },
     {
       key: 2,
       name: 'Bazaar',
-      href: '/bazaar'
+      href: '/admin/bazaar'
     },
     {
       key: 3,
-      name: 'Assign Role',
-      href: '#assignrole'
+      name: 'Manage Bazaar',
+      href: '/admin/bazaar/manage'
     },
   ]
 
