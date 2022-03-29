@@ -23,6 +23,16 @@ const RoleNavbar = (props) => {
       name: 'Manage Bazaar',
       href: '/admin/bazaar/manage'
     },
+    {
+      key: 4,
+      name: 'Group',
+      href: '/admin/group'
+    },
+    {
+      key: 5,
+      name: 'Harvest',
+      href: '/admin/barn'
+    }
   ]
 
   const merchantNavbarItems = [
