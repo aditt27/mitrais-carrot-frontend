@@ -23,6 +23,26 @@ const RoleNavbar = (props) => {
       name: 'Manage Bazaar',
       href: '/admin/bazaar/manage'
     },
+    {
+      key: 4,
+      name: 'Group',
+      href: '/admin/group'
+    },
+    {
+      key: 5,
+      name: 'Harvest',
+      href: '/admin/barn'
+    },
+    {
+      key: 6,
+      name: 'Staff In Group',
+      href: '/admin/staff-in-group'
+    },
+    {
+      key: 7,
+      name: 'Staff List',
+      href: '/admin/staff-list'
+    }
   ]
 
   const merchantNavbarItems = [
@@ -59,6 +79,11 @@ const RoleNavbar = (props) => {
       name: 'Assign Role',
       href: '#assignrole'
     },
+    {
+      key: 4,
+      name: 'Share Carrot',
+      href: '/admin/share-carrot'
+    }
   ]
 
   const staffNavbarItems = [
