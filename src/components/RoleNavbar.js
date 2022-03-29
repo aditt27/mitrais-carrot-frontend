@@ -32,6 +32,16 @@ const RoleNavbar = (props) => {
       key: 5,
       name: 'Harvest',
       href: '/admin/barn'
+    },
+    {
+      key: 6,
+      name: 'Staff In Group',
+      href: '/admin/staff-in-group'
+    },
+    {
+      key: 7,
+      name: 'Staff List',
+      href: '/admin/staff-list'
     }
   ]
 
@@ -69,6 +79,11 @@ const RoleNavbar = (props) => {
       name: 'Assign Role',
       href: '#assignrole'
     },
+    {
+      key: 4,
+      name: 'Share Carrot',
+      href: '/admin/share-carrot'
+    }
   ]
 
   const staffNavbarItems = [
