@@ -137,9 +137,9 @@ class Bazaar extends React.Component {
 }
 
 const mapStateToProps = (state)=> ({
-    data: state.bazaarItem.data,
-    currentPage: state.bazaarItem.currentPage,
-    totalPages: state.bazaarItem.totalPages
+    data: state.bazaarItemReducer.data,
+    currentPage: state.bazaarItemReducer.currentPage,
+    totalPages: state.bazaarItemReducer.totalPages
 })
 
 const mapDispatchToProps = (dispatch)=> ({

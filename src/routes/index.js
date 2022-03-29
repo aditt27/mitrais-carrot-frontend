@@ -9,6 +9,7 @@ import PrivateRoute from './PrivateRoute'
 import RedirectRoute from './RedirectRoute'
 import Forbidden from '../pages/Forbidden';
 import { Admin, Merchant, Manager, Staff } from '../utils/Role'
+import ManageBazaar from '../pages/ManageBazaar'
 
 class CarrotRouter extends React.Component {
 
@@ -22,6 +23,11 @@ class CarrotRouter extends React.Component {
       key: 2,
       path: 'bazaar',
       element: <Bazaar roles={[Admin]} />
+    },
+    {
+      key: 3,
+      path: 'bazaar/manage',
+      element: <ManageBazaar roles={[Admin]} />
     }
   ]
 
@@ -33,7 +39,7 @@ class CarrotRouter extends React.Component {
     },
     {
       key: 2,
-      path: 'bazaar',
+      path: 'bazaar/',
       element: <Bazaar roles={[Merchant]} />
     }
   ]

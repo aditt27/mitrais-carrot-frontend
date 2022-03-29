@@ -24,7 +24,7 @@ class ManageBazaar extends React.Component {
             formStock: 0,
             formExpiredDate: '',
 
-            editId: 0,
+            editId: -1,
             deleteId: 0
         }
     }
@@ -119,8 +119,7 @@ class ManageBazaar extends React.Component {
         this.setState({modalShow: false})
     }
 
-    handleModalOpen = (e)=> {
-        this.setState({modalShow: true})
+    handleModalOpen = (e, itemId = undefined)=> {
         switch(e.target.name) {
             case 'addItem':
                 this.setState({
@@ -131,21 +130,37 @@ class ManageBazaar extends React.Component {
                 })
                 break;
             case 'editItem':
+                const index = this.props.data.findIndex(item=> item.id === itemId)
+                const item = this.props.data[index]
+
+                let expireDate = new Date(item.expireDate).toISOString()
+                expireDate = expireDate.slice(0,16)
+
                 this.setState({
                     modalTitle: 'Edit Bazaar Item',
                     modalType: 'form',
-                    formType: e.target.name
+                    formType: e.target.name,
+
+                    editId: itemId,
+                    formName: item.name,
+                    formDescription: item.description,
+                    formImage: item.image,
+                    formCarrot: item.exchangeRate,
+                    formStock: item.stockAmount,
+                    formExpiredDate: expireDate
                 })
                 break;
             case 'deleteItem':
                 this.setState({
                     modalTitle: 'Delete Bazaar Item',
-                    modalType: 'confirmation'
+                    modalType: 'confirmation',
+                    deleteId: itemId
                 })
                 break;
             default: 
                 break;
         }   
+        this.setState({modalShow: true})
     }
     
     render() {
@@ -157,7 +172,6 @@ class ManageBazaar extends React.Component {
             formDisable,
             formName,
             formDescription,
-            formImage,
             formCarrot,
             formStock,
             formExpiredDate
@@ -167,7 +181,6 @@ class ManageBazaar extends React.Component {
         switch(modalType) {
             case 'form':
                 modalBody = <Form>
-                    <Form.Control type='hidden' name='formId'/>
                     <Form.Group className="mb-3" >
                         <Form.Label>Name</Form.Label>
                         <Form.Control type="text" name='formName' disabled={formDisable} value={formName} onChange={this.handleFormValueChange}/>
@@ -256,10 +269,10 @@ class ManageBazaar extends React.Component {
                                     />
                                 </td>
                                 <td className='text-center'>
-                                    <Button className='btn-block' onClick={(e)=>{this.handleModalOpen(e); this.setState({editId: item.id})}} name='editItem' dataId={item.key}>
+                                    <Button className='btn-block' onClick={(e)=>{this.handleModalOpen(e, item.id)}} name='editItem' >
                                         Edit
                                     </Button>
-                                    <Button className='btn-block' variant='danger' onClick={(e)=>{this.handleModalOpen(e); this.setState({deleteId: item.id})}} name='deleteItem' dataId={item.key}>
+                                    <Button className='btn-block' variant='danger' onClick={(e)=>{this.handleModalOpen(e, item.id)}} name='deleteItem' >
                                         Delete
                                     </Button>
                                 </td>
@@ -290,9 +303,9 @@ class ManageBazaar extends React.Component {
 }
 
 const mapStateToProps = (state)=> ({
-    data: state.bazaarItem.data,
-    currentPage: state.bazaarItem.currentPage,
-    totalPages: state.bazaarItem.totalPages
+    data: state.bazaarItemReducer.data,
+    currentPage: state.bazaarItemReducer.currentPage,
+    totalPages: state.bazaarItemReducer.totalPages
 })
 
 const mapDispatchToProps = (dispatch)=> ({
