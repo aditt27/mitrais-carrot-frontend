@@ -10,6 +10,8 @@ import RedirectRoute from './RedirectRoute'
 import Forbidden from '../pages/Forbidden';
 import { Admin, Merchant, Manager, Staff } from '../utils/Role'
 import ManageBazaar from '../pages/ManageBazaar'
+import Groups from '../pages/Groups'
+import Harvest from '../pages/Harvest'
 
 class CarrotRouter extends React.Component {
 
@@ -32,12 +34,12 @@ class CarrotRouter extends React.Component {
     {
       key: 4,
       path: 'group',
-      element: <Groups />
+      element: <Groups roles={[Admin]} />
   },
   {
       key: 5,
       path: 'barn',
-      element: <Harvest />
+      element: <Harvest roles={[Admin]} />
 
   }
   ]
