@@ -4,6 +4,8 @@ import Bazaar from '../pages/Bazaar'
 import Dashboard from '../pages/Dashboard'
 import PrivateRoute from './PrivateRoute'
 import { Merchant } from '../utils/Role'
+import CarrotHistory from '../pages/CarrotHistory'
+import BazaarItemDetail from '../pages/BazaarItemDetail'
 
 const routesMerchant = [
   {
@@ -15,6 +17,16 @@ const routesMerchant = [
     key: 2,
     path: 'bazaar/',
     element: <Bazaar roles={[Merchant]} />
+  },
+  {
+    key: 3,
+    path: 'carrotHistory',
+    element: <CarrotHistory roles={[Merchant]} />
+  },
+  {
+    key: 4,
+    path: 'bazaar/item',
+    element: <BazaarItemDetail roles={[Merchant]} />
   }
 ]
 

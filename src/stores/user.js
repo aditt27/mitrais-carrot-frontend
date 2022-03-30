@@ -29,18 +29,22 @@ export const changePassword = createAsyncThunk('user/changePassword', async (pay
 });
 
 
-const initialState = {};
+const initialState = {
+    profile: {}
+};
 
 export const userSlice = createSlice({
     name: 'user',
     initialState,
-    reducers: {},
+    reducers: {
+        saveProfile: (state, action)=> {
+            state.profile = action.payload.profile
+        }
+    },
     extraReducers: {
         [changePassword.fulfilled]: (state, action) => {},
     },
 })
 
-
-export const {} = userSlice.actions;
-
+export const { saveProfile } = userSlice.actions;
 export default userSlice.reducer;

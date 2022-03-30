@@ -1,20 +1,12 @@
 import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import CarrotLayout from '../components/CarrotLayout'
-import Bazaar from '../pages/Bazaar'
-import Dashboard from '../pages/Dashboard'
 import Login from '../pages/Login'
 import Logout from '../pages/Logout'
 import PrivateRoute from './PrivateRoute'
 import RedirectRoute from './RedirectRoute'
 import Forbidden from '../pages/Forbidden';
 import { Admin, Merchant, Manager, Staff } from '../utils/Role'
-import ManageBazaar from '../pages/ManageBazaar'
-import Groups from '../pages/Groups'
-import Harvest from '../pages/Harvest'
-import StaffInGroup from '../components/StaffInGroup'
-import StaffList from '../components/StaffList'
-import ShareCarrot from '../components/ShareCarrot'
 import ChangePassword from '../pages/ChangePassword'
 import AdminRoute from './admin'
 import MerchantRoute from './merchant'
@@ -39,15 +31,15 @@ class CarrotRouter extends React.Component {
             {AdminRoute}
           </Route>
 
-          <Route path='/merchant' element={<CarrotLayout role={Merchant} title='Title Here' />}>
+          <Route path='/merchant' element={<CarrotLayout role={Merchant} />}>
             {MerchantRoute}
           </Route>
 
-          <Route path='/manager' element={<CarrotLayout role={Manager} title='Title Here' />}>
+          <Route path='/manager' element={<CarrotLayout role={Manager} />}>
             {ManagerRoute}
           </Route>
 
-          <Route path='/staff' element={<CarrotLayout role={Staff} title='Title Here' />}>
+          <Route path='/staff' element={<CarrotLayout role={Staff} />}>
             {StaffRoute}
           </Route>
         </Routes>

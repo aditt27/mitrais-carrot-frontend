@@ -1,7 +1,16 @@
 import axios from 'axios'
+import { getAccessToken } from '../utils/HelperFunctions'
 
-const apiClient = axios.create({
-    baseURL: 'http://localhost:8081/api/v1'
+let apiClient = axios.create({
+    baseURL: 'http://localhost:8081/api/v1',
+    headers: {
+
+    }
+})
+
+apiClient.interceptors.request.use(function (config) {
+    config.headers.Authorization = `Bearer ${getAccessToken()}`
+    return config
 })
 
 export default apiClient
