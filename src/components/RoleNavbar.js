@@ -78,11 +78,6 @@ const RoleNavbar = (props) => {
       key: 4,
       name: 'Share Carrot',
       href: 'share-carrot'
-    },
-    {
-      key: 5,
-      name: 'Share Carrot Group',
-      href: 'share-carrot-group'
     }
   ]
 

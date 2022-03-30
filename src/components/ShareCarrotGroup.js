@@ -5,7 +5,7 @@ import { Component } from 'react'
 import { Container, Row, Table, Col, Pagination, Modal, Button, Form, Alert } from 'react-bootstrap'
 import { createNewGroupTransaction } from '../apis/transaction'
 import { getUserByUsername } from '../apis/user'
-import { btnRewardStyle } from './ShareCarrot'
+import { btnRewardStyle } from './ShareCarrotStaff'
 
 class ShareCarrotGroup extends Component {
 

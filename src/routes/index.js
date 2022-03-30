@@ -86,11 +86,6 @@ class CarrotRouter extends React.Component {
       key: 3,
       path: 'share-carrot',
       element: <ShareCarrot roles={[Manager]} />
-    },
-    {
-      key: 4,
-      path: 'share-carrot-group',
-      element: <ShareCarrotGroup roles={[Manager]} />
     }
   ]
 
