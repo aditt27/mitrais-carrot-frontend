@@ -185,7 +185,6 @@ const mapStateToProps = (state)=> ({
     currentPage: state.bazaarItemReducer.currentPage,
     totalPages: state.bazaarItemReducer.totalPages,
     userProfile: state.userReducer.profile,
-    role: state.authReducer.userData.role,
     username: state.authReducer.userData.sub
 })
 

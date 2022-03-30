@@ -11,7 +11,7 @@ class Dashboard extends React.Component {
 
         return(
             <div style={{padding: '16px'}}>
-                <h1 style={titleStyle}>Dashboard</h1>
+                WIP
             </div>
             
         )

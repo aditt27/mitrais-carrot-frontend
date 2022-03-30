@@ -73,7 +73,12 @@ class CarrotHistoryBazaar extends React.Component {
 
         return(
             <div>
-                <h4 style={{paddingBottom: '8px'}}>My Bazaar History</h4>
+                <hr style={{
+                    width: "2em",
+                    backgroundColor: "orange",
+                    height: "0.2em"
+                }} align="left"/>
+                <h5>MY BAZAAR HISTORY</h5>
                 <Table striped bordered hover>
                     <thead>
                         <tr>

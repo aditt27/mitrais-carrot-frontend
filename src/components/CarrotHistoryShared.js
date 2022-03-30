@@ -16,7 +16,12 @@ class CarrotHistoryShared extends React.Component {
 
         return(
             <div>
-                <h4 style={{paddingBottom: '8px'}}>My Shared History</h4>
+                <hr style={{
+                            width: "2em",
+                            backgroundColor: "orange",
+                            height: "0.2em"
+                        }} align="left"/>
+                        <h5>MY SHARED HISTORY</h5>
                 <Table striped bordered hover>
                     <thead>
                         <tr>
@@ -30,12 +35,12 @@ class CarrotHistoryShared extends React.Component {
                     </thead>
                     <tbody>
                         <tr>
-                            <td>1</td>
-                            <td>2</td>
-                            <td>3</td>
-                            <td>4</td>
-                            <td>5</td>
-                            <td>6</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
                     </tbody>
                 </Table>
