@@ -1,7 +1,8 @@
+import { Pagination } from '@mui/material'
 import React from 'react'
-import { Button, Form, Modal, Pagination, Table } from 'react-bootstrap'
+import { Button, Form, Modal, Table } from 'react-bootstrap'
 import { connect } from 'react-redux'
-import { addBazaarItem, deleteBazaarItem, getBazaarItem } from '../apis/BazaarItemApi'
+import { addBazaarItem, deleteBazaarItem, editBazaarItem, getBazaarItem } from '../apis/BazaarItemApi'
 import { saveCurrentPage } from '../stores/bazaarItem'
 
 class ManageBazaar extends React.Component {
@@ -10,6 +11,8 @@ class ManageBazaar extends React.Component {
         super(props)
 
         this.state = {
+            tableItemPerPage: 8,
+
             modalShow: false,
             modalTitle: '',
             modalType: '',
@@ -25,7 +28,7 @@ class ManageBazaar extends React.Component {
             formExpiredDate: '',
 
             editId: -1,
-            deleteId: 0
+            deleteId: -1
         }
     }
 
@@ -34,7 +37,7 @@ class ManageBazaar extends React.Component {
     }
 
     loadBazaarItem() {
-        getBazaarItem(true, 0, 8, true)
+        getBazaarItem(true, 0, this.state.tableItemPerPage, true)
             .then(result=> {
                 this.props.saveItem(
                     result.result.currentPageContent,
@@ -73,6 +76,31 @@ class ManageBazaar extends React.Component {
                 })
                 break;
             case 'editItem':
+                this.setState({formDisable: true})
+                editBazaarItem({
+                    id: this.state.editId,
+                    name: this.state.formName,
+                    description: this.state.formDescription,
+                    stockAmount: this.state.formStock,
+                    exchangeRate: this.state.formCarrot,
+                    expireDate: this.state.formExpiredDate,
+                    image: this.state.formImage
+                })
+                .then(result=> {
+                    console.log(result)
+                    this.setState({
+                        modalShow: false,
+                        formDisable: false,
+                        formId: 0,
+                        formName: '',
+                        formDescription: '',
+                        formImage: '',
+                        formCarrot: 0,
+                        formStock: 0,
+                        formExpiredDate: ''
+                    })
+                    this.loadBazaarItem()
+                })
                 break;
             default:
                 break;
@@ -125,8 +153,16 @@ class ManageBazaar extends React.Component {
                 this.setState({
                     modalTitle: 'Add Bazaar Item',
                     modalType: 'form',
+                    formType: e.target.name,
+
+                    editId: -1,
+                    deleteId: -1,
+                    formName: '',
+                    formDescription: '',
                     formImage: '',
-                    formType: e.target.name
+                    formCarrot: '',
+                    formStock: '',
+                    formExpiredDate: ''
                 })
                 break;
             case 'editItem':
@@ -162,6 +198,47 @@ class ManageBazaar extends React.Component {
         }   
         this.setState({modalShow: true})
     }
+
+    handleItemToggle = (e, itemId = undefined)=> {
+
+        let toggleValue = e.target.checked
+
+        switch(e.target.name) {
+            case 'toggleActive':
+                editBazaarItem({
+                    id: itemId,
+                    isActive: toggleValue
+                })
+                .then(result=> {
+                    console.log(result)
+                    this.loadBazaarItem()
+                })
+                break;
+            case 'toggleAutoApprove':
+                editBazaarItem({
+                    id: itemId,
+                    isAutoApprove: toggleValue
+                })
+                .then(result=> {
+                    console.log(result)
+                    this.loadBazaarItem()
+                })
+                break;
+            default:
+                break;
+        }
+    }
+
+    handlePageChange = (e, page)=> {
+        getBazaarItem(true, page-1, this.state.tableItemPerPage, true)
+            .then(result=> {
+                this.props.saveItem(
+                    result.result.currentPageContent,
+                    result.result.currentPage,
+                    result.result.totalPages
+                )
+            })
+    }
     
     render() {
 
@@ -172,10 +249,19 @@ class ManageBazaar extends React.Component {
             formDisable,
             formName,
             formDescription,
+            formImage,
             formCarrot,
             formStock,
             formExpiredDate
         } = this.state
+
+        let formImageComponent
+        if(formImage.length > 0) {
+            formImageComponent = <img 
+                src={formImage} 
+                width={100} 
+                alt='Item'/>
+        }
 
         let modalBody
         switch(modalType) {
@@ -191,6 +277,9 @@ class ManageBazaar extends React.Component {
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>Image</Form.Label>
+                        <br />
+                        {formImageComponent}
+                        
                         <Form.Control type='file' name='formImage' disabled={formDisable} onChange={this.handleFormValueChange}/>
                         <Form.Text className="text-muted">
                             Allowed extension: jpg/jpeg/png. Maximum size: 1000KB
@@ -262,10 +351,14 @@ class ManageBazaar extends React.Component {
                                     <Form.Check 
                                         label='Active'
                                         checked={item.active}
+                                        name='toggleActive'
+                                        onChange={(e)=> this.handleItemToggle(e, item.id)}
                                     />
                                     <Form.Check 
                                         label='Auto Approve'
                                         checked={item.autoApprove}
+                                        name='toggleAutoApprove'
+                                        onChange={(e)=> this.handleItemToggle(e, item.id)}
                                     />
                                 </td>
                                 <td className='text-center'>
@@ -281,13 +374,16 @@ class ManageBazaar extends React.Component {
                     }
                     </tbody>
                 </Table>
-                <Pagination style={{justifyContent: 'end'}}>
-                    <Pagination.Item>{`<`}</Pagination.Item>
-                    <Pagination.Item activeLabel='' active>{1}</Pagination.Item>
-                    <Pagination.Item activeLabel=''>{2}</Pagination.Item>
-                    <Pagination.Item activeLabel=''>{3}</Pagination.Item>
-                    <Pagination.Item>{`>`}</Pagination.Item>
-                </Pagination>
+                
+                <div style={{justifyContent:'end', display: 'flex'}} >
+                    <Pagination 
+                        color='primary'
+                        count={this.props.totalPages}
+                        page={this.props.currentPage + 1}
+                        onChange={(e, page)=> this.handlePageChange(e, page)}
+                    />
+                </div>
+                
 
                 <Modal show={modalShow} onHide={this.handleModalClose}>
                     <Modal.Header>
@@ -309,8 +405,8 @@ const mapStateToProps = (state)=> ({
 })
 
 const mapDispatchToProps = (dispatch)=> ({
-    saveItem: (data, currentPage, totalPage)=> dispatch(saveCurrentPage({
-        data, currentPage, totalPage
+    saveItem: (data, currentPage, totalPages)=> dispatch(saveCurrentPage({
+        data, currentPage, totalPages
     }))
 })
 

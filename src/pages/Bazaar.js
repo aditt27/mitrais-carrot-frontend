@@ -8,18 +8,50 @@ import { saveCurrentPage } from '../stores/bazaarItem'
 import ProfilePicture from '../assets/img/profilepicture-template.png'
 import CarrotPicture from '../assets/img/mc-icon-carrot.png'
 import CarrotTransPicture from '../assets/img/mc-icon-transaction.png'
+import { Pagination } from '@mui/material'
+import { getUserByUsername } from '../apis/user'
+import { saveProfile } from '../stores/user'
+import { Link } from 'react-router-dom'
 
 class Bazaar extends React.Component {
 
+    constructor(props) {
+        super(props)
+
+        this.state ={
+            tableItemPerPage: 8
+        }
+    }
+
     componentDidMount() {
         this.loadBazaarItem()
+        this.loadUserProfile()
+    }
+
+    loadUserProfile() {
+        getUserByUsername(this.props.username)
+            .then(result=> {
+                console.log(result)
+                this.props.saveUserProfile(result.result)
+            })
     }
 
     loadBazaarItem() {
         /*
         @params:    isPaginated, currentPage, itemPerPage, isAdmin, userId(can be null)
         */
-        getBazaarItem(true, 0, 8, false)
+        getBazaarItem(true, 0, this.state.tableItemPerPage, false)
+            .then(result=> {
+                this.props.saveItem(
+                    result.result.currentPageContent,
+                    result.result.currentPage,
+                    result.result.totalPages
+                )
+            })
+    }
+
+    handlePageChange = (e, page)=> {
+        getBazaarItem(true, page-1, this.state.tableItemPerPage, false)
             .then(result=> {
                 this.props.saveItem(
                     result.result.currentPageContent,
@@ -68,6 +100,8 @@ class Bazaar extends React.Component {
             justifyContent: 'center'
         }
 
+        const currentpath = window.location.pathname.split("/")
+
         return(
             <Container>
                 <Row style={rowCardStyle}>
@@ -82,8 +116,8 @@ class Bazaar extends React.Component {
                                 />
                             </Col>
                             <Col className='my-auto'>
-                                <h4>Aditya Budi</h4>
-                                <p>Grade, Department</p>
+                                <h4>{this.props.userProfile.name}</h4>
+                                <p>{this.props.userProfile.jobFamily}, {this.props.userProfile.office}</p>
                             </Col>
                         </Row>
                     </Col>
@@ -99,7 +133,7 @@ class Bazaar extends React.Component {
                             </Col>
                             <Col className='my-auto'>
                                 <h4>My Carrot Points:</h4>
-                                <h4>500</h4>
+                                <h4>{this.props.userProfile.points}</h4>
                             </Col>
                         </Row>
                     </Col>
@@ -115,9 +149,7 @@ class Bazaar extends React.Component {
                             </Col>
                             <Col className='my-auto'>
                                 <h4>Carrot Transaction History</h4>
-                                <Button variant="secondary" size="sm">
-                                    View
-                                </Button>
+                                <Button as={Link} to={`/${currentpath[1]}/carrotHistory`} variant="secondary">View</Button>
                             </Col>
                         </Row>
                     </Col>
@@ -130,9 +162,18 @@ class Bazaar extends React.Component {
                                 price={item.exchangeRate}
                                 image={item.image}
                                 key={item.id}
+                                id={item.id}
                             />
                         })
                     }
+                </div>
+                <div style={{justifyContent:'end', display: 'flex', paddingBottom: '1em'}} >
+                    <Pagination
+                        color='primary'
+                        count={this.props.totalPages}
+                        page={this.props.currentPage + 1}
+                        onChange={(e, page)=> this.handlePageChange(e, page)}
+                    />
                 </div>
             </Container>
         )
@@ -142,12 +183,20 @@ class Bazaar extends React.Component {
 const mapStateToProps = (state)=> ({
     data: state.bazaarItemReducer.data,
     currentPage: state.bazaarItemReducer.currentPage,
-    totalPages: state.bazaarItemReducer.totalPages
+    totalPages: state.bazaarItemReducer.totalPages,
+    userProfile: state.userReducer.profile,
+    role: state.authReducer.userData.role,
+    username: state.authReducer.userData.sub
 })
 
+
+
 const mapDispatchToProps = (dispatch)=> ({
-    saveItem: (data, currentPage, totalPage)=> dispatch(saveCurrentPage({
-        data, currentPage, totalPage
+    saveItem: (data, currentPage, totalPages)=> dispatch(saveCurrentPage({
+        data, currentPage, totalPages
+    })),
+    saveUserProfile: (profile)=> dispatch(saveProfile({
+        profile
     }))
 })
 
