@@ -1,7 +1,7 @@
 import { Component, useEffect, useState } from 'react'
 import { Container, Row, Col, Form, Table, Modal, Button, Pagination } from 'react-bootstrap'
-import { getAllUsers } from '../apis/user'
-import { createNewTransaction, getAllTransactions } from '../apis/transaction'
+import { getAllUsers, getUserByUsername } from '../apis/user'
+import { createNewTransaction, getTransactionsByManager, getAllTransactions } from '../apis/transaction'
 
 function StaffListRow(props) {
     const { staffList } = props
@@ -31,7 +31,6 @@ function RewardCarrotModal(props) {
     function handleRewardCarrotSubmit(e) {
         e.preventDefault()
         const data = {
-            senderId: "7", // diding
             receiverId: e.target.receiver.value,
             amount: e.target.amount.value,
             notes: e.target.note.value
@@ -85,22 +84,39 @@ class ShareCarrot extends Component {
             currentPage: 0,
             totalPages: 0
         },
-        staffList: []
+        staffList: [],
+        manager: {}
     }
 
     async componentDidMount() {
-        const { transactions, page, totalPages } = await getAllTransactions(0)
-        this.setState({transactionList: {
-            transactions: transactions,
-            currentPage: page,
-            totalPages: totalPages
-        }})
+        const { transactions, page, totalPages } = await getTransactionsByManager(0)
+        const user = await getUserByUsername()
+        this.setState({
+            transactionList: {
+                transactions: transactions,
+                currentPage: page,
+                totalPages: totalPages
+            },
+            manager: user
+        })
+        this.state.transactionList.transactions.reduce(function(previousValue, currentValue) {
+            console.log(previousValue)
+            return previousValue + currentValue.carrot
+        }, 0)
+    }
+
+    getTotalCarrot = async () => {
+        let carrot = 0
+        await getAllTransactions(0).then(res => {
+            carrot = res.transactions.reduce((prev, next) => prev + next.carrot)
+        })
+        return carrot
     }
 
     handleShowShareCarrotModal = async (isCancel) => {
         const transactionList = this.state.transactionList
         if (isCancel === false) {
-            const { transactions, page } = await getAllTransactions(0)
+            const { transactions, page } = await getTransactionsByManager(0)
             transactionList.transactions = transactions
             transactionList.currentPage = page
         }
@@ -125,7 +141,7 @@ class ShareCarrot extends Component {
     }
 
     fetchTransaction = (page) => {
-        getAllTransactions(page).then(res => {
+        getTransactionsByManager(page).then(res => {
             const { transactions, page, totalPages } = res
             this.setState({
                 transactionList: {
@@ -178,15 +194,21 @@ class ShareCarrot extends Component {
                                 </tr>
                                 <tr>
                                     <th>Total Carrot</th>
-                                    <td className="text-right">222</td>
+                                    <td className="text-right">{
+                                        this.getTotalCarrot
+                                    }</td>
                                 </tr>
                                 <tr>
                                     <th>Rewarded Carrot</th>
-                                    <td className="text-right">22</td>
+                                    <td className="text-right">{
+                                        this.state.transactionList.transactions.reduce((prev, next) => prev + next.carrot, 0)
+                                    }</td>
                                 </tr>
                                 <tr>
                                     <th>My Basket</th>
-                                    <td className="text-right">222</td>
+                                    <td className="text-right">{
+                                        this.state.manager.points
+                                    }</td>
                                 </tr>
                             </tbody>
                         </Table>

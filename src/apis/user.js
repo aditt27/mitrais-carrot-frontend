@@ -1,4 +1,5 @@
 import axios from 'axios'
+import store from '../stores'
 
 const endpoint = 'http://localhost:8081/api/v1/user'
 
@@ -69,6 +70,29 @@ async function getUsersByFilter(filter = 'default', page) {
     return result
 }
 
+async function getUserByUsername() {
+    const username = getCurrentUsername()
+    let result = {}
+    await axios.get(`${endpoint}/${username}`).then(res => {
+        if (res.data.message === 'Success') {
+            result = res.data.result
+        }
+    }).catch(e => {})
+    return result
+}
+
+function getCurrentUsername() {
+    const { userData } = store.getState().authReducer
+    const username = userData.sub
+    return username
+}
+
+function getCurrentUserId() {
+    const { userData } = store.getState().authReducer
+    const userId = userData.id
+    return userId
+}
+
 export {
-    getAllUsers, getUsersByFilter
+    getAllUsers, getUsersByFilter, getCurrentUserId, getUserByUsername
 }
