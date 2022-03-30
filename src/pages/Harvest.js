@@ -1,5 +1,6 @@
 import axios from "axios";
 import React from "react";
+import { Pagination } from "@mui/material";
 import { Card, Col, Row, Tab, Form, Table, Button, Modal } from "react-bootstrap";
 import { addBarn, addMoreCarrot, extendExpiryDate } from "../apis/barn";
 
@@ -17,9 +18,10 @@ export default class Harvest extends React.Component {
             formCarrot: 0,
             formShareExpDate: '',
             formExchangeExpDate: '',
-            editId: -1
+            editId: -1,
+            currentPage: 0,
+            totalPages: 0
         }
-
     }
 
     handleModalOpen = (e, barnId = undefined) => {
@@ -69,7 +71,7 @@ export default class Harvest extends React.Component {
         switch (this.state.formType) {
             case 'addBarn':
                 // console.log(this.state)
-                this.setState({formDisable: true})
+                this.setState({ formDisable: true })
                 //call api to add data
                 addBarn({
                     year: this.state.formYear,
@@ -77,89 +79,91 @@ export default class Harvest extends React.Component {
                     shareExpireDate: this.state.formShareExpDate,
                     exchangeExpireDate: this.state.formExchangeExpDate
                 })
-                .then(res => {
-                    // console.log(res);
-                    this.setState({
-                        modalShow: false,
-                        modalTitle: '',
-                        modalType: '',
-                        formType: '',
-                        formDisable: false,
-                        formYear: 0,
-                        formCarrot: 0,
-                        formShareExpDate: '',
-                        formExchangeExpDate: ''
+                    .then(res => {
+                        this.setState({
+                            modalShow: false,
+                            modalTitle: '',
+                            modalType: '',
+                            formType: '',
+                            formDisable: false,
+                            formYear: 0,
+                            formCarrot: 0,
+                            formShareExpDate: '',
+                            formExchangeExpDate: ''
+                        })
+                        //load new data
+                        this.loadData(this.state.currentPage)
                     })
-                    //load new data
-                    this.loadData()
-                })
                 break;
-            
+
             case 'extendDate':
-                this.setState({formDisable: true})
+                this.setState({ formDisable: true })
                 //call api to update data
                 extendExpiryDate({
-                    barnId:this.state.editId,
+                    barnId: this.state.editId,
                     shareExpireDate: this.state.formShareExpDate,
                     exchangeExpireDate: this.state.formExchangeExpDate
                 })
-                .then(res => {
-                    console.log(res);
-                    this.setState({
-                        modalShow: false,
-                        modalTitle: '',
-                        modalType: '',
-                        formType: '',
-                        formDisable: false,
-                        formYear: 0,
-                        formCarrot: 0,
-                        formShareExpDate: '',
-                        formExchangeExpDate: '',
-                        editId: -1
+                    .then(res => {
+                        this.setState({
+                            modalShow: false,
+                            modalTitle: '',
+                            modalType: '',
+                            formType: '',
+                            formDisable: false,
+                            formYear: 0,
+                            formCarrot: 0,
+                            formShareExpDate: '',
+                            formExchangeExpDate: '',
+                            editId: -1
+                        })
+                        this.loadData(this.state.currentPage)
                     })
-                    this.loadData()
-                })  
                 //load data
                 break;
 
             case 'addMoreCarrot':
-                this.setState({formDisable: true})
+                this.setState({ formDisable: true })
                 //call api to update data
                 addMoreCarrot({
-                    barnId:this.state.editId,
+                    barnId: this.state.editId,
                     toAdd: this.state.formCarrot,
                 })
-                .then(res => {
-                    console.log(res);
-                    this.setState({
-                        modalShow: false,
-                        modalTitle: '',
-                        modalType: '',
-                        formType: '',
-                        formDisable: false,
-                        formYear: 0,
-                        formCarrot: 0,
-                        formShareExpDate: '',
-                        formExchangeExpDate: '',
-                        editId: -1
+                    .then(res => {
+                        this.setState({
+                            modalShow: false,
+                            modalTitle: '',
+                            modalType: '',
+                            formType: '',
+                            formDisable: false,
+                            formYear: 0,
+                            formCarrot: 0,
+                            formShareExpDate: '',
+                            formExchangeExpDate: '',
+                            editId: -1
+                        })
+                        this.loadData(this.state.currentPage)
                     })
-                    this.loadData()
-                })                    
                 break;
 
             default:
                 break;
         }
     }
-    async loadData() {
-        let barns = [];
-        await axios.get("http://localhost:8081/api/v1/barn").then(res => {
+
+    async loadData(page = 0, size = 2) {
+        let result = {
+            barns: [],
+            currentPage: 0,
+            totalPages: 0
+        }
+        await axios.get(`http://localhost:8081/api/v1/barn/?page=${page}&size=${size}`).then(res => {
             const data = res.data.result
             if (data.currentPageContent) {
                 let no = 1
                 const barn = data.currentPageContent
                 barn.forEach(element => {
-                    barns.push({
+                    result.barns.push({
                         number: no++,
                         id: element.id,
                         year: element.year,
@@ -170,13 +174,18 @@ export default class Harvest extends React.Component {
                         isActive: element.isActive,
                     })
                 });
+                result.currentPage = data.currentPage
+                result.totalPages = data.totalPages
             }
         })
-        this.setState({ barnList: barns })
-        console.log(this.state.barnList)
+        this.setState({ barnList: result.barns, currentPage: result.currentPage, totalPages: result.totalPages })
     }
     async componentDidMount() {
         this.loadData()
+    }
+    handlePagination = (e, page) => {
+        console.log(page)
+        this.loadData(page-1)
     }
 
     renderBarnTable() {
@@ -248,12 +257,12 @@ export default class Harvest extends React.Component {
                         <Form.Group >
                             <Form.Label>Share Expire Date</Form.Label>
                             <Form.Control type="datetime-local" name='formShareExpDate' disabled={formDisable} value={formShareExpDate} onChange={this.handleValueChange} />
-                            <p style={{fontSize:'smaller'}}>All carrots received from this barn cannot be shared after this date</p>
+                            <p style={{ fontSize: 'smaller' }}>All carrots received from this barn cannot be shared after this date</p>
                         </Form.Group>
                         <Form.Group >
                             <Form.Label>Exchange Expire Date</Form.Label>
                             <Form.Control type="datetime-local" name='formExchangeExpDate' disabled={formDisable} value={formExchangeExpDate} onChange={this.handleValueChange} />
-                            <p style={{fontSize:'smaller'}}>All carrots from this barn cannot be used for exchanging reward after this date</p>
+                            <p style={{ fontSize: 'smaller' }}>All carrots from this barn cannot be used for exchanging reward after this date</p>
                         </Form.Group>
                         <Button variant="primary" className="float-right" disabled={formDisable} onClick={this.handleSubmit}>
                             Save
@@ -271,7 +280,7 @@ export default class Harvest extends React.Component {
                         <Form.Group>
                             <Form.Label>Add Carrot Amount</Form.Label>
                             <Form.Control type="number" name='formCarrot' disabled={formDisable} value={formCarrot} onChange={this.handleValueChange} />
-                            <p style={{fontSize:'smaller'}}>How much carrot do you want to add?</p>
+                            <p style={{ fontSize: 'smaller' }}>How much carrot do you want to add?</p>
                         </Form.Group>
                         <Button variant="primary" className="float-right" disabled={formDisable} onClick={this.handleSubmit}>
                             Save
@@ -340,6 +349,16 @@ export default class Harvest extends React.Component {
                                     {this.renderBarnTable()}
                                 </tbody>
                             </Table>
+                        </Col>
+                        <Col className="float-right">
+                            <Pagination
+                                className="float-right"
+                                color='primary'
+                                shape="rounded"
+                                count={this.state.totalPages}
+                                page={this.state.currentPage + 1}
+                                onChange={(e, page) => this.handlePagination(e, page)}
+                            />
                         </Col>
                     </Row>
                 </Card>

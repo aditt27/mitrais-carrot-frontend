@@ -47,8 +47,3 @@ export async function extendExpiryDate(params) {
     }))
     .catch(err => console.log(err))
  }
-
-
-async function loadBarn() {
-
-}
