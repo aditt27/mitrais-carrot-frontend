@@ -3,7 +3,7 @@ import store from '../stores'
 
 const endpoint = 'http://localhost:8081/api/v1/transaction'
 
-async function getAllTransactions(page) {
+async function getAllTransactions(page, isManager = true) {
     let result = {
         transactions: [],
         page: 0,
@@ -18,15 +18,27 @@ async function getAllTransactions(page) {
             const data = res.data.result
             const tr = data.currentPageContent
             let i = 1
-            tr.forEach((t) => {
-                result.transactions.push({
-                    no: i++,
-                    rewardedTo: t.receiver.name,
-                    carrot: t.amount,
-                    note: t.notes,
-                    rewardedAt: t.transactionDate
+            if (isManager) {
+                tr.forEach((t) => {
+                    result.transactions.push({
+                        no: i++,
+                        rewardedTo: t.receiver.name,
+                        carrot: t.amount,
+                        note: t.notes,
+                        rewardedAt: t.transactionDate
+                    })
                 })
-            })
+            } else {
+                tr.forEach((t) => {
+                    result.transactions.push({
+                        no: i++,
+                        earnedFrom: t.sender.name,
+                        total: t.amount,
+                        date: t.transactionDate,
+                        note: t.notes
+                    })
+                })
+            }
             result.totalPages = data.totalPages
             result.page = data.currentPage
         }
