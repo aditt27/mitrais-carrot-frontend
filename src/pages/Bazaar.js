@@ -11,6 +11,7 @@ import CarrotTransPicture from '../assets/img/mc-icon-transaction.png'
 import { Pagination } from '@mui/material'
 import { getUserByUsername } from '../apis/user'
 import { saveProfile } from '../stores/user'
+import { Link } from 'react-router-dom'
 
 class Bazaar extends React.Component {
 
@@ -28,7 +29,7 @@ class Bazaar extends React.Component {
     }
 
     loadUserProfile() {
-        getUserByUsername(this.props.userProfile.username)
+        getUserByUsername(this.props.username)
             .then(result=> {
                 console.log(result)
                 this.props.saveUserProfile(result.result)
@@ -146,9 +147,7 @@ class Bazaar extends React.Component {
                             </Col>
                             <Col className='my-auto'>
                                 <h4>Carrot Transaction History</h4>
-                                <Button variant="secondary" size="sm">
-                                    View
-                                </Button>
+                                <Button as={Link} to={`/${this.props.role}/carrotHistory`} variant="secondary">View</Button>
                             </Col>
                         </Row>
                     </Col>
@@ -183,8 +182,12 @@ const mapStateToProps = (state)=> ({
     data: state.bazaarItemReducer.data,
     currentPage: state.bazaarItemReducer.currentPage,
     totalPages: state.bazaarItemReducer.totalPages,
-    userProfile: state.userReducer.profile
+    userProfile: state.userReducer.profile,
+    role: state.authReducer.userData.role,
+    username: state.authReducer.userData.sub
 })
+
+
 
 const mapDispatchToProps = (dispatch)=> ({
     saveItem: (data, currentPage, totalPages)=> dispatch(saveCurrentPage({

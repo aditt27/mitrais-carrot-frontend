@@ -17,6 +17,7 @@ import StaffList from '../components/StaffList'
 import ShareCarrot from '../components/ShareCarrot'
 import ChangePassword from '../pages/ChangePassword'
 import BazaarItemDetail from '../pages/BazaarItemDetail'
+import CarrotHistory from '../pages/CarrotHistory'
 
 class CarrotRouter extends React.Component {
 
@@ -104,6 +105,11 @@ class CarrotRouter extends React.Component {
       key: 3,
       path: 'bazaar/item',
       element: <BazaarItemDetail roles={[Staff]} />
+    },
+    {
+      key: 3,
+      path: 'carrotHistory',
+      element: <CarrotHistory roles={[Staff]} />
     },
   ]
 

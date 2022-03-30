@@ -15,7 +15,7 @@ class MainNavbar extends React.Component {
     loadUserProfile() {
         getUserByUsername(this.props.auth.sub)
             .then(result=> {
-                console.log(result)
+                console.log('mainnavbar profile', result)
                 this.props.saveUserProfile(result.result)
             })
     }
