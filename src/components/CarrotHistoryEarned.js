@@ -1,52 +1,100 @@
-import { Pagination } from '@mui/material'
-import React from 'react'
-import { Table } from 'react-bootstrap'
+import { Component }  from 'react'
+import { Col, Container, Pagination, Row, Table } from 'react-bootstrap'
+import { getAllTransactions } from '../apis/transaction'
 
-class CarrotHistoryEarned extends React.Component {
+class CarrotHistoryEarned extends Component {
 
     constructor(props){
         super(props)
 
         this.state = {
-            itemPerPage: 10
+            transactionList: [],
+            currentPage: 0,
+            totalPages: 0
         }
+    }
+
+    componentDidMount() {
+        this.fetchTransactions(0)
+    }
+
+    fetchTransactions = (page) => {
+        getAllTransactions(page, false).then(res => {
+            this.setState({
+                transactionList: res.transactions,
+                currentPage: res.page,
+                totalPages: res.totalPages
+            })
+        })
+    }
+
+    TransactionListRow = () => {
+        const { transactionList } = this.state
+        return transactionList.map((tr, i) => {
+            return (
+                <tr key={i}>
+                    <td>{tr.no}</td>
+                    <td>{tr.earnedFrom}</td>
+                    <td>{tr.total}</td>
+                    <td>{tr.date}</td>
+                    <td>{tr.note}</td>
+                </tr>
+            )
+        })
+    }
+
+    PaginationItems = () => {
+        const { totalPages, currentPage } = this.state
+        let paginationItems = []
+        for (let i = 1; i <= totalPages; i++) {
+            paginationItems.push(
+                <Pagination.Item key={i} activeLabel="" active={i === currentPage + 1} onClick={() => this.fetchTransactions(i - 1)}>{i}</Pagination.Item>
+            )
+        }
+        return paginationItems
     }
 
     render() {
 
-        return(
-            <div>
-                <h4 style={{paddingBottom: '8px'}}>My Earned History</h4>
-                <Table striped bordered hover>
-                    <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Exchange Rate</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>2</td>
-                            <td>3</td>
-                            <td>4</td>
-                            <td>5</td>
-                            <td>6</td>
-                        </tr>
-                    </tbody>
-                </Table>
-                <div style={{justifyContent:'end', display: 'flex', paddingBottom: '1em'}} >
-                    <Pagination
-                        color='primary'
-                        count={0}
-                        page={2}
-                    />
-                </div>
-            </div>
+        return (
+            <Container className="px-4">
+                <Row>
+                    <Col>
+                        <hr style={{
+                            width: "2em",
+                            backgroundColor: "orange",
+                            height: "0.2em"
+                        }} align="left"/>
+                        <h5>MY EARNED HISTORY</h5>
+                    </Col>
+                </Row>
+                <br />
+                <Row>
+                    <Col>
+                        <Table bordered hover>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Earned From</th>
+                                    <th>Total</th>
+                                    <th>Date</th>
+                                    <th>Note</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <this.TransactionListRow />
+                            </tbody>
+                        </Table>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <Pagination className="float-right">
+                            <this.PaginationItems />
+                        </Pagination>
+                    </Col>
+                </Row>
+            </Container>
         )
     }
 }
