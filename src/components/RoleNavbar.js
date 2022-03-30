@@ -91,17 +91,12 @@ const RoleNavbar = (props) => {
     {
       key: 1,
       name: 'Dashboard',
-      href: '/'
+      href: '/staff'
     },
     {
       key: 2,
       name: 'Bazaar',
-      href: '/bazaar'
-    },
-    {
-      key: 3,
-      name: 'Assign Role',
-      href: '#assignrole'
+      href: '/staff/bazaar'
     },
   ]
 
@@ -113,8 +108,6 @@ const RoleNavbar = (props) => {
     fontSize: '0.8rem',
     fontFamily: 'Verdana'
   }
-
-  const handleSelect = (eventKey) => setActiveKey(eventKey);
 
   switch (props.role) {
     case Admin:
@@ -136,12 +129,16 @@ const RoleNavbar = (props) => {
 
   useEffect(() => {
     const item = roleNavbarItems.filter(item=> item.href === location.pathname)[0]
-    setActiveKey(item.key)
-  }, [])
+    if(item) {
+      setActiveKey(item.key)
+    } else {
+      setActiveKey(-1)
+    }
+  }, [location.pathname, roleNavbarItems])
 
 
   return (
-    <Nav variant='pills' as='ul' activeKey={activeKey} onSelect={handleSelect}>
+    <Nav variant='pills' as='ul' activeKey={activeKey}>
       {
         roleNavbarItems.map(item => {
           if (item.active) {

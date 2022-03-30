@@ -9,6 +9,8 @@ import ProfilePicture from '../assets/img/profilepicture-template.png'
 import CarrotPicture from '../assets/img/mc-icon-carrot.png'
 import CarrotTransPicture from '../assets/img/mc-icon-transaction.png'
 import { Pagination } from '@mui/material'
+import { getUserByUsername } from '../apis/user'
+import { saveProfile } from '../stores/user'
 
 class Bazaar extends React.Component {
 
@@ -22,6 +24,15 @@ class Bazaar extends React.Component {
 
     componentDidMount() {
         this.loadBazaarItem()
+        this.loadUserProfile()
+    }
+
+    loadUserProfile() {
+        getUserByUsername(this.props.userProfile.username)
+            .then(result=> {
+                console.log(result)
+                this.props.saveUserProfile(result.result)
+            })
     }
 
     loadBazaarItem() {
@@ -102,8 +113,8 @@ class Bazaar extends React.Component {
                                 />
                             </Col>
                             <Col className='my-auto'>
-                                <h4>Aditya Budi</h4>
-                                <p>Grade, Department</p>
+                                <h4>{this.props.userProfile.name}</h4>
+                                <p>{this.props.userProfile.jobFamily}, {this.props.userProfile.office}</p>
                             </Col>
                         </Row>
                     </Col>
@@ -119,7 +130,7 @@ class Bazaar extends React.Component {
                             </Col>
                             <Col className='my-auto'>
                                 <h4>My Carrot Points:</h4>
-                                <h4>500</h4>
+                                <h4>{this.props.userProfile.points}</h4>
                             </Col>
                         </Row>
                     </Col>
@@ -150,6 +161,7 @@ class Bazaar extends React.Component {
                                 price={item.exchangeRate}
                                 image={item.image}
                                 key={item.id}
+                                id={item.id}
                             />
                         })
                     }
@@ -170,12 +182,16 @@ class Bazaar extends React.Component {
 const mapStateToProps = (state)=> ({
     data: state.bazaarItemReducer.data,
     currentPage: state.bazaarItemReducer.currentPage,
-    totalPages: state.bazaarItemReducer.totalPages
+    totalPages: state.bazaarItemReducer.totalPages,
+    userProfile: state.userReducer.profile
 })
 
 const mapDispatchToProps = (dispatch)=> ({
     saveItem: (data, currentPage, totalPages)=> dispatch(saveCurrentPage({
         data, currentPage, totalPages
+    })),
+    saveUserProfile: (profile)=> dispatch(saveProfile({
+        profile
     }))
 })
 

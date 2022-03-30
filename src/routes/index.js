@@ -16,6 +16,7 @@ import StaffInGroup from '../components/StaffInGroup'
 import StaffList from '../components/StaffList'
 import ShareCarrot from '../components/ShareCarrot'
 import ChangePassword from '../pages/ChangePassword'
+import BazaarItemDetail from '../pages/BazaarItemDetail'
 
 class CarrotRouter extends React.Component {
 
@@ -98,7 +99,12 @@ class CarrotRouter extends React.Component {
       key: 2,
       path: 'bazaar',
       element: <Bazaar roles={[Staff]} />
-    }
+    },
+    {
+      key: 3,
+      path: 'bazaar/item',
+      element: <BazaarItemDetail roles={[Staff]} />
+    },
   ]
 
   render() {
@@ -111,7 +117,7 @@ class CarrotRouter extends React.Component {
           <Route exact path='/change-password' element={<ChangePassword />} />
           <Route exact path='' element={<RedirectRoute />} />
 
-          <Route path='/admin' element={<CarrotLayout role={Admin} title='Title Here' />}>
+          <Route path='/admin' element={<CarrotLayout role={Admin} />}>
             {
               this.routesAdmin.map(item => {
                 return <Route
@@ -124,7 +130,7 @@ class CarrotRouter extends React.Component {
             }
           </Route>
 
-          <Route path='/merchant' element={<CarrotLayout role={Merchant} title='Title Here' />}>
+          <Route path='/merchant' element={<CarrotLayout role={Merchant} />}>
             {
               this.routesMerchant.map(item => {
                 return <Route
@@ -137,7 +143,7 @@ class CarrotRouter extends React.Component {
             }
           </Route>
 
-          <Route path='/manager' element={<CarrotLayout role={Manager} title='Title Here' />}>
+          <Route path='/manager' element={<CarrotLayout role={Manager} />}>
             {
               this.routesManager.map(item => {
                 return <Route
@@ -150,7 +156,7 @@ class CarrotRouter extends React.Component {
             }
           </Route>
 
-          <Route path='/staff' element={<CarrotLayout role={Staff} title='Title Here' />}>
+          <Route path='/staff' element={<CarrotLayout role={Staff} />}>
             {
               this.routesStaff.map(item => {
                 return <Route

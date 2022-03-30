@@ -2,8 +2,8 @@ import { Pagination } from '@mui/material'
 import React from 'react'
 import { Button, Form, Modal, Table } from 'react-bootstrap'
 import { connect } from 'react-redux'
-import { addBazaarItem, deleteBazaarItem, editBazaarItem, getBazaarItem, updateActiveBazaarItem } from '../apis/BazaarItemApi'
-import { saveCurrentPage, updateItem } from '../stores/bazaarItem'
+import { addBazaarItem, deleteBazaarItem, editBazaarItem, getBazaarItem } from '../apis/BazaarItemApi'
+import { saveCurrentPage } from '../stores/bazaarItem'
 
 class ManageBazaar extends React.Component {
 
