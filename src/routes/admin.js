@@ -9,6 +9,7 @@ import Groups from '../pages/Groups'
 import Harvest from '../pages/Harvest'
 import StaffInGroup from '../components/StaffInGroup'
 import StaffList from '../components/StaffList'
+import Distribution from '../components/Distribution'
 
 const routesAdmin = [
   {
@@ -45,6 +46,11 @@ const routesAdmin = [
     key: 7,
     path: 'staff-list',
     element: <StaffList roles={[Admin]} />
+  },
+  {
+    key: 8,
+    path: 'distribution',
+    element: <Distribution roles={[Admin]} />
   }
 ]
 

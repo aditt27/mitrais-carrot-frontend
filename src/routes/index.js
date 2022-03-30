@@ -35,7 +35,7 @@ class CarrotRouter extends React.Component {
           
           <Route exact path='' element={<RedirectRoute />} />
 
-          <Route path='/admin' element={<CarrotLayout role={Admin} title='Title Here' />}>
+          <Route path='/admin' element={<CarrotLayout role={Admin} title='Barn Management' />}>
             {AdminRoute}
           </Route>
 
