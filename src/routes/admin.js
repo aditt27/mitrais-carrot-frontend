@@ -9,6 +9,8 @@ import Groups from '../pages/Groups'
 import Harvest from '../pages/Harvest'
 import StaffInGroup from '../components/StaffInGroup'
 import StaffList from '../components/StaffList'
+import CarrotHistory from '../pages/CarrotHistory'
+import BazaarItemDetail from '../pages/BazaarItemDetail'
 
 const routesAdmin = [
   {
@@ -45,6 +47,16 @@ const routesAdmin = [
     key: 7,
     path: 'staff-list',
     element: <StaffList roles={[Admin]} />
+  },
+  {
+    key: 3,
+    path: 'carrotHistory',
+    element: <CarrotHistory roles={[Admin]} />
+  },
+  {
+    key: 4,
+    path: 'bazaar/item',
+    element: <BazaarItemDetail roles={[Admin]} />
   }
 ]
 
