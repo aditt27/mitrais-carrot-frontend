@@ -50,40 +50,30 @@ const RoleNavbar = (props) => {
     {
       key: 1,
       name: 'Dashboard',
-      href: '/'
+      href: '/merchant'
     },
     {
       key: 2,
       name: 'Bazaar',
-      href: '/bazaar'
-    },
-    {
-      key: 3,
-      name: 'Assign Role',
-      href: '#assignrole'
-    },
+      href: '/merchant/bazaar'
+    }
   ]
 
   const managerNavbarItems = [
     {
       key: 1,
       name: 'Dashboard',
-      href: '/'
+      href: '/manager'
     },
     {
       key: 2,
       name: 'Bazaar',
-      href: '/bazaar'
+      href: '/manager/bazaar'
     },
     {
       key: 3,
-      name: 'Assign Role',
-      href: '#assignrole'
-    },
-    {
-      key: 4,
       name: 'Share Carrot',
-      href: '/admin/share-carrot'
+      href: '/manager/share-carrot'
     }
   ]
 

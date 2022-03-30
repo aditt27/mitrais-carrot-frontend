@@ -5,6 +5,8 @@ import Dashboard from '../pages/Dashboard'
 import PrivateRoute from './PrivateRoute'
 import { Manager } from '../utils/Role'
 import ShareCarrot from '../components/ShareCarrot'
+import CarrotHistory from '../pages/CarrotHistory'
+import BazaarItemDetail from '../pages/BazaarItemDetail'
 
 const routesManager = [
   {
@@ -21,6 +23,16 @@ const routesManager = [
     key: 3,
     path: 'share-carrot',
     element: <ShareCarrot roles={[Manager]} />
+  },
+  {
+    key: 3,
+    path: 'carrotHistory',
+    element: <CarrotHistory roles={[Manager]} />
+  },
+  {
+    key: 4,
+    path: 'bazaar/item',
+    element: <BazaarItemDetail roles={[Manager]} />
   }
 ]
 

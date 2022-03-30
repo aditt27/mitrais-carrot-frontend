@@ -100,6 +100,8 @@ class Bazaar extends React.Component {
             justifyContent: 'center'
         }
 
+        const currentpath = window.location.pathname.split("/")
+
         return(
             <Container>
                 <Row style={rowCardStyle}>
@@ -147,7 +149,7 @@ class Bazaar extends React.Component {
                             </Col>
                             <Col className='my-auto'>
                                 <h4>Carrot Transaction History</h4>
-                                <Button as={Link} to={`/${this.props.role}/carrotHistory`} variant="secondary">View</Button>
+                                <Button as={Link} to={`/${currentpath[1]}/carrotHistory`} variant="secondary">View</Button>
                             </Col>
                         </Row>
                     </Col>
