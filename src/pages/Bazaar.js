@@ -8,8 +8,17 @@ import { saveCurrentPage } from '../stores/bazaarItem'
 import ProfilePicture from '../assets/img/profilepicture-template.png'
 import CarrotPicture from '../assets/img/mc-icon-carrot.png'
 import CarrotTransPicture from '../assets/img/mc-icon-transaction.png'
+import { Pagination } from '@mui/material'
 
 class Bazaar extends React.Component {
+
+    constructor(props) {
+        super(props)
+
+        this.state ={
+            tableItemPerPage: 8
+        }
+    }
 
     componentDidMount() {
         this.loadBazaarItem()
@@ -19,7 +28,18 @@ class Bazaar extends React.Component {
         /*
         @params:    isPaginated, currentPage, itemPerPage, isAdmin, userId(can be null)
         */
-        getBazaarItem(true, 0, 8, false)
+        getBazaarItem(true, 0, this.state.tableItemPerPage, false)
+            .then(result=> {
+                this.props.saveItem(
+                    result.result.currentPageContent,
+                    result.result.currentPage,
+                    result.result.totalPages
+                )
+            })
+    }
+
+    handlePageChange = (e, page)=> {
+        getBazaarItem(true, page-1, this.state.tableItemPerPage, false)
             .then(result=> {
                 this.props.saveItem(
                     result.result.currentPageContent,
@@ -134,6 +154,14 @@ class Bazaar extends React.Component {
                         })
                     }
                 </div>
+                <div style={{justifyContent:'end', display: 'flex', paddingBottom: '1em'}} >
+                    <Pagination
+                        color='primary'
+                        count={this.props.totalPages}
+                        page={this.props.currentPage + 1}
+                        onChange={(e, page)=> this.handlePageChange(e, page)}
+                    />
+                </div>
             </Container>
         )
     }
@@ -146,8 +174,8 @@ const mapStateToProps = (state)=> ({
 })
 
 const mapDispatchToProps = (dispatch)=> ({
-    saveItem: (data, currentPage, totalPage)=> dispatch(saveCurrentPage({
-        data, currentPage, totalPage
+    saveItem: (data, currentPage, totalPages)=> dispatch(saveCurrentPage({
+        data, currentPage, totalPages
     }))
 })
 
