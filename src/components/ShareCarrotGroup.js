@@ -5,6 +5,7 @@ import { Component } from 'react'
 import { Container, Row, Table, Col, Pagination, Modal, Button, Form, Alert } from 'react-bootstrap'
 import { createNewGroupTransaction } from '../apis/transaction'
 import { getUserByUsername } from '../apis/user'
+import store from '../stores'
 import { btnRewardStyle } from './ShareCarrotStaff'
 
 class ShareCarrotGroup extends Component {
@@ -30,13 +31,14 @@ class ShareCarrotGroup extends Component {
             }
         })
         
-        const user = await getUserByUsername()
+        const { userData } = store.getState().authReducer
+        const user = await getUserByUsername(userData.sub)
 
         this.setState({
             currentPage: init.currentPage,
             totalPages: init.totalPages,
             groupList: init.groupList,
-            manager: user
+            manager: user.result
         })
     }
 

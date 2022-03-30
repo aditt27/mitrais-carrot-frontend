@@ -4,6 +4,7 @@ import { getUserByUsername } from '../apis/user'
 import { getTransactionsByManager, getAllTransactions } from '../apis/transaction'
 import ShareCarrotStaff from './ShareCarrotStaff'
 import ShareCarrotGroup from './ShareCarrotGroup'
+import store from '../stores'
 class ShareCarrot extends Component {
     
     state = {
@@ -12,16 +13,17 @@ class ShareCarrot extends Component {
     }
 
     async componentDidMount() {
-        const user = await getUserByUsername()
+        const { userData } = store.getState().authReducer
+        const user = await getUserByUsername(userData.sub)
         const totalCarrot = await this.getTotalCarrot()
         const { transactions } = await getTransactionsByManager(-1)
         const rewarded = transactions.reduce((prev, next) => prev + next.carrot, 0)
         
-        user.totalCarrot = totalCarrot
-        user.rewardedCarrot = rewarded
+        user.result.totalCarrot = totalCarrot
+        user.result.rewardedCarrot = rewarded
         
         this.setState({
-            manager: user
+            manager: user.result
         })
     }
 
