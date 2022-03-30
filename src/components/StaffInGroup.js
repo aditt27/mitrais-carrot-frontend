@@ -125,7 +125,7 @@ class StaffInGroup extends Component {
                         </Form.Group>
                     </Col>
                 </Row>
-                <Row>
+                {/* <Row>
                     <Col md="12" className="my-2">
                     <Form>
                         <Form.Group className="float-right form-inline">
@@ -134,7 +134,7 @@ class StaffInGroup extends Component {
                             </Form.Group>
                         </Form>
                     </Col>
-                </Row>
+                </Row> */}
                 <Row>
                     <Col md="12" className="my-2">
                         <Table striped bordered hover>

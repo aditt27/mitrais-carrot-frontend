@@ -1,8 +1,9 @@
 import axios from 'axios'
+import apiClient from '.'
 
 const endpoint = 'http://localhost:8081/api/v1/user'
 
-function getAllUsers() {
+export function getAllUsers() {
     return axios.get(`${endpoint}?page=-1`, { method: 'GET'}).then(res => {
         if (res.data.message === 'Success') {
             const data = res.data.result
@@ -17,7 +18,7 @@ function getAllUsers() {
     })
 }
 
-async function getUsersByFilter(filter = 'default', page) {
+export async function getUsersByFilter(filter = 'default', page) {
     let url
     switch (filter) {
         case 'carrot': {
@@ -69,6 +70,14 @@ async function getUsersByFilter(filter = 'default', page) {
     return result
 }
 
-export {
-    getAllUsers, getUsersByFilter
+export async function getUserByUsername(username) {
+    return apiClient
+        .get(`/user/${username}`)
+        .then((response=> {
+            if(response) {        
+                return response.data
+            }
+            return false
+        }))
+        .catch(err => console.log(err))
 }
