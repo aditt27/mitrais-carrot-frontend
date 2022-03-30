@@ -16,7 +16,7 @@ import StaffInGroup from '../components/StaffInGroup'
 import StaffList from '../components/StaffList'
 import ShareCarrot from '../components/ShareCarrot'
 import ChangePassword from '../pages/ChangePassword'
-import ShareCarrotGroup from '../components/ShareCarrotGroup'
+import EarnHistoryStaff from '../components/EarnHistoryStaff'
 
 class CarrotRouter extends React.Component {
 
@@ -99,6 +99,11 @@ class CarrotRouter extends React.Component {
       key: 2,
       path: 'bazaar',
       element: <Bazaar roles={[Staff]} />
+    },
+    {
+      key: 3,
+      path: 'earn-history',
+      element: <EarnHistoryStaff roles={[Staff]} />
     }
   ]
 
