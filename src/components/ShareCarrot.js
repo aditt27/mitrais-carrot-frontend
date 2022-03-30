@@ -12,6 +12,13 @@ function StaffListRow(props) {
     })
 }
 
+export const btnRewardStyle = {
+    fontWeight: "bold",
+    backgroundColor: "#FF5722",
+    boxShadow: "-2px 6px 33px -8px rgb(255 87 34)",
+    border: "1px solid #ff5722"
+}
+
 function RewardCarrotModal(props) {
     const [staffList, setStaffList] = useState([])
     
@@ -20,13 +27,6 @@ function RewardCarrotModal(props) {
             setStaffList(res)
         })
     }, [])
-
-    const btnRewardStyle = {
-        fontWeight: "bold",
-        backgroundColor: "#FF5722",
-        boxShadow: "-2px 6px 33px -8px rgb(255 87 34)",
-        border: "1px solid #ff5722"
-    }
 
     function handleRewardCarrotSubmit(e) {
         e.preventDefault()
@@ -91,6 +91,8 @@ class ShareCarrot extends Component {
     async componentDidMount() {
         const { transactions, page, totalPages } = await getTransactionsByManager(0)
         const user = await getUserByUsername()
+        const totalCarrot = await this.getTotalCarrot()
+        user.totalCarrot = totalCarrot
         this.setState({
             transactionList: {
                 transactions: transactions,
@@ -99,16 +101,12 @@ class ShareCarrot extends Component {
             },
             manager: user
         })
-        this.state.transactionList.transactions.reduce(function(previousValue, currentValue) {
-            console.log(previousValue)
-            return previousValue + currentValue.carrot
-        }, 0)
     }
 
     getTotalCarrot = async () => {
         let carrot = 0
         await getAllTransactions(0).then(res => {
-            carrot = res.transactions.reduce((prev, next) => prev + next.carrot)
+            carrot = res.transactions.reduce((prev, next) => prev + next.carrot, 0)
         })
         return carrot
     }
@@ -174,6 +172,9 @@ class ShareCarrot extends Component {
     }
 
     render() {
+        const rewaredCarrot = this.state.transactionList.transactions.reduce((prev, next) => prev + next.carrot, 0)
+        const basket = this.state.manager.points
+
         return (
             <Container className="px-4">
                 <Row>
@@ -194,21 +195,15 @@ class ShareCarrot extends Component {
                                 </tr>
                                 <tr>
                                     <th>Total Carrot</th>
-                                    <td className="text-right">{
-                                        this.getTotalCarrot
-                                    }</td>
+                                    <td className="text-right">{this.state.manager.totalCarrot}</td>
                                 </tr>
                                 <tr>
                                     <th>Rewarded Carrot</th>
-                                    <td className="text-right">{
-                                        this.state.transactionList.transactions.reduce((prev, next) => prev + next.carrot, 0)
-                                    }</td>
+                                    <td className="text-right">{rewaredCarrot}</td>
                                 </tr>
                                 <tr>
                                     <th>My Basket</th>
-                                    <td className="text-right">{
-                                        this.state.manager.points
-                                    }</td>
+                                    <td className="text-right">{basket}</td>
                                 </tr>
                             </tbody>
                         </Table>

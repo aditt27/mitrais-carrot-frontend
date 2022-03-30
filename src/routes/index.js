@@ -16,6 +16,7 @@ import StaffInGroup from '../components/StaffInGroup'
 import StaffList from '../components/StaffList'
 import ShareCarrot from '../components/ShareCarrot'
 import ChangePassword from '../pages/ChangePassword'
+import ShareCarrotGroup from '../components/ShareCarrotGroup'
 
 class CarrotRouter extends React.Component {
 
@@ -85,6 +86,11 @@ class CarrotRouter extends React.Component {
       key: 3,
       path: 'share-carrot',
       element: <ShareCarrot roles={[Manager]} />
+    },
+    {
+      key: 4,
+      path: 'share-carrot-group',
+      element: <ShareCarrotGroup roles={[Manager]} />
     }
   ]
 

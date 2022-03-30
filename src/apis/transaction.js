@@ -84,6 +84,20 @@ async function getTransactionsByManager(page) {
     return result
 }
 
+async function createNewGroupTransaction(groupId, managerId) {
+    let result = 'error'
+
+    await axios.post(`${endpoint}/group/${groupId}?manager_id=${managerId}`, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(res => {
+        result = res.data.message
+    }).catch(e => {})
+
+    return result
+}
+
 export {
-    getAllTransactions, createNewTransaction, getTransactionsByManager
+    getAllTransactions, createNewTransaction, getTransactionsByManager, createNewGroupTransaction
 }

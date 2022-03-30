@@ -72,17 +72,17 @@ const RoleNavbar = (props) => {
     {
       key: 2,
       name: 'Bazaar',
-      href: '/bazaar'
-    },
-    {
-      key: 3,
-      name: 'Assign Role',
-      href: '#assignrole'
+      href: 'bazaar'
     },
     {
       key: 4,
       name: 'Share Carrot',
       href: 'share-carrot'
+    },
+    {
+      key: 5,
+      name: 'Share Carrot Group',
+      href: 'share-carrot-group'
     }
   ]
 
