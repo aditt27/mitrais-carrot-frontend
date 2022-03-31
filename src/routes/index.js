@@ -31,7 +31,7 @@ class CarrotRouter extends React.Component {
             {AdminRoute}
           </Route>
 
-          <Route path='/merchant' element={<CarrotLayout role={Merchant} />}>
+          <Route path='/merchant' element={<CarrotLayout role={Merchant} title='Bazaar Management' />}>
             {MerchantRoute}
           </Route>
 
@@ -39,7 +39,7 @@ class CarrotRouter extends React.Component {
             {ManagerRoute}
           </Route>
 
-          <Route path='/staff' element={<CarrotLayout role={Staff} />}>
+          <Route path='/staff' element={<CarrotLayout role={Staff} title='Dashboard' />}>
             {StaffRoute}
           </Route>
         </Routes>

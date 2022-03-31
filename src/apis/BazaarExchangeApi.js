@@ -34,3 +34,18 @@ export async function getExchangeHistoryBazaarItem(isPaginated, currentPage, ite
         .catch(err => console.log(err))
 }
 
+export async function updateStatusExchangeRequest(exchangeId, exchangeStatus, userId) {
+    return apiClient
+        .patch(`/exchange/${exchangeId}`, {
+            exchangeStatus,
+            userId
+        })
+        .then((response=> {
+            if(response) {        
+                return response.data
+            }
+            return false
+        }))
+        .catch(err => console.log(err))
+}
+

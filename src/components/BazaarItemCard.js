@@ -12,12 +12,12 @@ const BazaarItemCard = (props)=> {
     }
 
     return (
-        <Card style={{ width: '250px', margin: '4px' }}>
+        <Card style={{ width: '262px', margin: '4px' }}>
             <Card.Img variant="top" src={props.image} style={imageStyle} />
             <Card.Body>
                 <Card.Title>{props.title}</Card.Title>
                 <Card.Text>{props.price} Carrots</Card.Text>
-                <Button as={Link} to={`${location.pathname}/item`} state={{itemId: props.id}} variant="success">View Details</Button>
+                <Button as={Link} to={`${location.pathname}/rewardDetail`} state={{itemId: props.id}} variant="success">View Details</Button>
             </Card.Body>
             
         </Card>
