@@ -16,7 +16,8 @@ class ShareCarrotGroup extends Component {
         showGroupMemberModal: false,
         showSendCarrotModal: false,
         manager: {},
-        failedSendCarrotMsg: ''
+        failedSendCarrotMsg: '',
+        index: 0,
     }
 
     async componentDidMount() {
@@ -52,34 +53,35 @@ class ShareCarrotGroup extends Component {
                     <td>{group.points}</td>
                     <td>{group.notes}</td>
                     <td className="text-center">
-                        <Button style={{marginRight: "0.25em"}} onClick={this.handleShowGroupMemberModal}>
+                        <Button style={{marginRight: "0.25em"}} onClick={() => this.handleShowGroupMemberModal(i)}>
                             <FontAwesomeIcon icon={faPeopleGroup}  />
                         </Button>
-                        <Button variant="success" style={{marginLeft: "0.25em"}} onClick={this.handleShowSendCarrotModal}>
+                        <Button variant="success" style={{marginLeft: "0.25em"}} onClick={() => this.handleShowSendCarrotModal(i)}>
                             <FontAwesomeIcon icon={faPaperPlane}  />
                         </Button>
-                        {this.state.showGroupMemberModal && (<this.GroupMemberModal index={i} />)}
-                        {this.state.showSendCarrotModal && (<this.SendCarrotModal index={i} />)}
+                        {this.state.showGroupMemberModal && (<this.GroupMemberModal />)}
+                        {this.state.showSendCarrotModal && (<this.SendCarrotModal />)}
                     </td>
                 </tr>
             )
         })
     }
 
-    handleShowGroupMemberModal = () => {
-        this.setState({showGroupMemberModal: true})
+    handleShowGroupMemberModal = (i) => {
+        this.setState({showGroupMemberModal: true, index: i})
     }
 
-    handleShowSendCarrotModal = () => {
-        this.setState({showSendCarrotModal: true})
+    handleShowSendCarrotModal = (i) => {
+        this.setState({showSendCarrotModal: true, index: i})
     }
 
     onHideModal = () => {
         this.setState({showGroupMemberModal: false, showSendCarrotModal: false, failedSendCarrotMsg: ''})
     }
 
-    GroupMemberModal = (props) => {
-        const group = this.state.groupList[props.index]
+    GroupMemberModal = () => {
+        const { index, groupList } = this.state
+        const group = groupList[index]
         
         return (
             <Modal show={this.state.showGroupMemberModal} onHide={this.onHideModal}>
@@ -140,8 +142,9 @@ class ShareCarrotGroup extends Component {
         })
     }
 
-    SendCarrotModal = (props) => {
-        const group = this.state.groupList[props.index]
+    SendCarrotModal = () => {
+        const { index, groupList } = this.state
+        const group = groupList[index]
         
         return (
             <Modal show={this.state.showSendCarrotModal} onHide={this.onHideModal} centered keyboard={false} backdrop="static">
