@@ -91,7 +91,7 @@ class MainNavbar extends React.Component {
                         <NavDropdown title={<FontAwesomeIcon icon="bell" className='notif-icon' />}>
                             {notificationItem}
                             
-                            <NavDropdown.Item href={`${path[1]}/notification`}>
+                            <NavDropdown.Item as={Link} to='notification'>
                               <Button>See All Notification</Button>
                             </NavDropdown.Item>
                         </NavDropdown>
