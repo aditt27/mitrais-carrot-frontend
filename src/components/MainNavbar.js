@@ -4,31 +4,82 @@ import { Button, Nav, Navbar, NavDropdown } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { saveProfile } from '../stores/user'
 import { connect } from 'react-redux'
-import { getUserByUsername } from '../apis/user'
+import { getNotificationByUserId, getUserByUsername } from '../apis/user'
+import { Link } from 'react-router-dom'
 
 class MainNavbar extends React.Component {
 
+    constructor(props){
+        super(props)
+
+        this.state = {
+            notifData: []
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if(prevProps.username !== this.props.username) {
+            this.loadUserProfile()
+            this.loadNotification()
+        }
+    }
+
     componentDidMount() {
-        this.loadUserProfile()
+        if(this.props.username) {
+            this.loadUserProfile()
+            this.loadNotification()
+        }
     }
 
     loadUserProfile() {
-        getUserByUsername(this.props.auth.sub)
+        getUserByUsername(this.props.username)
             .then(result=> {
                 console.log('mainnavbar profile', result)
                 this.props.saveUserProfile(result.result)
             })
     }
+
+    loadNotification() {
+        getNotificationByUserId(
+            true,
+            0,
+            5,
+            this.props.userId
+        ).then(result=> {
+            console.log('mainnavbar notif', result)
+            this.setState({notifData: result.result.currentPageContent})
+        })
+    }
     
     render() {
+
+        const { notifData } = this.state
 
         const navbarStyle = {
             borderBottom : '1px solid #d9d9d9'
         }
 
+        let notificationItem
+        if(notifData.length > 0) {
+            notificationItem = notifData.map(item=> {
+                return <div key={item.id}>
+                    <NavDropdown.Item>{item.subject}</NavDropdown.Item>
+                    <NavDropdown.Divider />
+                </div>
+            })
+        } else {
+            notificationItem = <div key='1'>
+                <NavDropdown.Item>Notification Empty</NavDropdown.Item>
+                <NavDropdown.Divider />
+            </div>
+        }
+
+        const location = window.location
+        const path  = location.pathname.split('/')
+
         return(
             <Navbar bg="light" expand="lg" style={navbarStyle}>
-                <Navbar.Brand href="#home"> 
+                <Navbar.Brand href={`${location.protocol}//${location.host}`}> 
                     <img 
                         src={MCarrotLogo}
                         alt='Mitrais Carrot Logo'
@@ -38,9 +89,9 @@ class MainNavbar extends React.Component {
                 <Navbar.Collapse>
                     <Nav>
                         <NavDropdown title={<FontAwesomeIcon icon="bell" className='notif-icon' />}>
-                            <NavDropdown.Item> Notification 1</NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item href='/notification'>
+                            {notificationItem}
+                            
+                            <NavDropdown.Item href={`${path[1]}/notification`}>
                               <Button>See All Notification</Button>
                             </NavDropdown.Item>
                         </NavDropdown>
@@ -71,7 +122,8 @@ class MainNavbar extends React.Component {
 }
 
 const mapStateToProps = (state)=> ({
-    auth: state.authReducer.userData,
+    username: state.authReducer.userData.sub,
+    userId: state.authReducer.userData.id,
     userProfile: state.userReducer.profile
 })
 

@@ -79,6 +79,22 @@ export async function getUserByUsername(username) {
         .catch(err => console.log(err))
 }
 
+export async function getNotificationByUserId(isPaginated, currentPage, itemPerPage, id) {
+    return apiClient
+        .get(`/user/${id}/notification`, { params: {
+            isPaginated: isPaginated,
+            page: currentPage,
+            size: itemPerPage
+        }})
+        .then((response=> {
+            if(response) {        
+                return response.data
+            }
+            return false
+        }))
+        .catch(err => console.log(err))
+}
+
 export async function addUser(data) {
     let response
     await apiClient.post('/user', JSON.stringify(data), {

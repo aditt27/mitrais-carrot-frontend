@@ -7,6 +7,7 @@ import { Manager } from '../utils/Role'
 import ShareCarrot from '../components/ShareCarrot'
 import CarrotHistory from '../pages/CarrotHistory'
 import BazaarItemDetail from '../pages/BazaarItemDetail'
+import Notification from '../pages/Notification'
 
 const routesManager = [
   {
@@ -28,6 +29,11 @@ const routesManager = [
     key: 4,
     path: 'rewardDetail',
     element: <BazaarItemDetail roles={[Manager]} />
+  },
+  {
+    key: 5,
+    path: 'notification',
+    element: <Notification roles={[Manager]} />
   }
 ]
 
