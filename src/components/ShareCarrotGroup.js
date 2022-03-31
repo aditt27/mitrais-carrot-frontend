@@ -21,16 +21,16 @@ class ShareCarrotGroup extends Component {
 
     async componentDidMount() {
         let init = {}
+        const { profile } = store.getState().userReducer
         await axios.get(`http://localhost:8081/api/v1/group`).then(res => {
             if (res.data.message === 'Success') {
                 const data = res.data.result
+                console.log(data)
                 init.currentPage = data.currentPage
                 init.totalPages = data.totalPages
-                init.groupList = data.currentPageContent
+                init.groupList = data.currentPageContent.filter(it => it.manager === profile.id.toString())
             }
         })
-        
-        const { profile } = store.getState().userReducer
         
         this.setState({
             currentPage: init.currentPage,
