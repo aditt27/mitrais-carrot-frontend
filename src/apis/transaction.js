@@ -1,7 +1,5 @@
-import axios from 'axios'
 import store from '../stores'
-
-const endpoint = 'http://localhost:8081/api/v1/transaction'
+import apiClient from '.'
 
 async function getAllTransactions(page, isManager = true) {
     let result = {
@@ -13,7 +11,7 @@ async function getAllTransactions(page, isManager = true) {
     const { userData } = store.getState().authReducer
     const userId = userData.id
 
-    await axios.get(`${endpoint}?userId=${userId}&page=${page}`).then(res => {
+    await apiClient.get(`/transaction?userId=${userId}&page=${page}`).then(res => {
         if (res.data.message === 'Success') {
             const data = res.data.result
             const tr = data.currentPageContent
@@ -57,7 +55,7 @@ async function createNewTransaction(data) {
         notes: notes
     })
     let result
-    await axios.post(endpoint, requestBody, {
+    await apiClient.post('/transaction', requestBody, {
         headers: {
             'Content-Type': 'application/json'
         }
@@ -75,7 +73,7 @@ async function getTransactionsByManager(page) {
         totalPages : 0,
         page: 0
     }
-    await axios.get(`${endpoint}/sender?userId=${managerId}&page=${page}`).then(res => {
+    await apiClient.get(`transaction/sender?userId=${managerId}&page=${page}`).then(res => {
         if (res.data.message === 'Success') {
             const data = res.data.result
             const tr = data.currentPageContent
@@ -99,7 +97,7 @@ async function getTransactionsByManager(page) {
 async function createNewGroupTransaction(groupId, managerId) {
     let result = 'error'
 
-    await axios.post(`${endpoint}/group/${groupId}?manager_id=${managerId}`, {
+    await apiClient.post(`transaction/group/${groupId}?manager_id=${managerId}`, {
         headers: {
             'Content-Type': 'application/json'
         }

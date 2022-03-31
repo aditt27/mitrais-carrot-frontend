@@ -40,14 +40,26 @@ const BazaarItemDetail = (props)=> {
     if(!itemId) {
         return (
             <div style={{padding: '16px'}}>
-                <h2 style={titleStyle}>404</h2>
+                <hr style={{
+                    width: "2em",
+                    backgroundColor: "orange",
+                    height: "0.2em"
+                }} align="left"/>
+                <h5>REWARD DETAILS</h5>
+                <br />
+                <h5>404</h5>
             </div>
         )
     }
 
     return (
         <div style={{padding: '16px'}}>
-            <h2 style={titleStyle}>Reward Details</h2>
+            <hr style={{
+                width: "2em",
+                backgroundColor: "orange",
+                height: "0.2em"
+            }} align="left"/>
+            <h5>REWARD DETAILS</h5>
             <Row style={{paddingTop: '16px', paddingBottom: '16px'}}>
                 <Col>
                     <img 
