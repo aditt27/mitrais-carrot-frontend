@@ -4,13 +4,15 @@ import logger from './middleware/logger'
 import bazaarItemReducer from "./bazaarItem";
 import authReducer from './auth';
 import userReducer from './user'
-import exchangeHistoryReducer from "./exchangeHistory";
+import exchangeHistoryReducer from './exchangeHistory';
+import notificationReducer from './notification'
 
 const rootReducer = combineReducers({
     bazaarItemReducer,
     authReducer,
     userReducer,
-    exchangeHistoryReducer
+    exchangeHistoryReducer,
+    notificationReducer
 })
 
 const store = configureStore({

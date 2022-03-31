@@ -22,7 +22,7 @@ class CarrotRouter extends React.Component {
           <Route exact path='/logout' element={<Logout />} />
           <Route exact path='/forbidden' element={<Forbidden />} />
           <Route exact path='/change-password' element={<PrivateRoute>
-            <ChangePassword routes={[Admin, Merchant, Manager, Staff]} />
+            <ChangePassword roles={[Admin, Merchant, Manager, Staff]} />
           </PrivateRoute>} />
           
           <Route exact path='' element={<RedirectRoute />} />
