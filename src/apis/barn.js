@@ -3,7 +3,6 @@ import axios from "axios";
 const baseURL = 'http://localhost:8081/api/v1/barn'
 
 export async function addBarn(params) {
-    console.log(params)
     return axios.post(baseURL, {
         year: params.year,
         totalCarrot: params.totalCarrot,
@@ -14,7 +13,6 @@ export async function addBarn(params) {
     })
     .then((response => {
         if(response) {
-            console.log(response.data)
             return response.data
         }
     }))
@@ -27,7 +25,6 @@ export async function addMoreCarrot(params) {
     })
     .then((response => {
         if (response) {
-            console.log(response.data);
             return response.data
         }
     }))
@@ -41,7 +38,6 @@ export async function extendExpiryDate(params) {
     })
     .then((response => {
         if (response) {
-            console.log(response.data);
             return response.data
         }
     }))
