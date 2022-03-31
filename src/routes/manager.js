@@ -12,15 +12,10 @@ const routesManager = [
   {
     key: 1,
     path: '',
-    element: <Dashboard roles={[Manager]} />
-  },
-  {
-    key: 2,
-    path: 'bazaar',
     element: <Bazaar roles={[Manager]} />
   },
   {
-    key: 3,
+    key: 2,
     path: 'share-carrot',
     element: <ShareCarrot roles={[Manager]} />
   },
@@ -31,7 +26,7 @@ const routesManager = [
   },
   {
     key: 4,
-    path: 'bazaar/item',
+    path: 'rewardDetail',
     element: <BazaarItemDetail roles={[Manager]} />
   }
 ]

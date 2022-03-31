@@ -4,7 +4,6 @@ import Bazaar from '../pages/Bazaar'
 import Dashboard from '../pages/Dashboard'
 import PrivateRoute from './PrivateRoute'
 import { Admin } from '../utils/Role'
-import ManageBazaar from '../pages/ManageBazaar'
 import Groups from '../pages/Groups'
 import Harvest from '../pages/Harvest'
 import StaffInGroup from '../components/StaffInGroup'
@@ -12,6 +11,7 @@ import StaffList from '../components/StaffList'
 import Distribution from '../components/Distribution'
 import CarrotHistory from '../pages/CarrotHistory'
 import BazaarItemDetail from '../pages/BazaarItemDetail'
+import AdminSetting from '../pages/AdminSetting'
 
 const routesAdmin = [
   {
@@ -23,11 +23,6 @@ const routesAdmin = [
     key: 2,
     path: 'bazaar',
     element: <Bazaar roles={[Admin]} />
-  },
-  {
-    key: 3,
-    path: 'bazaar/manage',
-    element: <ManageBazaar roles={[Admin]} />
   },
   {
     key: 4,
@@ -61,8 +56,13 @@ const routesAdmin = [
   },
   {
     key: 10,
-    path: 'bazaar/item',
+    path: 'bazaar/rewardDetail',
     element: <BazaarItemDetail roles={[Admin]} />
+  },
+  {
+    key: 11,
+    path: 'setting',
+    element: <AdminSetting roles={[Admin]} />
   }
 ]
 

@@ -11,21 +11,16 @@ const routesStaff = [
   {
     key: 1,
     path: '',
-    element: <Dashboard roles={[Staff]} />
-  },
-  {
-    key: 2,
-    path: 'bazaar',
     element: <Bazaar roles={[Staff]} />
   },
   {
-    key: 3,
+    key: 2,
     path: 'carrotHistory',
     element: <CarrotHistory roles={[Staff]} />
   },
   {
-    key: 4,
-    path: 'bazaar/item',
+    key: 3,
+    path: 'rewardDetail',
     element: <BazaarItemDetail roles={[Staff]} />
   }
 ]
