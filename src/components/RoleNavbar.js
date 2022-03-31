@@ -43,6 +43,11 @@ const RoleNavbar = (props) => {
       key: 8,
       name: 'Staff List',
       href: '/admin/staff-list'
+    },
+    {
+      key: 9,
+      name: 'Setting',
+      href: '/admin/setting'
     }
   ]
 

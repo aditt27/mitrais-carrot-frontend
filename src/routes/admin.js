@@ -11,6 +11,7 @@ import StaffList from '../components/StaffList'
 import Distribution from '../components/Distribution'
 import CarrotHistory from '../pages/CarrotHistory'
 import BazaarItemDetail from '../pages/BazaarItemDetail'
+import AdminSetting from '../pages/AdminSetting'
 
 const routesAdmin = [
   {
@@ -57,6 +58,11 @@ const routesAdmin = [
     key: 10,
     path: 'bazaar/rewardDetail',
     element: <BazaarItemDetail roles={[Admin]} />
+  },
+  {
+    key: 11,
+    path: 'setting',
+    element: <AdminSetting roles={[Admin]} />
   }
 ]
 
