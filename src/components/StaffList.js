@@ -1,26 +1,33 @@
-import { Component } from 'react'
-import { Container, Col, Row, Table, Form, Pagination, Button, Modal } from 'react-bootstrap'
+import { Component, useState } from 'react'
+import { Container, Col, Row, Table, Form, Pagination, Button, Modal, Alert } from 'react-bootstrap'
 import { getUsersByFilter } from '../apis/user'
 import { btnRewardStyle } from './ShareCarrotStaff'
+import { addUser } from '../apis/user'
 
 function AddStaffModal(props) {
+    const [msg, setMsg] = useState('')
 
     function handleAddStaffSubmit(e) {
         e.preventDefault()
-        console.log(e.target.dob.value)
         const data = {
-            "username": "string",
-            "password": "string",
-            "name": "string",
-            "email": "string",
-            "dob": "2022-03-30T09:29:52.730Z",
-            "jobFamily": "string",
-            "grade": "string",
-            "office": "string",
-            "role": "string"
+            "username": e.target.username.value,
+            "password": e.target.password.value,
+            "name": e.target.name.value,
+            "email": e.target.email.value,
+            "dob": e.target.dob.value,
+            "jobFamily": e.target.jobFamily.value,
+            "grade": e.target.grade.value,
+            "office": e.target.office.value,
+            "role": e.target.role.value
         }
+        addUser(data).then(res => {
+            setMsg(res)
+            if (res === 'Success') {                
+                props.onClose(false)
+            }
+        })
     }
-
+    
     return (
         <>
             <Modal show={props.showModal} centered backdrop="static" keyboard={false}>
@@ -29,40 +36,60 @@ function AddStaffModal(props) {
                         <h4>ADD STAFF</h4>
                     </Modal.Header>
                     <Modal.Body>
+                        {msg.length > 0 && <Alert variant={msg === 'Success' ? 'success' : 'danger'}>{msg}</Alert>}
                         <Form.Group className="my-2">
                             <Form.Label htmlFor="#username">Username</Form.Label>
-                            <Form.Control id="username" type="text" />
+                            <Form.Control id="username" type="text" required />
                         </Form.Group>
                         <Form.Group className="my-2">
                             <Form.Label htmlFor="#name">Name</Form.Label>
-                            <Form.Control id="name" type="text" />
+                            <Form.Control id="name" type="text" required />
                         </Form.Group>
                         <Form.Group className="my-2">
                             <Form.Label htmlFor="#email">Email</Form.Label>
-                            <Form.Control id="email" type="email" />
+                            <Form.Control id="email" type="email" required />
                         </Form.Group>
                         <Form.Group className="my-2">
                             <Form.Label htmlFor="#password">Password</Form.Label>
-                            <Form.Control id="password" type="password" />
+                            <Form.Control id="password" type="password" required />
                         </Form.Group>
                         <Form.Group className="my-2">
                             <Form.Label htmlFor="#jobFamily">Job Family</Form.Label>
-                            <Form.Control id="jobFamily" type="text" />
+                            <Form.Control id="jobFamily" as="select" required>
+                                <option value="SE">SE</option>
+                                <option value="SQ">SQ</option>
+                                <option value="CON">CON</option>
+                                <option value="DSG">DSG</option>
+                            </Form.Control>
                         </Form.Group>
                         <Form.Group className="my-2">
                             <Form.Label htmlFor="#grade">Grade</Form.Label>
-                            <Form.Control id="grade" type="text" />
+                            <Form.Control id="grade" as="select" required>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </Form.Control>
                         </Form.Group>
                         <Form.Group className="my-2">
                             <Form.Label htmlFor="#office">Office</Form.Label>
-                            <Form.Control id="office" type="text" />
+                            <Form.Control id="office" as="select" required>
+                                <option value="Bali">Bali</option>
+                                <option value="Bandung">Bandung</option>
+                                <option value="Jakarta">Jakarta</option>
+                                <option value="Yogyakarta">Yogyakarta</option>
+                            </Form.Control>
                         </Form.Group>
                         <Form.Group className="my-2">
                             <Form.Label htmlFor="#role">Role</Form.Label>
-                            <Form.Control id="role" type="text" />
+                            <Form.Control id="role" as="select" required>
+                                <option value="Staff">Staff</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Admin">Admin</option>
+                            </Form.Control>
                         </Form.Group>
                         <Form.Group className="my-2">
-                            <Form.Label htmlFor="#dob">Date of Birth</Form.Label>
+                            <Form.Label htmlFor="#dob" required>Date of Birth</Form.Label>
                             <Form.Control id="dob" type="date" />
                         </Form.Group>
                     </Modal.Body>

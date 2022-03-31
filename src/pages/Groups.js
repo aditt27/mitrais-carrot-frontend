@@ -1,36 +1,43 @@
 import axios from "axios";
 import React from "react"
-import { Card, Col, Row, Tab, Form, Table, Button, ButtonGroup } from "react-bootstrap";
+import { Card, Col, Row, Tab, Form, Table, Button, ButtonGroup, Modal } from "react-bootstrap";
+import { addGroup, deleteGroup, editGroup } from "../apis/group";
 import GroupForm from "../components/EditGroupForm";
 
-class Groups extends React.Component {
+export default class Groups extends React.Component {
     constructor() {
         super()
         this.state = {
             groupList: [],
-            showModal: false
+            modalShow: false,
+            modalTitle: '',
+            modalType: '',
+            formType: '',
+            formDisable: false,
+            formName: '',
+            formManager: '',
+            formCarrot: 0,
+            formNote: '',
+            editId: -1,
+            deleteId: -1,
+            currentPage: 0,
+            totalPages: 0
         }
 
     }
-
-    toggleModal() {
-        console.log(this.state.showModal)
-        this.setState({ showModal: !this.state.showModal });
-    }
-
-    onModalInputChanged = (modalInput) => {
-        console.log('add new group : ', modalInput )
-    }
-
-    async componentDidMount() {
-        let groups = [];
-        await axios.get("http://localhost:8081/api/v1/group").then(res => {
+    async loadData(page = 0, size = 2) {
+        let result = {
+            groups: [],
+            currentPage: 0,
+            totalPages: 0
+        }
+        await axios.get(`http://localhost:8081/api/v1/group/?page=${page}`).then(res => {
             const data = res.data.result
             if (data.currentPageContent) {
                 let no = 1
                 const group = data.currentPageContent
                 group.forEach(element => {
-                    groups.push({
+                    result.groups.push({
                         number: no++,
                         groupId: element.id,
                         groupName: element.groupName,
@@ -39,18 +46,131 @@ class Groups extends React.Component {
                         points: element.points,
                     })
                 });
+                result.currentPage = data.currentPage
+                result.totalPages = data.totalPages
             }
         })
-        console.log(groups)
-        this.setState({ groupList: groups })
+        this.setState({ groupList: result.groups, currentPage: result.currentPage, totalPages: result.totalPages })
+    }
+
+    async componentDidMount() {
+        this.loadData()
+
+    }
+
+    handleModalOpen = (e, groupId = undefined) => {
+        switch (e.target.name) {
+            case 'addGroup':
+                this.setState({
+                    modalTitle: 'Add New Group',
+                    modalType: 'form',
+                    formType: e.target.name
+                })
+                break;
+            case 'editGroup':
+                const idx = this.state.groupList.findIndex(i => i.groupId == groupId)
+                const toEdit = this.state.groupList[idx]
+                this.setState({
+                    modalTitle: 'Edit Group',
+                    modalType: 'form',
+                    formType: e.target.name,
+                    formName: toEdit.groupName,
+                    formManager: toEdit.manager,
+                    formCarrot: toEdit.points,
+                    formNote: toEdit.notes,
+                    editId: groupId
+                })
+                break;
+            case 'deleteGroup':
+                this.setState({
+                    modalTitle: 'Delete Group',
+                    modalType: 'confirmation',
+                    deleteId: groupId
+                })
+            default:
+                break;
+        }
+        this.setState({ modalShow: true })
+    }
+
+    handleModalClose = () => {
+        this.setState({ modalShow: false })
     }
 
     handleOnClick() {
         alert("button clicked")
     }
 
-    logInput(name) {
-        console.log(name)
+    handleValueChange = (e) => {
+        this.setState({ [e.target.name]: e.target.value })
+    }
+
+    handleSubmit = () => {
+        console.log(this.state.formType)
+        switch (this.state.formType) {
+            case 'addGroup':
+                this.setState({formDisable: true})
+                addGroup({
+                    groupName: this.state.formName,
+                    managerId: this.state.formManager,
+                    notes: this.state.formNote,
+                    points: this.state.formCarrot
+                })
+                .then(res => {
+                    this.setState({
+                        modalShow: false,
+                        modalTitle: '',
+                        modalType: '',
+                        formType: '',
+                        formDisable: false,
+                        formName: '',
+                        formManager: '',
+                        formCarrot: 0,
+                        formNote: ''
+                    })
+                    this.loadData(this.state.currentPage)
+                })
+                break;
+            case 'editGroup':
+                this.setState({formDisable: true})
+                editGroup({
+                    groupId: this.state.editId,
+                    groupName: this.state.formName,
+                    managerId: this.state.formManager,
+                    notes: this.state.formNote,
+                    points: this.state.formCarrot
+                })
+                .then(res => {
+                    this.setState({
+                        modalShow: false,
+                        modalTitle: '',
+                        modalType: '',
+                        formType: '',
+                        formDisable: false,
+                        formName: '',
+                        formManager: '',
+                        formCarrot: 0,
+                        formNote: '',
+                        editId: -1
+                    })
+                    this.loadData(this.state.currentPage)
+                })
+                break;
+            default:
+                break;
+
+        }
+    }
+
+    handleDeleteGroup = () => {
+        deleteGroup(this.state.deleteId)
+        .then(res => {
+            this.setState({
+                modalShow: false,
+                deleteId: -1
+            })
+            this.loadData(this.state.currentPage)
+        })
     }
 
     groupListRow() {
@@ -66,8 +186,8 @@ class Groups extends React.Component {
                     <td>
                         <ButtonGroup>
                             <Button onClick={(() => this.handleOnClick())}>Details</Button>
-                            <Button style={{ backgroundColor: "orange" }} onClick={(() => this.handleOnClick())}>Edit</Button>
-                            <Button onClick={(() => this.handleOnClick())} style={{ backgroundColor: "red" }}>Delete</Button>
+                            <Button style={{ backgroundColor: "orange" }} onClick={(e) => this.handleModalOpen(e, group.groupId)} name='editGroup'>Edit</Button>
+                            <Button onClick={(e)=>{this.handleModalOpen(e, group.groupId)}} name='deleteGroup' style={{ backgroundColor: "red" }}>Delete</Button>
                         </ButtonGroup>
                     </td>
                 </tr>
@@ -75,14 +195,82 @@ class Groups extends React.Component {
         })
     }
     render() {
+        const {
+            modalShow,
+            modalTitle,
+            modalType,
+            formDisable,
+            formName,
+            formManager,
+            formCarrot,
+            formNote,
+        } = this.state
+
+        let modalBody
+        switch (modalType) {
+            case 'form':
+                modalBody = (
+                    <Form>
+                        <Form.Group >
+                            <Form.Label>Name</Form.Label>
+                            <Form.Control type="text" name='formName' disabled={formDisable} value={formName} onChange={this.handleValueChange} />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label>Manager: </Form.Label>
+                            <Form.Control type="text" name='formManager' disabled={formDisable} value={formManager} onChange={this.handleValueChange} />
+                        </Form.Group>
+                        <Form.Group >
+                            <Form.Label>Carrot: </Form.Label>
+                            <Form.Control type="number" name='formCarrot' disabled={formDisable} value={formCarrot} onChange={this.handleValueChange} />
+                        </Form.Group>
+                        <Form.Group >
+                            <Form.Label>Notes: </Form.Label>
+                            <Form.Control as="textarea" rows={3} name='formNote' disabled={formDisable} value={formNote} onChange={this.handleValueChange} />
+                        </Form.Group>
+                        <Button variant="primary" className="float-right" disabled={formDisable} onClick={this.handleSubmit}>
+                            Submit
+                        </Button>
+                    </Form>
+                )
+                break;
+            case 'confirmation':
+                modalBody = <div>
+                    <p>Are you sure want to delete this item?</p>
+                    <Button variant="danger" className='float-right' disabled={formDisable} onClick={this.handleDeleteGroup}>
+                        Delete
+                    </Button>
+                </div>
+                break;
+            // case 'addMoreCarrot':
+            //     modalBody = (
+            //         <Form>
+            //             <Form.Group >
+            //                 <Form.Label>Year</Form.Label>
+            //                 <Form.Control plaintext readOnly name='formYear' disabled={formDisable} value={formYear} />
+            //             </Form.Group>
+            //             <Form.Group>
+            //                 <Form.Label>Add Carrot Amount</Form.Label>
+            //                 <Form.Control type="number" name='formCarrot' disabled={formDisable} value={formCarrot} onChange={this.handleValueChange} />
+            //                 <p style={{ fontSize: 'smaller' }}>How much carrot do you want to add?</p>
+            //             </Form.Group>
+            //             <Button variant="primary" className="float-right" disabled={formDisable} onClick={this.handleSubmit}>
+            //                 Save
+            //             </Button>
+            //         </Form>
+            //     )
+            //     break;
+        }
         return (
             <Tab.Content className="search-box">
+                <Modal show={modalShow} onHide={this.handleModalClose}>
+                    <Modal.Header>
+                        <Modal.Title>{modalTitle}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        {modalBody}
+                    </Modal.Body>
+                </Modal>
                 <Card style={{ padding: "1.5em" }}>
-                    <GroupForm 
-                        show={this.state.showModal} 
-                        toggle={() => this.toggleModal()}  
-                        type={"Add"}
-                        getInput={this.logInput}/>
                     <Row>
                         <Col md={12} className="align-self-start my-2">
                             <hr style={{
@@ -95,7 +283,7 @@ class Groups extends React.Component {
                     </Row>
                     <Row>
                         <Col md={12} className="align-self-start my-2">
-                            <Button onClick={() => this.toggleModal()}>
+                            <Button onClick={this.handleModalOpen} name='addGroup'>
                                 Add New
                             </Button>
 
@@ -133,5 +321,3 @@ class Groups extends React.Component {
         )
     }
 }
-
-export default Groups;

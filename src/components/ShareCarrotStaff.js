@@ -1,7 +1,7 @@
 import { Component, useEffect, useState } from 'react'
 import { Container, Row, Col, Form, Table, Modal, Button, Pagination } from 'react-bootstrap'
-import { getAllUsers, getUserByUsername } from '../apis/user'
-import { createNewTransaction, getTransactionsByManager, getAllTransactions } from '../apis/transaction'
+import { getAllUsers } from '../apis/user'
+import { createNewTransaction, getTransactionsByManager } from '../apis/transaction'
 
 function StaffListRow(props) {
     const { staffList } = props

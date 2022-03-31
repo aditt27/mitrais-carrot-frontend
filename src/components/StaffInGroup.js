@@ -1,6 +1,6 @@
 import { Container, Row, Col, Form, Table, Pagination } from 'react-bootstrap';
 import { Component } from 'react';
-import axios from 'axios';
+import apiClient from '../apis';
 
 class StaffInGroup extends Component {
 
@@ -17,7 +17,7 @@ class StaffInGroup extends Component {
     
     async componentDidMount() {
         let groups = []
-        await axios.get("http://localhost:8081/api/v1/group").then(res => {
+        await apiClient.get("/group").then(res => {
             const data = res.data.result.currentPageContent
             for (const i in data) {
                 groups.push(data[i].groupName)
@@ -36,7 +36,7 @@ class StaffInGroup extends Component {
         }
         
         const filter = groupName === "no_group" ? "filterBy=no_group" : `filterBy=group&filterValue=${groupName}`
-        await axios.get(`http://localhost:8081/api/v1/user?${filter}&page=${page}`).then(res => {
+        await apiClient.get(`/user?${filter}&page=${page}`).then(res => {
             const data = res.data.result
             if (data.currentPageContent) {
                 const st = data.currentPageContent.filter(s => s.role === "Staff")
@@ -48,7 +48,7 @@ class StaffInGroup extends Component {
                             username: s.username,
                             name: s.name,
                             role: s.role,
-                            office: ""
+                            office: s.office
                         })
                     )
                 }
