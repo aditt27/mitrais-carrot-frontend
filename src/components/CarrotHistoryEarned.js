@@ -71,7 +71,7 @@ class CarrotHistoryEarned extends Component {
                 <br />
                 <Row>
                     <Col>
-                        <Table bordered hover>
+                        <Table bordered striped hover>
                             <thead>
                                 <tr>
                                     <th>#</th>

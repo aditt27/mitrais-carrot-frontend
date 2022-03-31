@@ -1,10 +1,7 @@
-import axios from 'axios'
 import apiClient from '.'
 
-const endpoint = 'http://localhost:8081/api/v1/user'
-
 export function getAllUsers() {
-    return axios.get(`${endpoint}?page=-1`, { method: 'GET'}).then(res => {
+    return apiClient.get(`user?page=-1`).then(res => {
         if (res.data.message === 'Success') {
             const data = res.data.result
             const contents = data.currentPageContent
@@ -22,23 +19,23 @@ export async function getUsersByFilter(filter = 'default', page) {
     let url
     switch (filter) {
         case 'carrot': {
-            url = `${endpoint}?filterBy=carrot&page=${page}`
+            url = `user?filterBy=carrot&page=${page}`
             break
         }
         case 'most_spent': {
-            url = `${endpoint}/most_spent?page=${page}`
+            url = `user/most_spent?page=${page}`
             break
         }
         case 'most_earn_month': {
-            url = `${endpoint}/most_earn?period=month&page=${page}`
+            url = `user/most_earn?period=month&page=${page}`
             break
         }
         case 'most_earn_year': {
-            url = `${endpoint}/most_earn?period=year&page=${page}`
+            url = `user/most_earn?period=year&page=${page}`
             break
         }
         default:
-            url = `${endpoint}?page=${page}`
+            url = `user?page=${page}`
             break
     }
     
@@ -48,7 +45,7 @@ export async function getUsersByFilter(filter = 'default', page) {
         totalPages: 0
     }
 
-    await axios.get(url).then(res => {
+    await apiClient.get(url).then(res => {
         if (res.data.message === "Success") {
             const data = res.data.result
             let i = 1
@@ -80,4 +77,16 @@ export async function getUserByUsername(username) {
             return false
         }))
         .catch(err => console.log(err))
+}
+
+export async function addUser(data) {
+    let response
+    await apiClient.post('/user', JSON.stringify(data), {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(res => {
+        response = res.data.message
+    }).catch(e => {})
+    return response
 }
