@@ -24,8 +24,17 @@ class Bazaar extends React.Component {
     }
 
     componentDidMount() {
-        this.loadBazaarItem()
-        this.loadUserProfile()
+        if(this.props.username) {
+            this.loadBazaarItem()
+            this.loadUserProfile()
+        }      
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if(prevProps.username !== this.props.username) {
+            this.loadUserProfile()
+            this.loadBazaarItem()
+        }
     }
 
     loadUserProfile() {

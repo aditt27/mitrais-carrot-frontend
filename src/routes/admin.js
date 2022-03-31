@@ -12,6 +12,7 @@ import Distribution from '../components/Distribution'
 import CarrotHistory from '../pages/CarrotHistory'
 import BazaarItemDetail from '../pages/BazaarItemDetail'
 import AdminSetting from '../pages/AdminSetting'
+import Notification from '../pages/Notification'
 
 const routesAdmin = [
   {
@@ -63,6 +64,11 @@ const routesAdmin = [
     key: 11,
     path: 'setting',
     element: <AdminSetting roles={[Admin]} />
+  },
+  {
+    key: 12,
+    path: 'notification',
+    element: <Notification roles={[Admin]} />
   }
 ]
 

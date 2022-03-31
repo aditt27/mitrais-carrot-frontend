@@ -39,7 +39,7 @@ export default function ChangePassword(props) {
       <Container>
         <h2 style={titleStyle}>{'Change Password'}</h2>
         <Container style={contentStyle}>
-          <Form onSubmit={submitHandler}>
+          <Form onSubmit={submitHandler} style={{paddingTop: '1em', paddingBottom: '1em'}}>
             <Form.Group className="mb-3">
               <Form.Label>Old Password</Form.Label>
               <Form.Control type="password" placeholder="Enter old password" onChange={(e) => setOldPassword(e.target.value)} value={oldPassword} />

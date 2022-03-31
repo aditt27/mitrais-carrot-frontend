@@ -1,11 +1,11 @@
 import React from 'react'
 import { Route } from 'react-router-dom'
 import Bazaar from '../pages/Bazaar'
-import Dashboard from '../pages/Dashboard'
 import PrivateRoute from './PrivateRoute'
 import { Staff } from '../utils/Role'
 import CarrotHistory from '../pages/CarrotHistory'
 import BazaarItemDetail from '../pages/BazaarItemDetail'
+import Notification from '../pages/Notification'
 
 const routesStaff = [
   {
@@ -22,6 +22,11 @@ const routesStaff = [
     key: 3,
     path: 'rewardDetail',
     element: <BazaarItemDetail roles={[Staff]} />
+  },
+  {
+    key: 4,
+    path: 'notification',
+    element: <Notification roles={[Staff]} />
   }
 ]
 
