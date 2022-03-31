@@ -78,3 +78,15 @@ export async function getUserByUsername(username) {
         }))
         .catch(err => console.log(err))
 }
+
+export async function addUser(data) {
+    let response
+    await apiClient.post('/user', JSON.stringify(data), {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(res => {
+        response = res.data.message
+    }).catch(e => {})
+    return response
+}

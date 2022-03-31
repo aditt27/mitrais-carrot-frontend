@@ -48,7 +48,7 @@ class StaffInGroup extends Component {
                             username: s.username,
                             name: s.name,
                             role: s.role,
-                            office: ""
+                            office: s.office
                         })
                     )
                 }
