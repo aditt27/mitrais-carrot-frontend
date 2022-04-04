@@ -151,7 +151,7 @@ export default class Harvest extends React.Component {
         }
     }
 
-    async loadData(page = 0, size = 2) {
+    async loadData(page = 0, size = 5) {
         let result = {
             barns: [],
             currentPage: 0,
@@ -307,7 +307,7 @@ export default class Harvest extends React.Component {
                                 backgroundColor: "orange",
                                 height: "0.2em"
                             }} align="left" />
-                            <h4 className="box-title">HARVEST PLAN</h4>
+                            <h4 className="box-title">Harvest Plan</h4>
                         </Col>
                     </Row>
                     <Row>
@@ -316,14 +316,6 @@ export default class Harvest extends React.Component {
                                 Add New
                             </Button>
 
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col md="12" className="my-2">
-                            <Form.Group className="float-right form-inline">
-                                <Form.Label>SEARCH: &nbsp;</Form.Label>
-                                <Form.Control type="text" style={{ width: "15vw" }} />
-                            </Form.Group>
                         </Col>
                     </Row>
                     <Row>
@@ -354,7 +346,6 @@ export default class Harvest extends React.Component {
                             <Pagination
                                 className="float-right"
                                 color='primary'
-                                shape="rounded"
                                 count={this.state.totalPages}
                                 page={this.state.currentPage + 1}
                                 onChange={(e, page) => this.handlePagination(e, page)}
