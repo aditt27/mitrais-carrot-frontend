@@ -3,10 +3,11 @@ import React from "react";
 import { Pagination } from "@mui/material";
 import { Card, Col, Row, Tab, Form, Table, Button, Modal } from "react-bootstrap";
 import { addBarn, addMoreCarrot, extendExpiryDate } from "../apis/barn";
+import { connect } from "react-redux";
 
-export default class Harvest extends React.Component {
-    constructor() {
-        super()
+class Harvest extends React.Component {
+    constructor(props) {
+        super(props)
         this.state = {
             barnList: [],
             modalShow: false,
@@ -77,7 +78,8 @@ export default class Harvest extends React.Component {
                     year: this.state.formYear,
                     totalCarrot: this.state.formCarrot,
                     shareExpireDate: this.state.formShareExpDate,
-                    exchangeExpireDate: this.state.formExchangeExpDate
+                    exchangeExpireDate: this.state.formExchangeExpDate,
+                    creatorId: this.props.userId
                 })
                     .then(res => {
                         this.setState({
@@ -182,9 +184,10 @@ export default class Harvest extends React.Component {
     }
     async componentDidMount() {
         this.loadData()
+        console.log(this.props.userId)
     }
+    
     handlePagination = (e, page) => {
-        console.log(page)
         this.loadData(page-1)
     }
 
@@ -357,3 +360,9 @@ export default class Harvest extends React.Component {
         )
     }
 }
+
+const mapStateToProps = (state)=> ({
+    userId: state.authReducer.userData.id,
+})
+
+export default connect(mapStateToProps)(Harvest)
