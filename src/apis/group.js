@@ -41,3 +41,29 @@ export async function deleteGroup(deleteId) {
     }))
     .catch(err => console.log(err))
 }
+
+export async function addToGroup(params) {
+    console.log(params.userIds)
+    return axios.post(`${baseURL}/${params.groupId}/add-user`, {
+        userIds: params.userIds
+    })
+    .then((response => {
+        if(response) {
+            return response.data
+        }
+    }))
+    .catch(err => console.log(err))
+}
+
+export async function removeFromGroup(params) {
+    console.log(params.userIds)
+    return axios.delete(`${baseURL}/${params.groupId}/remove-user`, {
+        data: {userIds: params.userIds}
+    })
+    .then((response => {
+        if(response) {
+            return response.data
+        }
+    }))
+    .catch(err => console.log(err))
+}

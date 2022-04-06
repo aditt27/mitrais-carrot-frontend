@@ -3,10 +3,11 @@ import React from "react";
 import { Pagination } from "@mui/material";
 import { Card, Col, Row, Tab, Form, Table, Button, Modal } from "react-bootstrap";
 import { addBarn, addMoreCarrot, extendExpiryDate } from "../apis/barn";
+import { connect } from "react-redux";
 
-export default class Harvest extends React.Component {
-    constructor() {
-        super()
+class Harvest extends React.Component {
+    constructor(props) {
+        super(props)
         this.state = {
             barnList: [],
             modalShow: false,
@@ -77,7 +78,8 @@ export default class Harvest extends React.Component {
                     year: this.state.formYear,
                     totalCarrot: this.state.formCarrot,
                     shareExpireDate: this.state.formShareExpDate,
-                    exchangeExpireDate: this.state.formExchangeExpDate
+                    exchangeExpireDate: this.state.formExchangeExpDate,
+                    creatorId: this.props.userId
                 })
                     .then(res => {
                         this.setState({
@@ -151,7 +153,7 @@ export default class Harvest extends React.Component {
         }
     }
 
-    async loadData(page = 0, size = 2) {
+    async loadData(page = 0, size = 5) {
         let result = {
             barns: [],
             currentPage: 0,
@@ -182,9 +184,10 @@ export default class Harvest extends React.Component {
     }
     async componentDidMount() {
         this.loadData()
+        console.log(this.props.userId)
     }
+    
     handlePagination = (e, page) => {
-        console.log(page)
         this.loadData(page-1)
     }
 
@@ -307,7 +310,7 @@ export default class Harvest extends React.Component {
                                 backgroundColor: "orange",
                                 height: "0.2em"
                             }} align="left" />
-                            <h4 className="box-title">HARVEST PLAN</h4>
+                            <h4 className="box-title">Harvest Plan</h4>
                         </Col>
                     </Row>
                     <Row>
@@ -316,14 +319,6 @@ export default class Harvest extends React.Component {
                                 Add New
                             </Button>
 
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col md="12" className="my-2">
-                            <Form.Group className="float-right form-inline">
-                                <Form.Label>SEARCH: &nbsp;</Form.Label>
-                                <Form.Control type="text" style={{ width: "15vw" }} />
-                            </Form.Group>
                         </Col>
                     </Row>
                     <Row>
@@ -354,7 +349,6 @@ export default class Harvest extends React.Component {
                             <Pagination
                                 className="float-right"
                                 color='primary'
-                                shape="rounded"
                                 count={this.state.totalPages}
                                 page={this.state.currentPage + 1}
                                 onChange={(e, page) => this.handlePagination(e, page)}
@@ -366,3 +360,9 @@ export default class Harvest extends React.Component {
         )
     }
 }
+
+const mapStateToProps = (state)=> ({
+    userId: state.authReducer.userData.id,
+})
+
+export default connect(mapStateToProps)(Harvest)
