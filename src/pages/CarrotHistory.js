@@ -1,5 +1,7 @@
 import React from 'react'
 import { Button, Col, Image, Row } from 'react-bootstrap'
+import { connect } from 'react-redux'
+import { totalSpentForBazaar } from '../apis/user'
 import CarrotTransPicture from '../assets/img/mc-icon-transaction.png'
 import CarrotHistoryBazaar from '../components/CarrotHistoryBazaar'
 import CarrotHistoryEarned from '../components/CarrotHistoryEarned'
@@ -11,8 +13,21 @@ class CarrotHistory extends React.Component {
         super(props)
 
         this.state = {
-            tableView: 'bazaar'
+            tableView: 'bazaar',
+            totalSpent: 0
         }
+    }
+
+    async getTotalSpentForBazaar() {
+        await totalSpentForBazaar(this.props.userId)
+        .then(res => {
+            this.setState({totalSpent: res})
+        })
+    }
+
+    componentDidMount() {
+        this.getTotalSpentForBazaar()
+        console.log(this.props.userId)
     }
 
     render() {
@@ -102,8 +117,9 @@ class CarrotHistory extends React.Component {
                                 />
                             </Col>
                             <Col className='my-auto'>
-                                <h4>Bazaar</h4>
-                                <Button size='sm' name='bazaar' variant='secondary' onClick={(e)=>this.setState({tableView: e.target.name})}>View</Button>
+                                <h5>Bazaar</h5>
+                                <h4>{this.state.totalSpent} Carrot(s)</h4>
+                                <Button className='float-left' size='sm' name='bazaar' variant='secondary' onClick={(e)=>this.setState({tableView: e.target.name})}>View</Button>
                             </Col>
                         </Row>
                     </Col>
@@ -114,4 +130,8 @@ class CarrotHistory extends React.Component {
     }
 }
 
-export default CarrotHistory
+const mapStateToProps = (state)=> ({
+    userId: state.authReducer.userData.id,
+})
+
+export default connect(mapStateToProps)(CarrotHistory)
