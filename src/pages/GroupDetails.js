@@ -1,27 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { Card, Col, Row, Tab, Form, Table, Button, ButtonGroup, Modal } from "react-bootstrap";
+import { Card, Col, Row, Tab, Form, Table, Button, ButtonGroup, Modal, FormGroup, FormLabel } from "react-bootstrap";
 import { IconButton } from "@mui/material";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { Link, useLocation } from "react-router-dom";
 import apiClient from "../apis";
 import axios from "axios";
-import { removeFromGroup } from "../apis/group";
+import { addToGroup, removeFromGroup } from "../apis/group";
+import Multiselect from "multiselect-react-dropdown";
+import { getAllUsers } from "../apis/user";
 
 
 const GroupDetails = (props) => {
     const location = useLocation()
     const id = location.state.id
     const [staffList, setStaffList] = useState([])
+    const [addStaff, setAddStaff] = useState([])
+    const [dropdownList, setDropdownList] = useState([])
     const [showModal, setShowModal] = useState(false)
     const [disableButton, setDisableButton] = useState(false)
     const [modalType, setModalType] = useState('')
     const [removeId, setRemoveId] = useState(-1)
-    const [addId, setAddId] = useState([])
     const [modalTitle, setModalTitle] = useState('')
     const currentPath = window.location.pathname.split("/")
 
     useEffect(() => {
-        getGroupMembers(id)
+        getGroupInfo(id)
     }, [])
 
     const handleDelete = () => {
@@ -36,10 +39,27 @@ const GroupDetails = (props) => {
             setModalType('')
             setModalTitle('')
             setDisableButton(false)
-            getGroupMembers(id)
+            getGroupInfo(id)
         })
-        
     }
+
+    const handleSubmit = () => {
+        setDisableButton(true)
+        addToGroup({
+            groupId: id,
+            userIds: addStaff
+        })
+        .then(res => {
+            setShowModal(false)
+            setAddStaff([])
+            setDropdownList([])
+            setModalType('')
+            setModalTitle('')
+            setDisableButton(false)
+            getGroupInfo(id)
+        })
+    }
+    
 
     const handleModalOpen = (e, id = undefined) => {
         switch (e.target.name) {
@@ -51,21 +71,28 @@ const GroupDetails = (props) => {
             case 'addUser':
                 setModalType('form')
                 setModalTitle('Add user to group')
+                getStaffToBeAdded()
                 break;
         }
         setShowModal(true)
     }
 
-    const getGroupMembers = async (groupId) => {
+    const getStaffToBeAdded = async() => {
+        await getAllUsers().then(res => {
+            setDropdownList(res)
+        })
+        
+    }
+    const getGroupInfo = async (groupId) => {
         
         let result = {
             staffList: []
         }
 
-        // const filter = `filterBy=group&filterValue=${groupName}`
         axios.get(`http://localhost:8081/api/v1/group/${groupId}`).then(res => {
             const data = res.data.result
             console.log(data)
+            
             if (data.users) {
                 // console.log(data.currentPageContent)
                 const st = data.users.filter(s => s.role === "Staff")
@@ -110,8 +137,6 @@ const GroupDetails = (props) => {
         let modalBody
         switch (modalType) {
             case 'confirmation':
-                // const index = staffList.findIndex(i => i.id == removeId)
-                // const user = staffList[index]
                 modalBody = <div>
                     <p>Are you sure want to remove this user ?</p>
                     <Button variant="danger" disabled={disableButton} className='float-right' onClick={handleDelete}>
@@ -120,11 +145,27 @@ const GroupDetails = (props) => {
                 </div>
                 break;
             case 'form':
-                modalBody = <Form.Group >
-                <Form.Label>Carrot: </Form.Label>
-                <Form.Control type="text" name='formCarrot' disabled={disableButton} /*value={formCarrot} onChange={this.handleValueChange}*/ />
-            </Form.Group>
-            
+                let toBeAdded = []
+                modalBody = 
+                <FormGroup>
+                    <FormLabel>Select staff(s) :</FormLabel>
+                    <Multiselect 
+                            // isObject={false}
+                            displayValue="name"
+                            options={dropdownList}
+                            onSelect={(dropdownList, e) => {
+                                setAddStaff([...addStaff, e.id])
+                                }
+                            }
+                            onRemove={(dropdown, e) => {
+                                const idx = addStaff.findIndex(i => i == e.id)
+                                addStaff.splice(idx, 1)
+                            } }
+                    />
+                    <Button variant="primary" disabled={disableButton} className='float-right' onClick={handleSubmit}>
+                    Submit
+                    </Button>
+                </FormGroup>
                 
         }
         return modalBody

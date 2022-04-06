@@ -43,8 +43,9 @@ export async function deleteGroup(deleteId) {
 }
 
 export async function addToGroup(params) {
+    console.log(params.userIds)
     return axios.post(`${baseURL}/${params.groupId}/add-user`, {
-        userIds: new Set([params.userIds])
+        userIds: params.userIds
     })
     .then((response => {
         if(response) {
