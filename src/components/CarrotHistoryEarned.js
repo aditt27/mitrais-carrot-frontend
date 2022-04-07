@@ -1,5 +1,6 @@
+import { Pagination } from '@mui/material'
 import { Component }  from 'react'
-import { Col, Container, Pagination, Row, Table } from 'react-bootstrap'
+import { Col, Container, Row, Table } from 'react-bootstrap'
 import { getAllTransactions } from '../apis/transaction'
 
 class CarrotHistoryEarned extends Component {
@@ -56,8 +57,10 @@ class CarrotHistoryEarned extends Component {
 
     render() {
 
+        const { totalPages, currentPage } = this.state
+
         return (
-            <Container className="px-4">
+            <div>
                 <Row>
                     <Col>
                         <hr style={{
@@ -74,7 +77,7 @@ class CarrotHistoryEarned extends Component {
                         <Table bordered striped hover>
                             <thead>
                                 <tr>
-                                    <th>#</th>
+                                    <th>Id</th>
                                     <th>Earned From</th>
                                     <th>Total</th>
                                     <th>Date</th>
@@ -89,12 +92,15 @@ class CarrotHistoryEarned extends Component {
                 </Row>
                 <Row>
                     <Col>
-                        <Pagination className="float-right">
-                            <this.PaginationItems />
-                        </Pagination>
+                        <Pagination className='float-right'
+                            color='primary'
+                            count={totalPages}
+                            page={currentPage+1}
+                            onChange={(e, page)=> this.fetchTransactions(page - 1)}
+                        />
                     </Col>
                 </Row>
-            </Container>
+            </div>
         )
     }
 }

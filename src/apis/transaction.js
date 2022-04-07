@@ -19,7 +19,7 @@ async function getAllTransactions(page, isManager = true) {
             if (isManager) {
                 tr.forEach((t) => {
                     result.transactions.push({
-                        no: i++,
+                        no: t.id,
                         rewardedTo: t.receiver.name,
                         carrot: t.amount,
                         note: t.notes,
@@ -29,7 +29,7 @@ async function getAllTransactions(page, isManager = true) {
             } else {
                 tr.forEach((t) => {
                     result.transactions.push({
-                        no: i++,
+                        no: t.id,
                         earnedFrom: t.sender.name,
                         total: t.amount,
                         date: t.transactionDate,

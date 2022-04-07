@@ -8,7 +8,7 @@ export async function addBarn(params) {
         totalCarrot: params.totalCarrot,
         shareExpireDate: params.shareExpireDate,
         exchangeExpireDate: params.exchangeExpireDate,
-        createdByUserId: 5,
+        createdByUserId: params.creatorId,
         createdDate: Date.now().toString()
     })
     .then((response => {

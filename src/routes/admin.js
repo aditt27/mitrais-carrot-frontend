@@ -13,6 +13,7 @@ import CarrotHistory from '../pages/CarrotHistory'
 import BazaarItemDetail from '../pages/BazaarItemDetail'
 import AdminSetting from '../pages/AdminSetting'
 import Notification from '../pages/Notification'
+import GroupDetails from '../pages/GroupDetails'
 
 const routesAdmin = [
   {
@@ -69,6 +70,11 @@ const routesAdmin = [
     key: 12,
     path: 'notification',
     element: <Notification roles={[Admin]} />
+  },
+  {
+    key: 13,
+    path: 'groupDetails',
+    element: <GroupDetails roles={[Admin]}/>
   }
 ]
 
