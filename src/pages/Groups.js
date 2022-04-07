@@ -22,7 +22,8 @@ export default class Groups extends React.Component {
             editId: -1,
             deleteId: -1,
             currentPage: 0,
-            totalPages: 0
+            totalPages: 0,
+            validated: false
         }
 
     }
@@ -100,6 +101,13 @@ export default class Groups extends React.Component {
     
 
     handleValueChange = (e) => {
+        if(e.target.name === 'formCarrot'){
+            if(e.target.value < 0) {
+                return (
+                    <Form.Text>Carrot can't be lower than zero</Form.Text>
+                )
+            }
+        }
         this.setState({ [e.target.name]: e.target.value })
     }
 
@@ -218,7 +226,7 @@ export default class Groups extends React.Component {
             case 'form':
                 modalBody = (
                     <Form>
-                        <Form.Group >
+                        <Form.Group className="mb-3">
                             <Form.Label>Name</Form.Label>
                             <Form.Control type="text" name='formName' disabled={formDisable} value={formName} onChange={this.handleValueChange} />
                         </Form.Group>
@@ -226,11 +234,11 @@ export default class Groups extends React.Component {
                             <Form.Label>Manager: </Form.Label>
                             <Form.Control type="text" name='formManager' disabled={formDisable} value={formManager} onChange={this.handleValueChange} />
                         </Form.Group>
-                        <Form.Group >
+                        <Form.Group className="mb-3">
                             <Form.Label>Carrot: </Form.Label>
                             <Form.Control type="number" name='formCarrot' disabled={formDisable} value={formCarrot} onChange={this.handleValueChange} />
                         </Form.Group>
-                        <Form.Group >
+                        <Form.Group className="mb-3">
                             <Form.Label>Notes: </Form.Label>
                             <Form.Control as="textarea" rows={3} name='formNote' disabled={formDisable} value={formNote} onChange={this.handleValueChange} />
                         </Form.Group>
