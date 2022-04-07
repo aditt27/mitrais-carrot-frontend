@@ -37,8 +37,8 @@ export default function Login() {
                 </Form.Group>
 
                 <Button className="btn-block btn-mitrais text-uppercase" type="submit">
-                  <FontAwesomeIcon icon="lock" />
-                  &nbsp;Sign in
+                  <FontAwesomeIcon icon="lock"  className='mr-2'/>
+                  Sign in
                 </Button>
               </Form>
             </Card.Body>
