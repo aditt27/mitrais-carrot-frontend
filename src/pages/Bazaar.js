@@ -116,7 +116,7 @@ class Bazaar extends React.Component {
                 <Row style={rowCardStyle}>
                     <Col style={profileCardStyle} className=''>
                         <Row>
-                            <Col xs={4}>
+                            <Col xs={5}>
                                 <Image
                                     src={ProfilePicture} 
                                     width={100}
@@ -132,7 +132,7 @@ class Bazaar extends React.Component {
                     </Col>
                     <Col style={pointsCardStyle}>
                         <Row>
-                            <Col xs={4}>
+                            <Col xs={5}>
                                 <Image
                                     src={CarrotPicture} 
                                     width={100}
@@ -148,7 +148,7 @@ class Bazaar extends React.Component {
                     </Col>
                     <Col style={transactionCardStyle}>
                         <Row>
-                            <Col xs={4}>
+                            <Col xs={5}>
                                 <Image
                                     src={CarrotTransPicture} 
                                     width={100}
@@ -157,7 +157,7 @@ class Bazaar extends React.Component {
                                 />
                             </Col>
                             <Col className='my-auto'>
-                                <h4>Carrot Transaction History</h4>
+                                <h4>Transaction History</h4>
                                 <Button as={Link} to={`/${currentpath[1]}/carrotHistory`} variant="secondary">View</Button>
                             </Col>
                         </Row>
@@ -196,8 +196,6 @@ const mapStateToProps = (state)=> ({
     userProfile: state.userReducer.profile,
     username: state.authReducer.userData.sub
 })
-
-
 
 const mapDispatchToProps = (dispatch)=> ({
     saveItem: (data, currentPage, totalPages)=> dispatch(saveCurrentPage({

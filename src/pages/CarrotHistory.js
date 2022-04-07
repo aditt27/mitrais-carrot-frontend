@@ -32,22 +32,30 @@ class CarrotHistory extends React.Component {
 
     render() {
 
-        const transactionCardStyle = {
+        const transactionEarnedStyle = {
             borderRadius: '5px',
             backgroundColor: '#523bf0',
             color: 'white',
             padding: '15px',
-
+            marginRight: '0.5em'
         }
 
-        const transactionCardMiddleStyle = {
+        const transactionBazaarStyle = {
             borderRadius: '5px',
             backgroundColor: '#523bf0',
             color: 'white',
             padding: '15px',
-            marginLeft: '1em',
-            marginRight: '1em'
+            marginLeft: '0.5em'
         }
+
+        // const transactionCardMiddleStyle = {
+        //     borderRadius: '5px',
+        //     backgroundColor: '#523bf0',
+        //     color: 'white',
+        //     padding: '15px',
+        //     marginLeft: '1em',
+        //     marginRight: '1em'
+        // }
 
         const rowCardStyle = {
             paddingLeft: '1em',
@@ -74,9 +82,9 @@ class CarrotHistory extends React.Component {
             <div style={{padding: '1em'}}>
                 
                 <Row style={rowCardStyle}>
-                    <Col style={transactionCardStyle}>
+                    <Col style={transactionEarnedStyle}>
                         <Row>
-                            <Col xs={6}>
+                            <Col xs={5}>
                                 <Image
                                     src={CarrotTransPicture} 
                                     width={100}
@@ -90,7 +98,7 @@ class CarrotHistory extends React.Component {
                             </Col>
                         </Row>
                     </Col>
-                    <Col style={transactionCardMiddleStyle}>
+                    {/* <Col style={transactionCardMiddleStyle}>
                         <Row>
                             <Col xs={6}>
                                 <Image
@@ -105,10 +113,10 @@ class CarrotHistory extends React.Component {
                                 <Button size='sm' name='shared' variant='secondary' onClick={(e)=>this.setState({tableView: e.target.name})}>View</Button>
                             </Col>
                         </Row>
-                    </Col>
-                    <Col style={transactionCardStyle}>
+                    </Col> */}
+                    <Col style={transactionBazaarStyle}>
                         <Row>
-                            <Col xs={6}>
+                            <Col xs={5}>
                                 <Image
                                     src={CarrotTransPicture} 
                                     width={100}
