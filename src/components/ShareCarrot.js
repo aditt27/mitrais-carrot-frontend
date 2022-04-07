@@ -14,10 +14,17 @@ class ShareCarrot extends Component {
         manager: {}
     }
 
-    async componentDidMount() {
+    componentDidMount() {
+        this.fetchBarn()
+    }
+
+    setCurrentPage = (page) => {
+        this.setState({currentPage: page})
+    }
+
+    async fetchBarn() {
         const { userData } = store.getState().authReducer
         const user = await getUserByUsername(userData.sub)
-        const totalCarrot = await this.getTotalCarrot()
         const { transactions } = await getTransactionsByManager(-1)
         const rewarded = transactions.reduce((prev, next) => prev + next.carrot, 0)
         
@@ -33,18 +40,6 @@ class ShareCarrot extends Component {
             manager: user.result,
             year: year
         })
-    }
-
-    getTotalCarrot = async () => {
-        let carrot = 0
-        await getAllTransactions(-1).then(res => {
-            carrot = res.transactions.reduce((prev, next) => prev + next.carrot, 0)
-        })
-        return carrot
-    }
-
-    setCurrentPage = (page) => {
-        this.setState({currentPage: page})
     }
 
     render() {
@@ -98,7 +93,7 @@ class ShareCarrot extends Component {
                 </Row>
                 <Row>
                     <Col>
-                        {this.state.currentPage === 'staff' ? (<ShareCarrotStaff />) : (<ShareCarrotGroup />)}
+                        {this.state.currentPage === 'staff' ? (<ShareCarrotStaff updateBarn={() => this.fetchBarn()} />) : (<ShareCarrotGroup updateBarn={() => this.fetchBarn()} />)}
                     </Col>
                 </Row>
             </Container>
