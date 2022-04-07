@@ -1,6 +1,7 @@
 import axios from "axios";
 import React from "react"
 import { Card, Col, Row, Tab, Form, Table, Button, ButtonGroup, Modal } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import { addGroup, deleteGroup, editGroup } from "../apis/group";
 import GroupForm from "../components/EditGroupForm";
 
@@ -96,10 +97,7 @@ export default class Groups extends React.Component {
     handleModalClose = () => {
         this.setState({ modalShow: false })
     }
-
-    handleOnClick() {
-        alert("button clicked")
-    }
+    
 
     handleValueChange = (e) => {
         this.setState({ [e.target.name]: e.target.value })
@@ -174,6 +172,7 @@ export default class Groups extends React.Component {
     }
 
     groupListRow() {
+        const currentPath = window.location.pathname.split("/")
         const { groupList } = this.state
         return groupList.map((group, i) => {
             return (
@@ -185,7 +184,14 @@ export default class Groups extends React.Component {
                     <td>{group.notes}</td>
                     <td>
                         <ButtonGroup>
-                            <Button onClick={(() => this.handleOnClick())}>Details</Button>
+                            {/* <Button onClick={() => alert(currentPath[1])}>Details</Button> */}
+                            <Button 
+                                as={Link} 
+                                to={`/${currentPath[1]}/groupDetails`}
+                                state={{id: group.groupId}}
+                                >
+                                    Details
+                            </Button>
                             <Button style={{ backgroundColor: "orange" }} onClick={(e) => this.handleModalOpen(e, group.groupId)} name='editGroup'>Edit</Button>
                             <Button onClick={(e)=>{this.handleModalOpen(e, group.groupId)}} name='deleteGroup' style={{ backgroundColor: "red" }}>Delete</Button>
                         </ButtonGroup>
@@ -194,6 +200,7 @@ export default class Groups extends React.Component {
             )
         })
     }
+    
     render() {
         const {
             modalShow,
@@ -241,24 +248,6 @@ export default class Groups extends React.Component {
                     </Button>
                 </div>
                 break;
-            // case 'addMoreCarrot':
-            //     modalBody = (
-            //         <Form>
-            //             <Form.Group >
-            //                 <Form.Label>Year</Form.Label>
-            //                 <Form.Control plaintext readOnly name='formYear' disabled={formDisable} value={formYear} />
-            //             </Form.Group>
-            //             <Form.Group>
-            //                 <Form.Label>Add Carrot Amount</Form.Label>
-            //                 <Form.Control type="number" name='formCarrot' disabled={formDisable} value={formCarrot} onChange={this.handleValueChange} />
-            //                 <p style={{ fontSize: 'smaller' }}>How much carrot do you want to add?</p>
-            //             </Form.Group>
-            //             <Button variant="primary" className="float-right" disabled={formDisable} onClick={this.handleSubmit}>
-            //                 Save
-            //             </Button>
-            //         </Form>
-            //     )
-            //     break;
         }
         return (
             <Tab.Content className="search-box">
@@ -278,7 +267,7 @@ export default class Groups extends React.Component {
                                 backgroundColor: "orange",
                                 height: "0.2em"
                             }} align="left" />
-                            <h4 className="box-title">STAFF GROUP LIST</h4>
+                            <h4 className="box-title">Staff Group List</h4>
                         </Col>
                     </Row>
                     <Row>
@@ -287,14 +276,6 @@ export default class Groups extends React.Component {
                                 Add New
                             </Button>
 
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col md="12" className="my-2">
-                            <Form.Group className="float-right form-inline">
-                                <Form.Label>SEARCH: &nbsp;</Form.Label>
-                                <Form.Control type="text" style={{ width: "15vw" }} />
-                            </Form.Group>
                         </Col>
                     </Row>
                     <Row>

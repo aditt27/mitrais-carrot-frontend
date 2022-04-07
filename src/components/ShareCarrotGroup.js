@@ -2,10 +2,11 @@ import { faPaperPlane, faPeopleGroup } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
 import { Component } from 'react'
-import { Container, Row, Table, Col, Pagination, Modal, Button, Form, Alert } from 'react-bootstrap'
+import { Container, Row, Table, Col, Modal, Button, Form, Alert } from 'react-bootstrap'
 import { createNewGroupTransaction } from '../apis/transaction'
 import store from '../stores'
 import { btnRewardStyle } from './ShareCarrotStaff'
+import { Pagination } from '@mui/material'
 
 class ShareCarrotGroup extends Component {
 
@@ -16,21 +17,25 @@ class ShareCarrotGroup extends Component {
         showGroupMemberModal: false,
         showSendCarrotModal: false,
         manager: {},
-        failedSendCarrotMsg: ''
+        sendCarrotMsg: '',
+        selectedGroupId: 0,
     }
 
-    async componentDidMount() {
+    componentDidMount() {
+        this.fetchGroupList()
+    }
+
+    fetchGroupList = async (page = 0) => {
         let init = {}
-        await axios.get(`http://localhost:8081/api/v1/group`).then(res => {
+        const { profile } = store.getState().userReducer
+        await axios.get(`http://localhost:8081/api/v1/group?page=${page}`).then(res => {
             if (res.data.message === 'Success') {
                 const data = res.data.result
                 init.currentPage = data.currentPage
                 init.totalPages = data.totalPages
-                init.groupList = data.currentPageContent
+                init.groupList = data.currentPageContent.filter(it => it.manager === profile.id.toString())
             }
         })
-        
-        const { profile } = store.getState().userReducer
         
         this.setState({
             currentPage: init.currentPage,
@@ -47,82 +52,86 @@ class ShareCarrotGroup extends Component {
                 <tr key={i}>
                     <td>{i + 1}</td>
                     <td>{group.groupName}</td>
-                    <td>{group.points / group.users.length}</td>
+                    <td>{Math.floor(group.points / group.users.length)}</td>
                     <td>{group.users.length}</td>
                     <td>{group.points}</td>
                     <td>{group.notes}</td>
                     <td className="text-center">
-                        <Button style={{marginRight: "0.25em"}} onClick={this.handleShowGroupMemberModal}>
+                        <Button style={{marginRight: "0.25em"}} onClick={() => this.handleShowGroupMemberModal(i)}>
                             <FontAwesomeIcon icon={faPeopleGroup}  />
                         </Button>
-                        <Button variant="success" style={{marginLeft: "0.25em"}} onClick={this.handleShowSendCarrotModal}>
+                        <Button variant="success" style={{marginLeft: "0.25em"}} onClick={() => this.handleShowSendCarrotModal(i)}>
                             <FontAwesomeIcon icon={faPaperPlane}  />
                         </Button>
-                        {this.state.showGroupMemberModal && (<this.GroupMemberModal index={i} />)}
-                        {this.state.showSendCarrotModal && (<this.SendCarrotModal index={i} />)}
                     </td>
                 </tr>
             )
         })
     }
 
-    handleShowGroupMemberModal = () => {
-        this.setState({showGroupMemberModal: true})
+    handleShowGroupMemberModal = (i) => {
+        this.setState({showGroupMemberModal: true, selectedGroupId: i})
     }
 
-    handleShowSendCarrotModal = () => {
-        this.setState({showSendCarrotModal: true})
+    handleShowSendCarrotModal = (i) => {
+        this.setState({showSendCarrotModal: true, selectedGroupId: i})
     }
 
     onHideModal = () => {
-        this.setState({showGroupMemberModal: false, showSendCarrotModal: false, failedSendCarrotMsg: ''})
+        this.setState({showGroupMemberModal: false, showSendCarrotModal: false, sendCarrotMsg: ''})
     }
 
-    GroupMemberModal = (props) => {
-        const group = this.state.groupList[props.index]
+    GroupMemberModal = () => {
+        const { selectedGroupId, groupList } = this.state
+        const group = groupList[selectedGroupId]
         
         return (
-            <Modal show={this.state.showGroupMemberModal} onHide={this.onHideModal}>
-                <div className="p-4">
-                    <Modal.Header>
-                        <Modal.Title>
-                            MEMBER LIST
-                        </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <Row>
-                            <Col>
-                                <strong>Group Name: </strong>
-                                <p>{ group.groupName }</p>
-                            </Col>
-                        </Row>
-                        <br />
-                        <Row>
-                            <Col>
-                                <Table bordered striped hover>
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Name</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {
-                                            group.users.map((u, i) => {
-                                                return (
-                                                    <tr key={i}>
-                                                        <td>{i + 1}</td>
-                                                        <td>{u}</td>
-                                                    </tr>
-                                                )
-                                            })
-                                        }
-                                    </tbody>
-                                </Table>
-                            </Col>
-                        </Row>
-                    </Modal.Body>
-                </div>
+            <Modal show={this.state.showGroupMemberModal} onHide={this.onHideModal} centered backdrop="static" keyboard={false}>
+                <Modal.Header className="m-2">
+                    <Modal.Title>
+                        MEMBER LIST
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="mx-2">
+                    <Row>
+                        <Col>
+                            <strong>Group Name: </strong>
+                            <p>{ group.groupName }</p>
+                        </Col>
+                    </Row>
+                    <br />
+                    <Row>
+                        <Col>
+                            <Table bordered striped hover>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Carrot</th>
+                                        <th>JF</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        group.users.map((u, i) => {
+                                            return (
+                                                <tr key={i}>
+                                                    <td>{i + 1}</td>
+                                                    <td>{u.name}</td>
+                                                    <td>{u.points}</td>
+                                                    <td>{u.jobFamily}</td>
+                                                </tr>
+                                            )
+                                        })
+                                    }
+                                </tbody>
+                            </Table>
+                        </Col>
+                    </Row>
+                </Modal.Body>
+                <Modal.Footer className="m-2">
+                    <Button className="float-right" variant="info" onClick={this.onHideModal}>Close</Button>
+                </Modal.Footer>
             </Modal>
         )
     }
@@ -132,53 +141,53 @@ class ShareCarrotGroup extends Component {
         const groupId = e.target.groupid.value
         const managerId = this.state.manager.id
         createNewGroupTransaction(groupId, managerId).then(res => {
+            this.setState({sendCarrotMsg: res})
             if (res === 'Success') {
                 this.onHideModal()
-            } else {
-                this.setState({failedSendCarrotMsg: res})
+                this.props.updateBarn()
             }
         })
     }
 
-    SendCarrotModal = (props) => {
-        const group = this.state.groupList[props.index]
+    SendCarrotModal = () => {
+        const { selectedGroupId, groupList } = this.state
+        const group = groupList[selectedGroupId]
         
         return (
-            <Modal show={this.state.showSendCarrotModal} onHide={this.onHideModal} centered keyboard={false} backdrop="static">
-                <div className="p-4">
-                    <Modal.Header>
-                        <Modal.Title>
-                            SEND CARROT
-                        </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <Table bordered>
-                            <tbody>
-                                <tr>
-                                    <th>Group Name</th>
-                                    <td>{group.groupName}</td>
-                                </tr>
-                                <tr>
-                                    <th>Total Carrot</th>
-                                    <td>{group.points}</td>
-                                </tr>
-                                <tr>
-                                    <th>Year</th>
-                                    <td>2022</td>
-                                </tr>
-                            </tbody>
-                        </Table>
-                        <p>Are you sure you want to send now?</p>
-                        {this.state.failedSendCarrotMsg.length > 0 && (<Alert variant="danger">{this.state.failedSendCarrotMsg}</Alert>)}
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Form onSubmit={this.handleSendCarrotSubmit}>
-                            <Button variant="link" className="m-2" onClick={() => this.onHideModal()}>CANCEL</Button>
-                            <Button type="submit" className="m-2" style={btnRewardStyle}>SEND NOW</Button>
-                            <input type="hidden" name="groupid" value={group.id} />
-                        </Form>
-                    </Modal.Footer>
-                </div>
+            <Modal show={this.state.showSendCarrotModal} onHide={this.onHideModal} keyboard={false} backdrop="static" centered>
+                <Modal.Header className="m-2">
+                    <Modal.Title>
+                        SEND CARROT
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="mx-4">
+                    <Table bordered>
+                        <tbody>
+                            <tr>
+                                <th>Group Name</th>
+                                <td>{group.groupName}</td>
+                            </tr>
+                            <tr>
+                                <th>Total Carrot</th>
+                                <td>{group.points}</td>
+                            </tr>
+                            <tr>
+                                <th>Year</th>
+                                <td>2022</td>
+                            </tr>
+                        </tbody>
+                    </Table>
+                    <p>Are you sure you want to send now?</p>
+                    {this.state.sendCarrotMsg.length > 0 && this.state.sendCarrotMsg !== 'Success' && (<Alert variant="danger">{this.state.sendCarrotMsg}</Alert>)}
+                    {this.state.sendCarrotMsg.length > 0 && this.state.sendCarrotMsg === 'Success' && (<Alert variant="success">{this.state.sendCarrotMsg}</Alert>)}
+                </Modal.Body>
+                <Modal.Footer className="m-2">
+                    <Form onSubmit={this.handleSendCarrotSubmit}>
+                        <Button variant="link" className="mr-4" onClick={() => this.onHideModal()}>CANCEL</Button>
+                        <Button type="submit" style={btnRewardStyle}>SEND NOW</Button>
+                        <input type="hidden" name="groupid" value={group.id} />
+                    </Form>
+                </Modal.Footer>
             </Modal>
         )
     }
@@ -204,11 +213,11 @@ class ShareCarrotGroup extends Component {
                                 <this.GroupListRow />
                             </tbody>
                         </Table>
+                        {this.state.showGroupMemberModal && (<this.GroupMemberModal />)}
+                        {this.state.showSendCarrotModal && (<this.SendCarrotModal />)}
                     </Col>
                     <Col md="12">
-                        <Pagination className="float-right">
-
-                        </Pagination>
+                        <Pagination className="float-right" count={this.state.totalPages} page={this.state.currentPage + 1} onChange={(e, page) => this.fetchGroupList(e, page - 1)} />
                     </Col>
                 </Row>
             </Container>

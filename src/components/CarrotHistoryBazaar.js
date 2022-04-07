@@ -79,6 +79,7 @@ class CarrotHistoryBazaar extends React.Component {
                     height: "0.2em"
                 }} align="left"/>
                 <h5>MY BAZAAR HISTORY</h5>
+                <br />
                 <Table striped bordered hover>
                     <thead>
                         <tr>

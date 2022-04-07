@@ -41,7 +41,7 @@ export async function addBazaarItem(req) {
             isAutoApprove: true,
             isActive: true,
             image: req.image,
-            userId: 5
+            userId: req.userId
         })
         .then((response=> {
         if(response) {        
@@ -52,11 +52,11 @@ export async function addBazaarItem(req) {
         .catch(err => console.log(err))
 }
 
-export async function deleteBazaarItem(id) {
+export async function deleteBazaarItem(id, userId) {
     return apiClient
         .delete(`/item/${id}`, {
             data: {
-                userId: 5
+                userId
             }
         })
         .then((response=> {
@@ -79,7 +79,7 @@ export async function editBazaarItem(req) {
             isAutoApprove: req.isAutoApprove,
             isActive: req.isActive,
             image: req.image,
-            userId: 5
+            userId: req.userId
         })
         .then((response=> {
             if(response) {        

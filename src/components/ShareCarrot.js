@@ -5,38 +5,41 @@ import { getTransactionsByManager, getAllTransactions } from '../apis/transactio
 import ShareCarrotStaff from './ShareCarrotStaff'
 import ShareCarrotGroup from './ShareCarrotGroup'
 import store from '../stores'
+import apiClient from '../apis'
 class ShareCarrot extends Component {
     
     state = {
+        year: '',
         currentPage: 'staff',
         manager: {}
     }
 
-    async componentDidMount() {
-        const { userData } = store.getState().authReducer
-        const user = await getUserByUsername(userData.sub)
-        const totalCarrot = await this.getTotalCarrot()
-        const { transactions } = await getTransactionsByManager(-1)
-        const rewarded = transactions.reduce((prev, next) => prev + next.carrot, 0)
-        
-        user.result.totalCarrot = totalCarrot
-        user.result.rewardedCarrot = rewarded
-        
-        this.setState({
-            manager: user.result
-        })
-    }
-
-    getTotalCarrot = async () => {
-        let carrot = 0
-        await getAllTransactions(-1).then(res => {
-            carrot = res.transactions.reduce((prev, next) => prev + next.carrot, 0)
-        })
-        return carrot
+    componentDidMount() {
+        this.fetchBarn()
     }
 
     setCurrentPage = (page) => {
         this.setState({currentPage: page})
+    }
+
+    async fetchBarn() {
+        const { userData } = store.getState().authReducer
+        const user = await getUserByUsername(userData.sub)
+        const { transactions } = await getTransactionsByManager(-1)
+        const rewarded = transactions.reduce((prev, next) => prev + next.carrot, 0)
+        
+        user.result.totalCarrot = user.result.points + rewarded
+        user.result.rewardedCarrot = rewarded
+        let year = 0
+        await apiClient.get('/barn?filterBy=active-only').then(res => {
+            const data = res.data.result.currentPageContent
+            year = data[0].year
+        })
+        
+        this.setState({
+            manager: user.result,
+            year: year
+        })
     }
 
     render() {
@@ -58,7 +61,7 @@ class ShareCarrot extends Component {
                             <tbody>
                                 <tr>
                                     <th>Year</th>
-                                    <td className="text-right">2022</td>
+                                    <td className="text-right">{this.state.year}</td>
                                 </tr>
                                 <tr>
                                     <th>Total Carrot</th>
@@ -90,7 +93,7 @@ class ShareCarrot extends Component {
                 </Row>
                 <Row>
                     <Col>
-                        {this.state.currentPage === 'staff' ? (<ShareCarrotStaff />) : (<ShareCarrotGroup />)}
+                        {this.state.currentPage === 'staff' ? (<ShareCarrotStaff updateBarn={() => this.fetchBarn()} />) : (<ShareCarrotGroup updateBarn={() => this.fetchBarn()} />)}
                     </Col>
                 </Row>
             </Container>

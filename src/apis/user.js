@@ -106,3 +106,14 @@ export async function addUser(data) {
     }).catch(e => {})
     return response
 }
+
+export async function totalSpentForBazaar(userId) {
+    return apiClient
+        .get(`/user/total_spent/${userId}`)
+        .then(res => {
+            if(res) {
+                return res.data.result.exchangedPoints
+            }
+        })
+        .catch(err => console.log(err))
+}

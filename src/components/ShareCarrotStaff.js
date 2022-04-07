@@ -1,7 +1,8 @@
 import { Component, useEffect, useState } from 'react'
-import { Container, Row, Col, Form, Table, Modal, Button, Pagination } from 'react-bootstrap'
+import { Container, Row, Col, Form, Table, Modal, Button, Alert } from 'react-bootstrap'
 import { getAllUsers } from '../apis/user'
 import { createNewTransaction, getTransactionsByManager } from '../apis/transaction'
+import { Pagination } from '@mui/material'
 
 function StaffListRow(props) {
     const { staffList } = props
@@ -21,6 +22,7 @@ export const btnRewardStyle = {
 
 function RewardCarrotModal(props) {
     const [staffList, setStaffList] = useState([])
+    const [shareCarrotMsg, setShareCarrotMsg] = useState('')
     
     useEffect(() => {
         getAllUsers().then(res => {
@@ -36,8 +38,10 @@ function RewardCarrotModal(props) {
             notes: e.target.note.value
         }
         createNewTransaction(data).then(res => {
+            setShareCarrotMsg(res)
             if (res === "Success") {
                 props.onHideModal(false)
+                props.updateBarn()
             }
         })
     }
@@ -45,10 +49,10 @@ function RewardCarrotModal(props) {
     return (
         <Modal show={props.showShareCarrotModal} backdrop="static" keyboard={false} centered>
             <Form onSubmit={handleRewardCarrotSubmit}>
-                <Modal.Header className="m-4">
+                <Modal.Header className="m-2">
                     <Modal.Title>REWARD CARROT</Modal.Title>
                 </Modal.Header>
-                <Modal.Body className="mx-4">
+                <Modal.Body className="mx-2">
                         <Form.Group className="pb-4">
                             <Form.Label htmlFor="#receiver">RECIPIENT</Form.Label>
                             <Form.Control as="select" name="receiver" id="receiver">
@@ -57,13 +61,14 @@ function RewardCarrotModal(props) {
                         </Form.Group>
                         <Form.Group className="pb-4">
                             <Form.Label htmlFor="#amount">CARROT AMOUNT</Form.Label>
-                            <Form.Control name="amount" id="amount" type="number" max="50" defaultValue="0" />
-                            <small>Maximum share carrot allowed is 50</small>
+                            <Form.Control name="amount" id="amount" type="number" min="1" defaultValue="0" />
                         </Form.Group>
                         <Form.Group className="pb-4">
                             <Form.Label htmlFor="#note">NOTE</Form.Label>
-                            <Form.Control as="textarea" rows="4" id="note" name="note"/>
+                            <Form.Control as="textarea" rows="4" id="note" name="note" required />
                         </Form.Group>
+                        {shareCarrotMsg.length > 0 && shareCarrotMsg !== 'Success' && (<Alert variant="danger">{shareCarrotMsg}</Alert>)}
+                        {shareCarrotMsg.length > 0 && shareCarrotMsg === 'Success' && (<Alert variant="success">{shareCarrotMsg}</Alert>)}
                 </Modal.Body>
                 <Modal.Footer>
                     <div className="float-right">
@@ -155,7 +160,7 @@ class ShareCarrotStaff extends Component {
                 <Row>
                     <Col md="12" className="my-2 text-center">
                         <Button onClick={() => this.handleShowShareCarrotModal(true)}>REWARD CARROT</Button>
-                        {this.state.showShareCarrotModal && <RewardCarrotModal showShareCarrotModal={true} onHideModal={this.handleShowShareCarrotModal} />}
+                        {this.state.showShareCarrotModal && <RewardCarrotModal showShareCarrotModal={true} onHideModal={this.handleShowShareCarrotModal} updateBarn={this.props.updateBarn} />}
                     </Col>
                 </Row>
                 <Row>
@@ -175,10 +180,8 @@ class ShareCarrotStaff extends Component {
                             </tbody>
                         </Table>
                     </Col>
-                    <Col md="12">
-                        <Pagination className="float-right">
-                            <this.PaginationItems />
-                        </Pagination>
+                    <Col md="12" className="mb-4">
+                        <Pagination className="float-right" count={this.state.transactionList.totalPages} page={this.state.transactionList.currentPage + 1} onChange={(e, page) => this.fetchTransaction(page - 1)} />
                     </Col>
                 </Row>
             </Container>
