@@ -27,14 +27,16 @@ class CarrotLayout extends React.Component {
 
         return (
             <div style={containerStyle}>
-                <MainNavbar />
-                <Container>
-                    <h2 style={titleStyle}>{this.props.title}</h2>
-                    <RoleNavbar role={this.props.role} />
-                    <div className='my-3' style={contentStyle}>
-                        <Outlet />
-                    </div> 
-                </Container>
+                <div style={{minHeight: '100vh'}}>
+                    <MainNavbar />
+                    <Container>
+                        <h2 style={titleStyle}>{this.props.title}</h2>
+                        <RoleNavbar role={this.props.role} />
+                        <div className='my-3' style={contentStyle}>
+                            <Outlet />
+                        </div> 
+                    </Container>
+                </div>
                 <footer className='text-center py-3'> 
                     <small>Mitrais FG 2022 Team 3</small>
                 </footer>  

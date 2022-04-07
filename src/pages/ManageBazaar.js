@@ -23,9 +23,12 @@ class ManageBazaar extends React.Component {
             formName: '',
             formDescription: '',
             formImage: '',
+            formImageValid: false,
             formCarrot: 0,
             formStock: 0,
             formExpiredDate: '',
+            formExpiredDateValid: false,
+            formValidated: false,
 
             editId: -1,
             deleteId: -1
@@ -47,68 +50,86 @@ class ManageBazaar extends React.Component {
             })
     }
 
-    handleSubmitForm = ()=> {
-        switch(this.state.formType) {
-            case 'addItem':
-                this.setState({formDisable: true})
-                addBazaarItem({
-                    name: this.state.formName,
-                    description: this.state.formDescription,
-                    stockAmount: this.state.formStock,
-                    exchangeRate: this.state.formCarrot,
-                    expireDate: this.state.formExpiredDate,
-                    image: this.state.formImage
-                })
-                .then(result=> {
-                    console.log(result)
-                    this.setState({
-                        modalShow: false,
-                        formDisable: false,
-                        formId: 0,
-                        formName: '',
-                        formDescription: '',
-                        formImage: '',
-                        formCarrot: 0,
-                        formStock: 0,
-                        formExpiredDate: ''
+    handleSubmitForm = (e)=> {
+        const form = e.currentTarget;
+        if (form.checkValidity() === false) {
+            e.preventDefault()
+            e.stopPropagation()
+            this.setState({formValidated: true})
+        } else if(this.state.formImage.substring(0,10) !== 'data:image'){
+            e.preventDefault()
+            alert('Please choose image file type')
+        } else {
+            e.preventDefault()
+            switch(this.state.formType) {
+                case 'addItem':
+                    this.setState({formDisable: true})
+                    addBazaarItem({
+                        name: this.state.formName,
+                        description: this.state.formDescription,
+                        stockAmount: this.state.formStock,
+                        exchangeRate: this.state.formCarrot,
+                        expireDate: this.state.formExpiredDate,
+                        image: this.state.formImage,
+                        userId: this.props.userId
                     })
-                    this.loadBazaarItem()
-                })
-                break;
-            case 'editItem':
-                this.setState({formDisable: true})
-                editBazaarItem({
-                    id: this.state.editId,
-                    name: this.state.formName,
-                    description: this.state.formDescription,
-                    stockAmount: this.state.formStock,
-                    exchangeRate: this.state.formCarrot,
-                    expireDate: this.state.formExpiredDate,
-                    image: this.state.formImage
-                })
-                .then(result=> {
-                    console.log(result)
-                    this.setState({
-                        modalShow: false,
-                        formDisable: false,
-                        formId: 0,
-                        formName: '',
-                        formDescription: '',
-                        formImage: '',
-                        formCarrot: 0,
-                        formStock: 0,
-                        formExpiredDate: ''
+                    .then(result=> {
+                        console.log(result)
+                        this.setState({
+                            modalShow: false,
+                            formDisable: false,
+                            formId: 0,
+                            formName: '',
+                            formDescription: '',
+                            formImage: '',
+                            formCarrot: 0,
+                            formStock: 0,
+                            formExpiredDate: '',
+                            formValidated: false
+                            
+                        })
+                        this.loadBazaarItem()
                     })
-                    this.loadBazaarItem()
-                })
-                break;
-            default:
-                break;
+                    break;
+                case 'editItem':
+                    this.setState({formDisable: true})
+                    editBazaarItem({
+                        id: this.state.editId,
+                        name: this.state.formName,
+                        description: this.state.formDescription,
+                        stockAmount: this.state.formStock,
+                        exchangeRate: this.state.formCarrot,
+                        expireDate: this.state.formExpiredDate,
+                        image: this.state.formImage,
+                        userId: this.props.userId
+                    })
+                    .then(result=> {
+                        console.log(result)
+                        this.setState({
+                            modalShow: false,
+                            formDisable: false,
+                            formId: 0,
+                            formName: '',
+                            formDescription: '',
+                            formImage: '',
+                            formCarrot: 0,
+                            formStock: 0,
+                            formExpiredDate: '',
+                            formValidated: false
+                        })
+                        this.loadBazaarItem()
+                    })
+                    break;
+                default:
+                    break;
+            }
         }
+        
+        
     }
 
     handleDeleteItem = ()=> {
-        deleteBazaarItem(this.state.deleteId)
+        deleteBazaarItem(this.state.deleteId, this.props.userId)
             .then(result=> {
                 this.setState({
                     modalShow: false,
@@ -250,9 +271,12 @@ class ManageBazaar extends React.Component {
             formName,
             formDescription,
             formImage,
+            formImageValid,
             formCarrot,
             formStock,
-            formExpiredDate
+            formExpiredDate,
+            formExpiredDateValid,
+            formValidated
         } = this.state
 
         let formImageComponent
@@ -266,38 +290,82 @@ class ManageBazaar extends React.Component {
         let modalBody
         switch(modalType) {
             case 'form':
-                modalBody = <Form>
+                modalBody = <Form noValidate validated={formValidated} onSubmit={this.handleSubmitForm}>
                     <Form.Group className="mb-3" >
                         <Form.Label>Name</Form.Label>
-                        <Form.Control type="text" name='formName' disabled={formDisable} value={formName} onChange={this.handleFormValueChange}/>
+                        <Form.Control 
+                            type="text" 
+                            name='formName' 
+                            disabled={formDisable} 
+                            value={formName} 
+                            onChange={this.handleFormValueChange}
+                            required
+                        />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>Description</Form.Label>
-                        <Form.Control as='textarea' rows={2} name='formDescription' disabled={formDisable} value={formDescription} onChange={this.handleFormValueChange}/>
+                        <Form.Control 
+                            as='textarea' 
+                            rows={2} 
+                            name='formDescription' 
+                            disabled={formDisable} 
+                            value={formDescription} 
+                            onChange={this.handleFormValueChange}
+                            required
+                        />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>Image</Form.Label>
                         <br />
                         {formImageComponent}
                         
-                        <Form.Control type='file' name='formImage' disabled={formDisable} onChange={this.handleFormValueChange}/>
+                        <Form.Control 
+                            type='file' 
+                            name='formImage' 
+                            disabled={formDisable} 
+                            onChange={this.handleFormValueChange}
+                            isInvalid={false}
+                            accept='image/png, image/jpeg'
+                            required
+                        />
                         <Form.Text className="text-muted">
                             Allowed extension: jpg/jpeg/png. Maximum size: 1000KB
                         </Form.Text>
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>Carrot</Form.Label>
-                        <Form.Control type="number" name='formCarrot' disabled={formDisable} value={formCarrot} onChange={this.handleFormValueChange}/>
+                        <Form.Control 
+                            type="number" 
+                            min={0} 
+                            name='formCarrot' 
+                            disabled={formDisable} 
+                            value={formCarrot? formCarrot : 0} 
+                            onChange={this.handleFormValueChange}
+                        />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>Stock</Form.Label>
-                        <Form.Control type="number" name='formStock' disabled={formDisable} value={formStock} onChange={this.handleFormValueChange}/>
+                        <Form.Control 
+                            type="number" 
+                            min={0} 
+                            name='formStock' 
+                            disabled={formDisable} 
+                            value={formStock? formStock : 0} 
+                            onChange={this.handleFormValueChange}
+                        />
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>Expired Date</Form.Label>
-                        <Form.Control type="datetime-local" name='formExpiredDate' disabled={formDisable} value={formExpiredDate} onChange={this.handleFormValueChange}/>
+                        <Form.Control 
+                            type="datetime-local" 
+                            name='formExpiredDate' 
+                            disabled={formDisable} 
+                            value={formExpiredDate} 
+                            onChange={this.handleFormValueChange}
+                            required
+                        />
                     </Form.Group>
-                    <Button variant="primary" className='float-right' disabled={formDisable} onClick={this.handleSubmitForm}>
+                    <Button variant="primary" type='submit' className='float-right' disabled={formDisable}>
                         Submit
                     </Button>
                 </Form>
@@ -401,7 +469,8 @@ class ManageBazaar extends React.Component {
 const mapStateToProps = (state)=> ({
     data: state.bazaarItemReducer.data,
     currentPage: state.bazaarItemReducer.currentPage,
-    totalPages: state.bazaarItemReducer.totalPages
+    totalPages: state.bazaarItemReducer.totalPages,
+    userId: state.authReducer.userData.id,
 })
 
 const mapDispatchToProps = (dispatch)=> ({
