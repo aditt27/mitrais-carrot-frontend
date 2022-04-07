@@ -217,7 +217,7 @@ class ShareCarrotGroup extends Component {
                         {this.state.showSendCarrotModal && (<this.SendCarrotModal />)}
                     </Col>
                     <Col md="12">
-                        <Pagination className="float-right" count={this.state.totalPages} page={this.state.currentPage + 1} onChange={(e, page) => this.fetchGroupList(page - 1)} />
+                        <Pagination color="primary" className="float-right mb-2" count={this.state.totalPages} page={this.state.currentPage + 1} onChange={(_, page) => this.fetchGroupList(page - 1)} />
                     </Col>
                 </Row>
             </Container>

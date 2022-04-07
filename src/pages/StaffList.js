@@ -1,8 +1,9 @@
 import { Component, useState } from 'react'
-import { Container, Col, Row, Table, Form, Pagination, Button, Modal, Alert } from 'react-bootstrap'
+import { Container, Col, Row, Table, Form, Button, Modal, Alert } from 'react-bootstrap'
 import { getUsersByFilter } from '../apis/user'
 import { btnRewardStyle } from './ShareCarrotStaff'
 import { addUser } from '../apis/user'
+import { Pagination } from '@mui/material'
 
 function AddStaffModal(props) {
     const [msg, setMsg] = useState('')
@@ -105,8 +106,6 @@ function AddStaffModal(props) {
 
 class StaffList extends Component {
 
-    endpoint = 'http://localhost:8081/api/v1/user'
-
     state = {
         staffList: [],
         currentPage: 0,
@@ -116,7 +115,7 @@ class StaffList extends Component {
     }
 
     componentDidMount() {
-        this.fetchStaff('default', 0)
+        this.fetchStaff()
     }
 
     fetchStaff(filter = 'default', page = 0) {
@@ -139,17 +138,6 @@ class StaffList extends Component {
                 </tr>
             )
         })
-    }
-
-    PaginationItems = () => {
-        const { totalPages, currentPage } = this.state
-        let paginationItems = []
-        for (let i = 1; i <= totalPages; i++) {
-            paginationItems.push(
-                <Pagination.Item key={i} active={i === currentPage + 1} activeLabel="" onClick={() => this.fetchStaff(this.state.currentFilter, i - 1)}>{i}</Pagination.Item>
-            )
-        }
-        return paginationItems
     }
 
     handleFilterChange = (e) => {
@@ -216,9 +204,7 @@ class StaffList extends Component {
                         </Table>
                     </Col>
                     <Col md="12">
-                        <Pagination className="float-right">
-                            <this.PaginationItems />
-                        </Pagination>
+                        <Pagination color="primary" className="float-right mb-2" count={this.state.totalPages} page={this.state.currentPage + 1} onChange={(_, page) => this.fetchStaff(page)} />
                     </Col>
                 </Row>
             </Container>

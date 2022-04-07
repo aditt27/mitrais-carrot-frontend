@@ -1,6 +1,7 @@
-import { Container, Row, Col, Form, Table, Pagination } from 'react-bootstrap';
+import { Container, Row, Col, Form, Table } from 'react-bootstrap';
 import { Component } from 'react';
 import apiClient from '../apis';
+import { Pagination } from '@mui/material'
 
 class StaffInGroup extends Component {
 
@@ -48,7 +49,8 @@ class StaffInGroup extends Component {
                             username: s.username,
                             name: s.name,
                             role: s.role,
-                            office: s.office
+                            office: s.office,
+                            jobFamily: s.jobFamily
                         })
                     )
                 }
@@ -65,7 +67,7 @@ class StaffInGroup extends Component {
         this.setState({staffList: staffList, currentPageStaff: currentPage, currentGroup: groupName})
     }
 
-    fetchStaff = (page) => {
+    fetchStaff = (page = 0) => {
         this.filterStaffByGroup(this.state.currentGroup, page).then(res => {
             const { currentPage, staffList, totalPages } = res
             this.setState({staffList: staffList, currentPageStaff: currentPage, totalPageStaff: totalPages})
@@ -86,21 +88,11 @@ class StaffInGroup extends Component {
                     <td>{staff.username}</td>
                     <td>{staff.name}</td>
                     <td>{staff.role}</td>
+                    <td>{staff.jobFamily}</td>
                     <td>{staff.office}</td>
                 </tr>
             )
         })
-    }
-
-    PaginationItems = () => {
-        const { totalPageStaff, currentPageStaff } = this.state
-        let paginationItems = []
-        for (let i = 1; i <= totalPageStaff; i++) {
-            paginationItems.push(
-                <Pagination.Item key={i} active={i === currentPageStaff + 1} activeLabel="" onClick={() => this.fetchStaff(i - 1)}>{i}</Pagination.Item>
-            )
-        }
-        return paginationItems
     }
 
     render() {
@@ -144,6 +136,7 @@ class StaffInGroup extends Component {
                                     <th>Username</th>
                                     <th>Name</th>
                                     <th>Role</th>
+                                    <th>JF</th>
                                     <th>Office</th>
                                 </tr>
                             </thead>
@@ -153,9 +146,7 @@ class StaffInGroup extends Component {
                         </Table>
                     </Col>
                     <Col md="12">
-                        <Pagination className="float-right">
-                            <this.PaginationItems />
-                        </Pagination>
+                        <Pagination color="primary" className="float-right mb-2" count={this.state.totalPageStaff} page={this.state.currentPageStaff + 1} onChange={(_, page) => this.fetchStaff(page - 1)} />
                     </Col>
                 </Row>
             </Container>

@@ -181,7 +181,7 @@ class ShareCarrotStaff extends Component {
                         </Table>
                     </Col>
                     <Col md="12" className="mb-4">
-                        <Pagination className="float-right" count={this.state.transactionList.totalPages} page={this.state.transactionList.currentPage + 1} onChange={(e, page) => this.fetchTransaction(page - 1)} />
+                        <Pagination color="primary" className="float-right" count={this.state.transactionList.totalPages} page={this.state.transactionList.currentPage + 1} onChange={(_, page) => this.fetchTransaction(page - 1)} />
                     </Col>
                 </Row>
             </Container>
