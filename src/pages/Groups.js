@@ -1,3 +1,4 @@
+import { Pagination } from "@mui/material";
 import axios from "axios";
 import React from "react"
 import { Card, Col, Row, Tab, Form, Table, Button, ButtonGroup, Modal } from "react-bootstrap";
@@ -23,7 +24,7 @@ export default class Groups extends React.Component {
             deleteId: -1,
             currentPage: 0,
             totalPages: 0,
-            validated: false
+            formValidated: false
         }
 
     }
@@ -33,7 +34,7 @@ export default class Groups extends React.Component {
             currentPage: 0,
             totalPages: 0
         }
-        await axios.get(`http://localhost:8081/api/v1/group/?page=${page}`).then(res => {
+        await axios.get(`http://localhost:8081/api/v1/group/?page=${page}&size=${size}`).then(res => {
             const data = res.data.result
             if (data.currentPageContent) {
                 let no = 1
@@ -59,6 +60,9 @@ export default class Groups extends React.Component {
         this.loadData()
 
     }
+    handlePagination = (e, page) => {
+        this.loadData(page-1)
+    }
 
     handleModalOpen = (e, groupId = undefined) => {
         switch (e.target.name) {
@@ -66,7 +70,11 @@ export default class Groups extends React.Component {
                 this.setState({
                     modalTitle: 'Add New Group',
                     modalType: 'form',
-                    formType: e.target.name
+                    formType: e.target.name,
+                    formName: '',
+                    formManager: '',
+                    formCarrot: 0,
+                    formNote: ''
                 })
                 break;
             case 'editGroup':
@@ -98,85 +106,85 @@ export default class Groups extends React.Component {
     handleModalClose = () => {
         this.setState({ modalShow: false })
     }
-    
+
 
     handleValueChange = (e) => {
-        if(e.target.name === 'formCarrot'){
-            if(e.target.value < 0) {
-                return (
-                    <Form.Text>Carrot can't be lower than zero</Form.Text>
-                )
-            }
-        }
         this.setState({ [e.target.name]: e.target.value })
     }
 
-    handleSubmit = () => {
-        console.log(this.state.formType)
-        switch (this.state.formType) {
-            case 'addGroup':
-                this.setState({formDisable: true})
-                addGroup({
-                    groupName: this.state.formName,
-                    managerId: this.state.formManager,
-                    notes: this.state.formNote,
-                    points: this.state.formCarrot
-                })
-                .then(res => {
-                    this.setState({
-                        modalShow: false,
-                        modalTitle: '',
-                        modalType: '',
-                        formType: '',
-                        formDisable: false,
-                        formName: '',
-                        formManager: '',
-                        formCarrot: 0,
-                        formNote: ''
+    handleSubmit = (event) => {
+        const form = event.currentTarget
+        if (form.checkValidity() === false) {
+            event.preventDefault()
+            event.stopPropagation()
+            this.setState({formValidated: true})
+        } else {
+            event.preventDefault()
+            switch (this.state.formType) {
+                case 'addGroup':
+                    this.setState({ formDisable: true })
+                    addGroup({
+                        groupName: this.state.formName,
+                        managerId: this.state.formManager,
+                        notes: this.state.formNote,
+                        points: this.state.formCarrot
                     })
-                    this.loadData(this.state.currentPage)
-                })
-                break;
-            case 'editGroup':
-                this.setState({formDisable: true})
-                editGroup({
-                    groupId: this.state.editId,
-                    groupName: this.state.formName,
-                    managerId: this.state.formManager,
-                    notes: this.state.formNote,
-                    points: this.state.formCarrot
-                })
-                .then(res => {
-                    this.setState({
-                        modalShow: false,
-                        modalTitle: '',
-                        modalType: '',
-                        formType: '',
-                        formDisable: false,
-                        formName: '',
-                        formManager: '',
-                        formCarrot: 0,
-                        formNote: '',
-                        editId: -1
+                        .then(res => {
+                            this.setState({
+                                modalShow: false,
+                                modalTitle: '',
+                                modalType: '',
+                                formType: '',
+                                formDisable: false,
+                                formName: '',
+                                formManager: '',
+                                formCarrot: 0,
+                                formNote: ''
+                            })
+                            this.loadData(this.state.currentPage)
+                        })
+                    break;
+                case 'editGroup':
+                    this.setState({ formDisable: true })
+                    editGroup({
+                        groupId: this.state.editId,
+                        groupName: this.state.formName,
+                        managerId: this.state.formManager,
+                        notes: this.state.formNote,
+                        points: this.state.formCarrot
                     })
-                    this.loadData(this.state.currentPage)
-                })
-                break;
-            default:
-                break;
+                        .then(res => {
+                            this.setState({
+                                modalShow: false,
+                                modalTitle: '',
+                                modalType: '',
+                                formType: '',
+                                formDisable: false,
+                                formName: '',
+                                formManager: '',
+                                formCarrot: 0,
+                                formNote: '',
+                                editId: -1
+                            })
+                            this.loadData(this.state.currentPage)
+                        })
+                    break;
+                default:
+                    break;
 
+            }
         }
     }
 
     handleDeleteGroup = () => {
         deleteGroup(this.state.deleteId)
-        .then(res => {
-            this.setState({
-                modalShow: false,
-                deleteId: -1
+            .then(res => {
+                this.setState({
+                    modalShow: false,
+                    deleteId: -1
+                })
+                this.loadData(this.state.currentPage)
             })
-            this.loadData(this.state.currentPage)
-        })
     }
 
     groupListRow() {
@@ -185,36 +193,36 @@ export default class Groups extends React.Component {
         return groupList.map((group, i) => {
             return (
                 <tr key={i}>
-                    <td>{group.number}</td>
+                    <td>{(this.state.currentPage * this.state.totalPages) + group.number}</td>
                     <td>{group.groupName}</td>
                     <td>{group.manager}</td>
                     <td>{group.points}</td>
                     <td>{group.notes}</td>
                     <td>
                         <ButtonGroup>
-                            {/* <Button onClick={() => alert(currentPath[1])}>Details</Button> */}
-                            <Button 
-                                as={Link} 
+                            <Button
+                                as={Link}
                                 to={`/${currentPath[1]}/groupDetails`}
-                                state={{id: group.groupId}}
-                                >
-                                    Details
+                                state={{ id: group.groupId }}
+                            >
+                                Details
                             </Button>
                             <Button style={{ backgroundColor: "orange" }} onClick={(e) => this.handleModalOpen(e, group.groupId)} name='editGroup'>Edit</Button>
-                            <Button onClick={(e)=>{this.handleModalOpen(e, group.groupId)}} name='deleteGroup' style={{ backgroundColor: "red" }}>Delete</Button>
+                            <Button onClick={(e) => { this.handleModalOpen(e, group.groupId) }} name='deleteGroup' style={{ backgroundColor: "red" }}>Delete</Button>
                         </ButtonGroup>
                     </td>
                 </tr>
             )
         })
     }
-    
+
     render() {
         const {
             modalShow,
             modalTitle,
             modalType,
             formDisable,
+            formValidated: formValidated,
             formName,
             formManager,
             formCarrot,
@@ -225,24 +233,46 @@ export default class Groups extends React.Component {
         switch (modalType) {
             case 'form':
                 modalBody = (
-                    <Form>
+                    <Form noValidate validated={formValidated} onSubmit={this.handleSubmit}>
                         <Form.Group className="mb-3">
                             <Form.Label>Name</Form.Label>
-                            <Form.Control type="text" name='formName' disabled={formDisable} value={formName} onChange={this.handleValueChange} />
+                            <Form.Control
+                                type="text"
+                                name='formName'
+                                required
+                                disabled={formDisable}
+                                value={formName}
+                                onChange={this.handleValueChange} />
+                            <Form.Control.Feedback type='invalid'>Enter a group name</Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Manager: </Form.Label>
-                            <Form.Control type="text" name='formManager' disabled={formDisable} value={formManager} onChange={this.handleValueChange} />
+                            <Form.Control
+                                required
+                                type="text"
+                                name='formManager'
+                                disabled={formDisable}
+                                value={formManager}
+                                onChange={this.handleValueChange} />
+                            <Form.Control.Feedback type='invalid'>Enter group manager</Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Carrot: </Form.Label>
-                            <Form.Control type="number" name='formCarrot' disabled={formDisable} value={formCarrot} onChange={this.handleValueChange} />
+                            <Form.Control type="number" name='formCarrot' min={0} disabled={formDisable} value={formCarrot} onChange={this.handleValueChange} />
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Notes: </Form.Label>
-                            <Form.Control as="textarea" rows={3} name='formNote' disabled={formDisable} value={formNote} onChange={this.handleValueChange} />
+                            <Form.Control
+                                required 
+                                as="textarea" 
+                                rows={3} 
+                                name='formNote' 
+                                disabled={formDisable} 
+                                value={formNote} 
+                                onChange={this.handleValueChange} />
+                            <Form.Control.Feedback type='invalid'>Enter group notes</Form.Control.Feedback>
                         </Form.Group>
-                        <Button variant="primary" className="float-right" disabled={formDisable} onClick={this.handleSubmit}>
+                        <Button variant="primary" type="submit" className="float-right" disabled={formDisable}>
                             Submit
                         </Button>
                     </Form>
@@ -303,6 +333,15 @@ export default class Groups extends React.Component {
                                     {this.groupListRow()}
                                 </tbody>
                             </Table>
+                        </Col>
+                        <Col className="float-right">
+                            <Pagination
+                                className="float-right"
+                                color='primary'
+                                count={this.state.totalPages}
+                                page={this.state.currentPage + 1}
+                                onChange={(e, page) => this.handlePagination(e, page)}
+                            />
                         </Col>
                     </Row>
                 </Card>
