@@ -23,11 +23,9 @@ class ManageBazaar extends React.Component {
             formName: '',
             formDescription: '',
             formImage: '',
-            formImageValid: false,
             formCarrot: 0,
             formStock: 0,
             formExpiredDate: '',
-            formExpiredDateValid: false,
             formValidated: false,
 
             editId: -1,
@@ -271,11 +269,9 @@ class ManageBazaar extends React.Component {
             formName,
             formDescription,
             formImage,
-            formImageValid,
             formCarrot,
             formStock,
             formExpiredDate,
-            formExpiredDateValid,
             formValidated
         } = this.state
 
