@@ -11,6 +11,7 @@ function AddStaffModal(props) {
 
     function handleAddStaffSubmit(e) {
         setLoading(true)
+        setMsg('')
         e.preventDefault()
         const data = {
             "username": e.target.username.value,
@@ -29,7 +30,7 @@ function AddStaffModal(props) {
                 setLoading(false)                
                 props.onClose(false)
             }
-        })
+        }).finally(() => setLoading(false))
     }
     
     return (
@@ -95,7 +96,7 @@ function AddStaffModal(props) {
                             <Form.Label htmlFor="#dob" required>Date of Birth</Form.Label>
                             <Form.Control id="dob" type="date" />
                         </Form.Group>
-                        {isLoading && <Spinner animation="border" />}
+                        {isLoading && <div className="text-center"><Spinner variant="primary" animation="border" /></div>}
                         {msg.length > 0 && <Alert variant={msg === 'Success' ? 'success' : 'danger'}>{msg}</Alert>}
                     </Modal.Body>
                     <Modal.Footer>
@@ -169,56 +170,58 @@ class StaffList extends Component {
 
     render() {
         return (
-            <Container className="px-4" style={this.state.isLoading ? loadingStyle : {}}>
-                <Row>
-                    <Col md={12} className="align-self-start my-2">
-                        <hr style={{
-                            width: "2em",
-                            backgroundColor: "orange",
-                            height: "0.2em"
-                        }} align="left"/>
-                        <h4 className="box-title">STAFF LIST</h4>
-                    </Col>
-                    <Col md={12} className="align-self-start my-2">
-                        <Button onClick={this.handleAddStaffBtn}>ADD STAFF</Button>
-                        <AddStaffModal showModal={this.state.isShowModal} onClose={this.onModalClose} />
-                    </Col>
-                    <Col md="12" className="my-2">
-                        <Form.Group className="float-right">
-                            <Form.Label htmlFor="#staff-filter">FILTER</Form.Label>
-                            <Form.Control id="staff-filter" as="select" defaultValue="default" className="mx-auto" onChange={this.handleFilterChange}>
-                                <option value="default">Default</option>
-                                <option value="carrot">Carrot</option>
-                                <option value="most_spent">Most Spent Carrot</option>
-                                <option value="most_earn_month">Most Earn Carrot In Month</option>
-                                <option value="most_earn_year">Most Earn Carrot In Year</option>
-                            </Form.Control>
-                        </Form.Group>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col md="12" className="my-2">
-                        <Table striped bordered hover >
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Username</th>
-                                    <th>Name</th>
-                                    <th>Role</th>
-                                    <th>Carrot</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <this.StaffListRow />
-                            </tbody>
-                        </Table>
-                    </Col>
-                    <Col md="12">
-                        <Pagination color="primary" className="float-right mb-2" count={this.state.totalPages} page={this.state.currentPage + 1} onChange={(_, page) => this.fetchStaff(this.state.currentFilter, page - 1)} />
-                    </Col>
-                </Row>
-                {this.state.isLoading && (<div style={{position: "absolute", right: "50vw", top: "50vh"}}><Spinner animation="border" variant="primary" /></div>)}
-            </Container>
+            <>
+                {this.state.isLoading && (<div style={{position: "fixed", left: "50%", top: "50%", zIndex: "9999"}}><Spinner animation="border" variant="primary" /></div>)}
+                <Container className="px-4" style={this.state.isLoading ? loadingStyle : {}}>
+                    <Row>
+                        <Col md={12} className="align-self-start my-2">
+                            <hr style={{
+                                width: "2em",
+                                backgroundColor: "orange",
+                                height: "0.2em"
+                            }} align="left"/>
+                            <h4 className="box-title">STAFF LIST</h4>
+                        </Col>
+                        <Col md={12} className="align-self-start my-2">
+                            <Button onClick={this.handleAddStaffBtn}>ADD STAFF</Button>
+                            <AddStaffModal showModal={this.state.isShowModal} onClose={this.onModalClose} />
+                        </Col>
+                        <Col md="12" className="my-2">
+                            <Form.Group className="float-right">
+                                <Form.Label htmlFor="#staff-filter">FILTER</Form.Label>
+                                <Form.Control id="staff-filter" as="select" defaultValue="default" className="mx-auto" onChange={this.handleFilterChange}>
+                                    <option value="default">Default</option>
+                                    <option value="carrot">Carrot</option>
+                                    <option value="most_spent">Most Spent Carrot</option>
+                                    <option value="most_earn_month">Most Earn Carrot In Month</option>
+                                    <option value="most_earn_year">Most Earn Carrot In Year</option>
+                                </Form.Control>
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col md="12" className="my-2">
+                            <Table striped bordered hover >
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Username</th>
+                                        <th>Name</th>
+                                        <th>Role</th>
+                                        <th>Carrot</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <this.StaffListRow />
+                                </tbody>
+                            </Table>
+                        </Col>
+                        <Col md="12">
+                            <Pagination color="primary" className="float-right mb-2" count={this.state.totalPages} page={this.state.currentPage + 1} onChange={(_, page) => this.fetchStaff(this.state.currentFilter, page - 1)} />
+                        </Col>
+                    </Row>
+                </Container>
+            </>
         )
     }
 }

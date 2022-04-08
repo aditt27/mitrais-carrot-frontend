@@ -1,5 +1,5 @@
 import { Component, useEffect, useState } from 'react'
-import { Container, Row, Col, Form, Table, Modal, Button, Alert } from 'react-bootstrap'
+import { Container, Row, Col, Form, Table, Modal, Button, Alert, Spinner } from 'react-bootstrap'
 import { getAllUsers } from '../apis/user'
 import { createNewTransaction, getTransactionsByManager } from '../apis/transaction'
 import { Pagination } from '@mui/material'
@@ -23,14 +23,17 @@ export const btnRewardStyle = {
 function RewardCarrotModal(props) {
     const [staffList, setStaffList] = useState([])
     const [shareCarrotMsg, setShareCarrotMsg] = useState('')
+    const [isLoading, setLoading] = useState(true)
     
     useEffect(() => {
         getAllUsers().then(res => {
             setStaffList(res)
-        })
+        }).then(() => setLoading(false))
     }, [])
 
     function handleRewardCarrotSubmit(e) {
+        setLoading(true)
+        setShareCarrotMsg('')
         e.preventDefault()
         const data = {
             receiverId: e.target.receiver.value,
@@ -43,7 +46,7 @@ function RewardCarrotModal(props) {
                 props.onHideModal(false)
                 props.updateBarn()
             }
-        })
+        }).finally(() => setLoading(false))
     }
 
     return (
@@ -53,22 +56,23 @@ function RewardCarrotModal(props) {
                     <Modal.Title>REWARD CARROT</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="mx-2">
-                        <Form.Group className="pb-4">
-                            <Form.Label htmlFor="#receiver">RECIPIENT</Form.Label>
-                            <Form.Control as="select" name="receiver" id="receiver">
-                                <StaffListRow staffList={staffList} />
-                            </Form.Control>
-                        </Form.Group>
-                        <Form.Group className="pb-4">
-                            <Form.Label htmlFor="#amount">CARROT AMOUNT</Form.Label>
-                            <Form.Control name="amount" id="amount" type="number" min="1" defaultValue="0" />
-                        </Form.Group>
-                        <Form.Group className="pb-4">
-                            <Form.Label htmlFor="#note">NOTE</Form.Label>
-                            <Form.Control as="textarea" rows="4" id="note" name="note" required />
-                        </Form.Group>
-                        {shareCarrotMsg.length > 0 && shareCarrotMsg !== 'Success' && (<Alert variant="danger">{shareCarrotMsg}</Alert>)}
-                        {shareCarrotMsg.length > 0 && shareCarrotMsg === 'Success' && (<Alert variant="success">{shareCarrotMsg}</Alert>)}
+                    <Form.Group className="pb-4">
+                        <Form.Label htmlFor="#receiver">RECIPIENT</Form.Label>
+                        <Form.Control as="select" name="receiver" id="receiver" disabled={isLoading}>
+                            <StaffListRow staffList={staffList} />
+                        </Form.Control>
+                    </Form.Group>
+                    <Form.Group className="pb-4">
+                        <Form.Label htmlFor="#amount">CARROT AMOUNT</Form.Label>
+                        <Form.Control name="amount" id="amount" type="number" min="1" defaultValue="0" disabled={isLoading} />
+                    </Form.Group>
+                    <Form.Group className="pb-4">
+                        <Form.Label htmlFor="#note">NOTE</Form.Label>
+                        <Form.Control as="textarea" rows="4" id="note" name="note" required disabled={isLoading} />
+                    </Form.Group>
+                    {isLoading && <div className="text-center"><Spinner variant="primary" animation="border" /></div>}
+                    {shareCarrotMsg.length > 0 && shareCarrotMsg !== 'Success' && (<Alert variant="danger">{shareCarrotMsg}</Alert>)}
+                    {shareCarrotMsg.length > 0 && shareCarrotMsg === 'Success' && (<Alert variant="success">{shareCarrotMsg}</Alert>)}
                 </Modal.Body>
                 <Modal.Footer>
                     <div className="float-right">
@@ -92,14 +96,7 @@ class ShareCarrotStaff extends Component {
     }
 
     async componentDidMount() {
-        const { transactions, page, totalPages } = await getTransactionsByManager(0)
-        this.setState({
-            transactionList: {
-                transactions: transactions,
-                currentPage: page,
-                totalPages: totalPages
-            }
-        })
+        this.fetchTransaction(0)
     }
 
 
@@ -131,6 +128,7 @@ class ShareCarrotStaff extends Component {
     }
 
     fetchTransaction = (page) => {
+        this.props.onLoading(true)
         getTransactionsByManager(page).then(res => {
             const { transactions, page, totalPages } = res
             this.setState({
@@ -140,18 +138,7 @@ class ShareCarrotStaff extends Component {
                     totalPages: totalPages
                 }
             })
-        })
-    }
-
-    PaginationItems = () => {
-        const { totalPages, currentPage } = this.state.transactionList
-        let paginationItems = []
-        for (let i = 1; i <= totalPages; i++) {
-            paginationItems.push(
-                <Pagination.Item key={i} active={i === currentPage + 1} activeLabel="" onClick={() => this.fetchTransaction(i - 1)}>{i}</Pagination.Item>
-            )
-        }
-        return paginationItems
+        }).finally(() => this.props.onLoading(false))
     }
 
     render() {
@@ -160,7 +147,7 @@ class ShareCarrotStaff extends Component {
                 <Row>
                     <Col md="12" className="my-2 text-center">
                         <Button onClick={() => this.handleShowShareCarrotModal(true)}>REWARD CARROT</Button>
-                        {this.state.showShareCarrotModal && <RewardCarrotModal showShareCarrotModal={true} onHideModal={this.handleShowShareCarrotModal} updateBarn={this.props.updateBarn} />}
+                        {this.state.showShareCarrotModal && <RewardCarrotModal showShareCarrotModal={true} onHideModal={this.handleShowShareCarrotModal} updateBarn={this.props.updateBarn} onLoading={this.props.onLoading} />}
                     </Col>
                 </Row>
                 <Row>

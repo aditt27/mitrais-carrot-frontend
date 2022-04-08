@@ -98,60 +98,62 @@ class StaffInGroup extends Component {
 
     render() {
         return (
-            <Container className="px-4" style={this.state.isLoading ? loadingStyle : {}}>
-                <Row>
-                    <Col md={12} className="align-self-start my-2">
-                        <hr style={{
-                            width: "2em",
-                            backgroundColor: "orange",
-                            height: "0.2em"
-                        }} align="left"/>
-                        <h4 className="box-title">STAFF IN GROUP LIST</h4>
-                    </Col>
-                    <Col md="12" className="my-2">
-                        <Form.Group className="float-right">
-                            <Form.Label htmlFor="#group-filter">STAFF GROUP</Form.Label>
-                            <Form.Control id="group-filter" as="select" defaultValue="no_group" className="mx-auto" onChange={this.handleGroupSelect}>
-                                <option value="no_group">No Group</option>
-                                <this.GroupListOptions />
-                            </Form.Control>
-                        </Form.Group>
-                    </Col>
-                </Row>
-                {/* <Row>
-                    <Col md="12" className="my-2">
-                    <Form>
-                        <Form.Group className="float-right form-inline">
-                            <Form.Label>SEARCH: &nbsp;</Form.Label>
-                                <Form.Control type="text" className="w-auto" />
+            <>
+                {this.state.isLoading && (<div style={{position: "fixed", left: "50%", top: "50%", zIndex: "9999"}}><Spinner animation="border" variant="primary" /></div>)}
+                <Container className="px-4" style={this.state.isLoading ? loadingStyle : {}}>
+                    <Row>
+                        <Col md={12} className="align-self-start my-2">
+                            <hr style={{
+                                width: "2em",
+                                backgroundColor: "orange",
+                                height: "0.2em"
+                            }} align="left"/>
+                            <h4 className="box-title">STAFF IN GROUP LIST</h4>
+                        </Col>
+                        <Col md="12" className="my-2">
+                            <Form.Group className="float-right">
+                                <Form.Label htmlFor="#group-filter">STAFF GROUP</Form.Label>
+                                <Form.Control id="group-filter" as="select" defaultValue="no_group" className="mx-auto" onChange={this.handleGroupSelect}>
+                                    <option value="no_group">No Group</option>
+                                    <this.GroupListOptions />
+                                </Form.Control>
                             </Form.Group>
-                        </Form>
-                    </Col>
-                </Row> */}
-                <Row>
-                    <Col md="12" className="my-2">
-                        <Table striped bordered hover>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Username</th>
-                                    <th>Name</th>
-                                    <th>Role</th>
-                                    <th>JF</th>
-                                    <th>Office</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <this.StaffListRow />
-                            </tbody>
-                        </Table>
-                    </Col>
-                    <Col md="12">
-                        <Pagination color="primary" className="float-right mb-2" count={this.state.totalPageStaff} page={this.state.currentPageStaff + 1} onChange={(_, page) => this.fetchStaff(page - 1)} />
-                    </Col>
-                </Row>
-                {this.state.isLoading && (<div style={{position: "absolute", right: "50vw", top: "50vh"}}><Spinner animation="border" variant="primary" /></div>)}
-            </Container>
+                        </Col>
+                    </Row>
+                    {/* <Row>
+                        <Col md="12" className="my-2">
+                        <Form>
+                            <Form.Group className="float-right form-inline">
+                                <Form.Label>SEARCH: &nbsp;</Form.Label>
+                                    <Form.Control type="text" className="w-auto" />
+                                </Form.Group>
+                            </Form>
+                        </Col>
+                    </Row> */}
+                    <Row>
+                        <Col md="12" className="my-2">
+                            <Table striped bordered hover>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Username</th>
+                                        <th>Name</th>
+                                        <th>Role</th>
+                                        <th>JF</th>
+                                        <th>Office</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <this.StaffListRow />
+                                </tbody>
+                            </Table>
+                        </Col>
+                        <Col md="12">
+                            <Pagination color="primary" className="float-right mb-2" count={this.state.totalPageStaff} page={this.state.currentPageStaff + 1} onChange={(_, page) => this.fetchStaff(page - 1)} />
+                        </Col>
+                    </Row>
+                </Container>
+            </>
         )
     }
 }
