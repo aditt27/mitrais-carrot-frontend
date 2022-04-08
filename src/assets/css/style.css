@@ -39,3 +39,8 @@
   font-size: 25px;
   color: #888;
 }
+
+.dropdown-menu {
+  right: 0 !important;
+  left: auto !important;
+}
