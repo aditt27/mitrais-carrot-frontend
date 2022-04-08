@@ -3,8 +3,8 @@ import axios from "axios";
 import React from "react"
 import { Card, Col, Row, Tab, Form, Table, Button, ButtonGroup, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import apiClient from "../apis";
 import { addGroup, deleteGroup, editGroup } from "../apis/group";
-import GroupForm from "../components/EditGroupForm";
 
 export default class Groups extends React.Component {
     constructor() {
@@ -34,7 +34,7 @@ export default class Groups extends React.Component {
             currentPage: 0,
             totalPages: 0
         }
-        await axios.get(`http://localhost:8081/api/v1/group/?page=${page}&size=${size}`).then(res => {
+        await apiClient.get(`/group/?page=${page}&size=${size}`).then(res => {
             const data = res.data.result
             if (data.currentPageContent) {
                 let no = 1

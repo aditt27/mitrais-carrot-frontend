@@ -1,9 +1,10 @@
 import axios from "axios";
+import apiClient from ".";
 
-const baseURL = 'http://localhost:8081/api/v1/barn'
+// const baseURL = 'http://localhost:8081/api/v1/barn'
 
 export async function addBarn(params) {
-    return axios.post(baseURL, {
+    return apiClient.post('/barn', {
         year: params.year,
         totalCarrot: params.totalCarrot,
         shareExpireDate: params.shareExpireDate,
@@ -20,7 +21,7 @@ export async function addBarn(params) {
 }
 
 export async function addMoreCarrot(params) {
-    return axios.put(`${baseURL}/add-carrot/${params.barnId}`, {
+    return apiClient.put(`/barn/add-carrot/${params.barnId}`, {
         toAdd: params.toAdd
     })
     .then((response => {
@@ -32,7 +33,7 @@ export async function addMoreCarrot(params) {
 }
 
 export async function extendExpiryDate(params) {
-    return axios.put(`${baseURL}/exp-date/${params.barnId}`, {
+    return apiClient.put(`/barn/exp-date/${params.barnId}`, {
         newShareExpireDate: params.shareExpireDate,
         newExchangeExpireDate: params.exchangeExpireDate
     })

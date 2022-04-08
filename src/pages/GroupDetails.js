@@ -91,7 +91,7 @@ const GroupDetails = (props) => {
             staffList: []
         }
 
-        axios.get(`http://localhost:8081/api/v1/group/${groupId}`).then(res => {
+        apiClient.get(`/group/${groupId}`).then(res => {
             const data = res.data.result
             // console.log(data)
             setGroupInfo({

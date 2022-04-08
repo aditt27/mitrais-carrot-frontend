@@ -1,9 +1,10 @@
 import axios from "axios";
+import apiClient from ".";
 
-const baseURL = 'http://localhost:8081/api/v1/group'
+// const baseURL = 'http://localhost:8081/api/v1/group'
 
 export async function addGroup(params) {
-    return axios.post(baseURL, {
+    return apiClient.post('/group', {
         groupName: params.groupName,
         managerId: params.managerId,
         notes: params.notes,
@@ -18,7 +19,7 @@ export async function addGroup(params) {
 }
 
 export async function editGroup(params) {
-    return axios.put(`${baseURL}/${params.groupId}`, {
+    return apiClient.put(`/group/${params.groupId}`, {
         groupName: params.groupName,
         managerId: params.managerId,
         notes: params.notes,
@@ -33,7 +34,7 @@ export async function editGroup(params) {
 }
 
 export async function deleteGroup(deleteId) {
-    return axios.delete(`${baseURL}/${deleteId}`)
+    return apiClient.delete(`/group/${deleteId}`)
     .then((response => {
         if(response) {
             return response.data
@@ -44,7 +45,7 @@ export async function deleteGroup(deleteId) {
 
 export async function addToGroup(params) {
     console.log(params.userIds)
-    return axios.post(`${baseURL}/${params.groupId}/add-user`, {
+    return apiClient.post(`/group/${params.groupId}/add-user`, {
         userIds: params.userIds
     })
     .then((response => {
@@ -57,7 +58,7 @@ export async function addToGroup(params) {
 
 export async function removeFromGroup(params) {
     console.log(params.userIds)
-    return axios.delete(`${baseURL}/${params.groupId}/remove-user`, {
+    return apiClient.delete(`/group/${params.groupId}/remove-user`, {
         data: {userIds: params.userIds}
     })
     .then((response => {

@@ -4,6 +4,7 @@ import { Pagination } from "@mui/material";
 import { Card, Col, Row, Tab, Form, Table, Button, Modal } from "react-bootstrap";
 import { addBarn, addMoreCarrot, extendExpiryDate } from "../apis/barn";
 import { connect } from "react-redux";
+import apiClient from "../apis";
 
 class Harvest extends React.Component {
     constructor(props) {
@@ -181,7 +182,7 @@ class Harvest extends React.Component {
             currentPage: 0,
             totalPages: 0
         }
-        await axios.get(`http://localhost:8081/api/v1/barn/?page=${page}&size=${size}`).then(res => {
+        await apiClient.get(`/barn/?page=${page}&size=${size}`).then(res => {
             const data = res.data.result
             if (data.currentPageContent) {
                 let no = 1
@@ -209,6 +210,7 @@ class Harvest extends React.Component {
     }
 
     handlePagination = (e, page) => {
+        console.log(this.state.totalPages)
         this.loadData(page - 1)
     }
 
