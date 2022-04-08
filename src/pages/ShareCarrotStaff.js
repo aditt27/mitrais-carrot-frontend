@@ -3,6 +3,7 @@ import { Container, Row, Col, Form, Table, Modal, Button, Alert, Spinner } from 
 import { getAllUsers } from '../apis/user'
 import { createNewTransaction, getTransactionsByManager } from '../apis/transaction'
 import { Pagination } from '@mui/material'
+import { getTableStartIndexByTen } from '../utils/HelperFunctions'
 
 function StaffListRow(props) {
     const { staffList } = props
@@ -92,7 +93,8 @@ class ShareCarrotStaff extends Component {
             transactions: [],
             currentPage: 0,
             totalPages: 0
-        }
+        },
+        startNumber: 0
     }
 
     async componentDidMount() {
@@ -113,11 +115,13 @@ class ShareCarrotStaff extends Component {
     }
 
     TransactionListRow = () => {
-        const { transactions } = this.state.transactionList
+        const { transactions, currentPage } = this.state.transactionList
+        let index = getTableStartIndexByTen(currentPage + 1)
+
         return transactions.map((tr, i) => {
             return (
                 <tr key={i}>
-                    <td>{tr.no}</td>
+                    <td>{index++}</td>
                     <td>{tr.rewardedTo}</td>
                     <td>{tr.carrot}</td>
                     <td>{tr.note}</td>

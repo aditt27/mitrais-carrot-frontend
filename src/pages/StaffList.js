@@ -4,6 +4,7 @@ import { getUsersByFilter } from '../apis/user'
 import { btnRewardStyle } from './ShareCarrotStaff'
 import { addUser } from '../apis/user'
 import { Pagination } from '@mui/material'
+import { getTableStartIndexByTen } from '../utils/HelperFunctions'
 
 function AddStaffModal(props) {
     const [msg, setMsg] = useState('')
@@ -137,11 +138,13 @@ class StaffList extends Component {
     }
 
     StaffListRow = () => {
-        const { staffList } = this.state
+        const { staffList, currentPage } = this.state
+        let index = getTableStartIndexByTen(currentPage + 1)
+
         return staffList.map((staff, i) => {
             return (
                 <tr key={i}>
-                    <td>{staff.no}</td>
+                    <td>{index++}</td>
                     <td>{staff.username}</td>
                     <td>{staff.name}</td>
                     <td>{staff.role}</td>

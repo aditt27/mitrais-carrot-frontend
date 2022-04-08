@@ -3,6 +3,7 @@ import { Component } from 'react';
 import apiClient from '../apis';
 import { Pagination } from '@mui/material'
 import { loadingStyle } from './StaffList';
+import { getTableStartIndexByTen } from '../utils/HelperFunctions';
 
 class StaffInGroup extends Component {
 
@@ -81,11 +82,13 @@ class StaffInGroup extends Component {
     }
 
     StaffListRow = () => {
-        const { staffList } = this.state
+        const { staffList, currentPageStaff } = this.state
+        let index = getTableStartIndexByTen(currentPageStaff + 1)
+
         return staffList.map((staff, i) => {
             return (
                 <tr key={i}>
-                    <td>{staff.no}</td>
+                    <td>{index++}</td>
                     <td>{staff.username}</td>
                     <td>{staff.name}</td>
                     <td>{staff.role}</td>

@@ -7,6 +7,7 @@ import store from '../stores'
 import { btnRewardStyle } from './ShareCarrotStaff'
 import { Pagination } from '@mui/material'
 import apiClient from '../apis'
+import { getTableStartIndexByTen } from '../utils/HelperFunctions'
 
 function SendCarrotModal(props) {
     const group = props.group
@@ -105,11 +106,13 @@ class ShareCarrotGroup extends Component {
     }
 
     GroupListRow = () => {
-        const { groupList } = this.state
+        const { groupList, currentPage } = this.state
+        let index = getTableStartIndexByTen(currentPage + 1)
+
         return groupList.map((group, i) => {
             return (
                 <tr key={i}>
-                    <td>{i + 1}</td>
+                    <td>{index++}</td>
                     <td>{group.groupName}</td>
                     <td>{Math.floor(group.points / group.users.length)}</td>
                     <td>{group.users.length}</td>
