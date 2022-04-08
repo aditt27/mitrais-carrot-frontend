@@ -1,22 +1,22 @@
-import { Container, Row, Col, Form, Table } from 'react-bootstrap';
+import { Container, Row, Col, Form, Table, Spinner } from 'react-bootstrap';
 import { Component } from 'react';
 import apiClient from '../apis';
 import { Pagination } from '@mui/material'
+import { loadingStyle } from './StaffList';
 
 class StaffInGroup extends Component {
 
-    constructor() {
-        super()
-        this.state = {
-            groupList: [],
-            staffList: [],
-            currentPageStaff: 0,
-            totalPageStaff: 0,
-            currentGroup: 'no_group'
-        }
+    state = {
+        groupList: [],
+        staffList: [],
+        currentPageStaff: 0,
+        totalPageStaff: 0,
+        currentGroup: 'no_group',
+        isLoading: false
     }
     
     async componentDidMount() {
+        this.setState({isLoading: true})
         let groups = []
         await apiClient.get("/group").then(res => {
             const data = res.data.result.currentPageContent
@@ -27,10 +27,11 @@ class StaffInGroup extends Component {
 
         const { staffList, totalPages } = await this.filterStaffByGroup()
 
-        this.setState({groupList: groups, staffList:  staffList, totalPageStaff: totalPages})
+        this.setState({groupList: groups, staffList:  staffList, totalPageStaff: totalPages, isLoading: false})
     }
 
     async filterStaffByGroup(groupName = "no_group", page = 0) {
+        this.setState({isLoading: true})
         let result = {
             staffList: [],
             currentPage: 0
@@ -57,7 +58,7 @@ class StaffInGroup extends Component {
                 result.currentPage = data.currentPage
                 result.totalPages = data.totalPages
             }
-        }).catch(e => {})
+        }).catch(e => {}).finally(() => this.setState({isLoading: false}))
         return result
     }
 
@@ -97,7 +98,7 @@ class StaffInGroup extends Component {
 
     render() {
         return (
-            <Container className="px-4">
+            <Container className="px-4" style={this.state.isLoading ? loadingStyle : {}}>
                 <Row>
                     <Col md={12} className="align-self-start my-2">
                         <hr style={{
@@ -149,6 +150,7 @@ class StaffInGroup extends Component {
                         <Pagination color="primary" className="float-right mb-2" count={this.state.totalPageStaff} page={this.state.currentPageStaff + 1} onChange={(_, page) => this.fetchStaff(page - 1)} />
                     </Col>
                 </Row>
+                {this.state.isLoading && (<div style={{position: "absolute", right: "50vw", top: "50vh"}}><Spinner animation="border" variant="primary" /></div>)}
             </Container>
         )
     }

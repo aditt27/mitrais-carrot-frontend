@@ -1,5 +1,5 @@
 import { Component, useState } from 'react'
-import { Container, Col, Row, Table, Form, Button, Modal, Alert } from 'react-bootstrap'
+import { Container, Col, Row, Table, Form, Button, Modal, Alert, Spinner } from 'react-bootstrap'
 import { getUsersByFilter } from '../apis/user'
 import { btnRewardStyle } from './ShareCarrotStaff'
 import { addUser } from '../apis/user'
@@ -7,8 +7,10 @@ import { Pagination } from '@mui/material'
 
 function AddStaffModal(props) {
     const [msg, setMsg] = useState('')
+    const [isLoading, setLoading] = useState(false)
 
     function handleAddStaffSubmit(e) {
+        setLoading(true)
         e.preventDefault()
         const data = {
             "username": e.target.username.value,
@@ -23,7 +25,8 @@ function AddStaffModal(props) {
         }
         addUser(data).then(res => {
             setMsg(res)
-            if (res === 'Success') {                
+            if (res === 'Success') {
+                setLoading(false)                
                 props.onClose(false)
             }
         })
@@ -37,7 +40,6 @@ function AddStaffModal(props) {
                         <h4>ADD STAFF</h4>
                     </Modal.Header>
                     <Modal.Body>
-                        {msg.length > 0 && <Alert variant={msg === 'Success' ? 'success' : 'danger'}>{msg}</Alert>}
                         <Form.Group className="my-2">
                             <Form.Label htmlFor="#username">Username</Form.Label>
                             <Form.Control id="username" type="text" required />
@@ -93,6 +95,8 @@ function AddStaffModal(props) {
                             <Form.Label htmlFor="#dob" required>Date of Birth</Form.Label>
                             <Form.Control id="dob" type="date" />
                         </Form.Group>
+                        {isLoading && <Spinner animation="border" />}
+                        {msg.length > 0 && <Alert variant={msg === 'Success' ? 'success' : 'danger'}>{msg}</Alert>}
                     </Modal.Body>
                     <Modal.Footer>
                             <Button variant="link" className="m-2" onClick={() => props.onClose(true)}>CANCEL</Button>
@@ -104,6 +108,10 @@ function AddStaffModal(props) {
     )
 }
 
+export const loadingStyle = {
+    pointerEvents: "none",
+    opacity: "0.5"
+}
 class StaffList extends Component {
 
     state = {
@@ -111,7 +119,8 @@ class StaffList extends Component {
         currentPage: 0,
         totalPages: 0,
         currentFilter: 'default',
-        isShowModal: false
+        isShowModal: false,
+        isLoading: false
     }
 
     componentDidMount() {
@@ -119,9 +128,10 @@ class StaffList extends Component {
     }
 
     fetchStaff(filter = 'default', page = 0) {
+        this.setState({isLoading: true})
         getUsersByFilter(filter, page).then(res => {
             const { page, staffList, totalPages } = res
-            this.setState({staffList: staffList, currentPage: page, totalPages: totalPages, currentFilter: filter, isShowModal: false})
+            this.setState({staffList: staffList, currentPage: page, totalPages: totalPages, currentFilter: filter, isShowModal: false, isLoading: false})
         }).catch(e => {})
     }
 
@@ -159,7 +169,7 @@ class StaffList extends Component {
 
     render() {
         return (
-            <Container className="px-4">
+            <Container className="px-4" style={this.state.isLoading ? loadingStyle : {}}>
                 <Row>
                     <Col md={12} className="align-self-start my-2">
                         <hr style={{
@@ -188,7 +198,7 @@ class StaffList extends Component {
                 </Row>
                 <Row>
                     <Col md="12" className="my-2">
-                        <Table striped bordered hover>
+                        <Table striped bordered hover >
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -204,9 +214,10 @@ class StaffList extends Component {
                         </Table>
                     </Col>
                     <Col md="12">
-                        <Pagination color="primary" className="float-right mb-2" count={this.state.totalPages} page={this.state.currentPage + 1} onChange={(_, page) => this.fetchStaff(page)} />
+                        <Pagination color="primary" className="float-right mb-2" count={this.state.totalPages} page={this.state.currentPage + 1} onChange={(_, page) => this.fetchStaff(this.state.currentFilter, page - 1)} />
                     </Col>
                 </Row>
+                {this.state.isLoading && (<div style={{position: "absolute", right: "50vw", top: "50vh"}}><Spinner animation="border" variant="primary" /></div>)}
             </Container>
         )
     }
