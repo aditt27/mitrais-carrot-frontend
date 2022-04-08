@@ -2,7 +2,8 @@ import { createSlice } from '@reduxjs/toolkit'
 import { login, logout, setUserData} from './authThunk';
 
 const initialState = {
-    userData: {}
+    userData: {},
+    rejected: false
 };
 
 export const authSlice = createSlice({
@@ -15,6 +16,9 @@ export const authSlice = createSlice({
         },
         [login.fulfilled]: (state, action) => {
             state.userData = action.payload;
+        },
+        [login.rejected]: (state, action) => {
+          state.rejected = true;
         },
         [setUserData.fulfilled]: (state, action) => {
           state.userData = action.payload;
