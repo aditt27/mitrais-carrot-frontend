@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Card, Col, Row, Tab, Form, Table, Button, Modal, Alert } from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Pagination } from '@mui/material'
+import { getActiveBarn, getBarnTransaction, getManager, postDistribution } from "../apis/Distribution";
 
 export default function Distribution() {
   const [activeBarn, setActiveBarn] = useState({
@@ -28,6 +28,7 @@ export default function Distribution() {
     setUserId(undefined);
     setAmount(1);
     setValidated(false);
+    setSuccess(false);
   }
 
   const handleShare = (e) => {
@@ -36,13 +37,13 @@ export default function Distribution() {
     e.stopPropagation();
 
     if (form.checkValidity() === true) {
-      axios.post('http://localhost:8081/api/v1/barn/carrot-distribution', { userId, amount }).then(res => {
+      postDistribution(userId, amount).then(res => {
         setSuccess(true);
         handleReset();
         getBarnTransaction(page)
         getActiveBarn();
         setShow(false);
-      })
+      });
     }
 
     setValidated(true);
@@ -53,27 +54,27 @@ export default function Distribution() {
   }
 
   useEffect(() => {
-    getActiveBarn();
-    getBarnTransaction(1);
+    getActiveBarnData();
+    getBarnTransactionData(1);
 
-    axios.get("http://localhost:8081/api/v1/user?filterBy=role&filterValue=Manager").then(res => {
-      const data = res.data.result.currentPageContent;
+    getManager().then(res => {
+      const data = res.result.currentPageContent;
       setManagers(data);
     })
   }, []);
 
-  const getActiveBarn = () => {
-    axios.get("http://localhost:8081/api/v1/barn?filterBy=active-only").then(res => {
-      const data = res.data.result.currentPageContent;
+  const getActiveBarnData = () => {
+    getActiveBarn().then(res => {
+      const data = res.result.currentPageContent;
       setActiveBarn(data[0]);
     })
   }
 
-  const getBarnTransaction = (page) => {
-    axios.get(`http://localhost:8081/api/v1/barn-transaction?page=${page - 1}`).then(res => {
-      const data = res.data.result.content;
+  const getBarnTransactionData = (page) => {
+    getBarnTransaction(page).then(res => {
+      const data = res.result.content;
       setBarnTransactions(data);
-      setTotalPage(res.data.result.totalPages)
+      setTotalPage(res.result.totalPages)
       setPage(page)
     })
   }
