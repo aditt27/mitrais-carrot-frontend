@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { Card, Col, Row, Tab, Form, Table, Button, Modal } from "react-bootstrap";
+import { Card, Col, Row, Tab, Form, Table, Button, Modal, Alert } from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Pagination } from '@mui/material'
+import { getActiveBarn, getBarnTransaction, getManager, postDistribution } from "../apis/Distribution";
 
 export default function Distribution() {
   const [activeBarn, setActiveBarn] = useState({
@@ -13,21 +13,40 @@ export default function Distribution() {
   const [barnTransactions, setBarnTransactions] = useState([]);
   const [show, setShow] = useState(false);
   const [managers, setManagers] = useState([]);
-  const [userId, setUserId] = useState(1);
+  const [userId, setUserId] = useState(undefined);
   const [amount, setAmount] = useState(1);
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
+  const [validated, setValidated] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleClose = () => {
     setShow(false);
   }
 
-  const handleShare = () => {
-    axios.post('http://localhost:8081/api/v1/barn/carrot-distribution', { userId, amount }).then(res => {
-      setShow(false);
-      getBarnTransaction(page)
-      getActiveBarn();
-    })
+  const handleReset = () => {
+    setUserId(undefined);
+    setAmount(1);
+    setValidated(false);
+    setSuccess(false);
+  }
+
+  const handleShare = (e) => {
+    const form = e.currentTarget;
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (form.checkValidity() === true) {
+      postDistribution(userId, amount).then(res => {
+        setSuccess(true);
+        handleReset();
+        getBarnTransaction(page)
+        getActiveBarn();
+        setShow(false);
+      });
+    }
+
+    setValidated(true);
   }
 
   const handleShow = () => {
@@ -35,27 +54,27 @@ export default function Distribution() {
   }
 
   useEffect(() => {
-    getActiveBarn();
-    getBarnTransaction(1);
+    getActiveBarnData();
+    getBarnTransactionData(1);
 
-    axios.get("http://localhost:8081/api/v1/user?filterBy=role&filterValue=Manager").then(res => {
-      const data = res.data.result.currentPageContent;
+    getManager().then(res => {
+      const data = res.result.currentPageContent;
       setManagers(data);
     })
   }, []);
 
-  const getActiveBarn = () => {
-    axios.get("http://localhost:8081/api/v1/barn?filterBy=active-only").then(res => {
-      const data = res.data.result.currentPageContent;
+  const getActiveBarnData = () => {
+    getActiveBarn().then(res => {
+      const data = res.result.currentPageContent;
       setActiveBarn(data[0]);
     })
   }
 
-  const getBarnTransaction = (page) => {
-    axios.get(`http://localhost:8081/api/v1/barn-transaction?page=${page-1}`).then(res => {
-      const data = res.data.result.content;
+  const getBarnTransactionData = (page) => {
+    getBarnTransaction(page).then(res => {
+      const data = res.result.content;
       setBarnTransactions(data);
-      setTotalPage(res.data.result.totalPages)
+      setTotalPage(res.result.totalPages)
       setPage(page)
     })
   }
@@ -132,33 +151,43 @@ export default function Distribution() {
             </Button>
 
             <Modal show={show} onHide={handleClose}>
-              <Modal.Header closeButton>
-                <Modal.Title>Share Carrot</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <Form>
+              <Form noValidate validated={validated} onSubmit={handleShare}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Share Carrot</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <Alert show={success} variant="success">
+                    Carrot share success
+                  </Alert>
+
                   <Form.Group className="mb-3">
-                    <Form.Label>RECEPIENT</Form.Label>
-                    <Form.Control as="select" value={userId} onChange={(e) => setUserId(parseInt(e.target.value))}>
+                    <Form.Label>RECIPIENT</Form.Label>
+                    <Form.Control as="select" required value={userId} onChange={(e) => setUserId(parseInt(e.target.value))}>
                       <option></option>
                       {renderManagerOptions()}
                     </Form.Control>
+                    <Form.Control.Feedback type="invalid">
+                      Choose recipient
+                    </Form.Control.Feedback>
                   </Form.Group>
 
                   <Form.Group className="mb-3" >
                     <Form.Label>CARROT AMOUNT</Form.Label>
-                    <Form.Control type="number" value={amount} onChange={(e) => setAmount(parseInt(e.target.value))} />
+                    <Form.Control type="number" min={1} required value={amount} onChange={(e) => setAmount(parseInt(e.target.value))} />
+                    <Form.Control.Feedback type="invalid">
+                      Carrot amount cannot blank
+                    </Form.Control.Feedback>
                   </Form.Group>
-                </Form>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
-                  CANCEL
-                </Button>
-                <Button variant="primary" onClick={handleShare}>
-                  SHARE NOW
-                </Button>
-              </Modal.Footer>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={handleClose}>
+                    CANCEL
+                  </Button>
+                  <Button variant="primary" type="submit">
+                    SHARE NOW
+                  </Button>
+                </Modal.Footer>
+              </Form>
             </Modal>
 
           </Col>

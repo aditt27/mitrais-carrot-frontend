@@ -1,49 +1,37 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import {getAccessToken, removeToken} from '../utils/HelperFunctions';
-import api from '../apis/api';
 import { createSlice } from '@reduxjs/toolkit'
+import apiClient from '../apis';
 
-const fetchUserData = createAsyncThunk('auth/fetchUserData', async (_, {rejectWithValue}) => {
-  try{
-      const accessToken = getAccessToken();
-      api.defaults.headers.Authorization = `Bearer ${accessToken}`;
-      const response = await api.get('/user');
-      return {...response.data, accessToken};
-  }catch(e){
-      removeToken();
-      return rejectWithValue('');
-  }
-});
-
-export const changePassword = createAsyncThunk('user/changePassword', async (payload, {rejectWithValue}) => {
-  try{
-      const accessToken = getAccessToken();
-      api.defaults.headers.Authorization = `Bearer ${accessToken}`;
-      const response = await api.post(`/user/change-password?old_password=${payload.oldPassword}&new_password=${payload.newPassword}`);
-      payload.navigate('/', {replace: true});
-      return response.data;
-  }catch(e){
-      removeToken();
-      return rejectWithValue('');
+export const changePassword = createAsyncThunk('user/changePassword', async (payload, { rejectWithValue }) => {
+  try {
+    const response = await apiClient.post(`/user/change-password?old_password=${payload.oldPassword}&new_password=${payload.newPassword}`);
+    payload.navigate('/', { replace: true });
+    return response.data;
+  } catch (e) {
+    return rejectWithValue('Old password not match');
   }
 });
 
 
 const initialState = {
-    profile: {}
+  profile: {},
+  rejected: false
 };
 
 export const userSlice = createSlice({
-    name: 'user',
-    initialState,
-    reducers: {
-        saveProfile: (state, action)=> {
-            state.profile = action.payload.profile
-        }
-    },
-    extraReducers: {
-        [changePassword.fulfilled]: (state, action) => {},
-    },
+  name: 'user',
+  initialState,
+  reducers: {
+    saveProfile: (state, action) => {
+      state.profile = action.payload.profile
+    }
+  },
+  extraReducers: {
+    [changePassword.fulfilled]: (state, action) => { },
+    [changePassword.rejected]: (state, action) => {
+      state.rejected = true;
+    }
+  },
 })
 
 export const { saveProfile } = userSlice.actions;
