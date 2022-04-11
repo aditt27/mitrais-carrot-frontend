@@ -26,6 +26,8 @@ class Harvest extends React.Component {
             formValidated: false
         }
     }
+    
+    pageSize = 5
 
     handleModalOpen = (e, barnId = undefined) => {
         switch (e.target.name) {
@@ -114,7 +116,7 @@ class Harvest extends React.Component {
                                 formValidated: false
                             })
                             //load new data
-                            this.loadData(this.state.currentPage)
+                            this.loadData(this.state.currentPage, this.pageSize)
                         })
                     break;
 
@@ -140,7 +142,7 @@ class Harvest extends React.Component {
                                 editId: -1,
                                 formValidated: false
                             })
-                            this.loadData(this.state.currentPage)
+                            this.loadData(this.state.currentPage, this.pageSize)
                         })
                     //load data
                     break;
@@ -166,7 +168,7 @@ class Harvest extends React.Component {
                                 editId: -1,
                                 formValidated: false
                             })
-                            this.loadData(this.state.currentPage)
+                            this.loadData(this.state.currentPage, this.pageSize)
                         })
                     break;
 
@@ -206,12 +208,12 @@ class Harvest extends React.Component {
         this.setState({ barnList: result.barns, currentPage: result.currentPage, totalPages: result.totalPages })
     }
     async componentDidMount() {
-        this.loadData()
+        this.loadData(undefined, this.pageSize)
     }
 
     handlePagination = (e, page) => {
         console.log(this.state.totalPages)
-        this.loadData(page - 1)
+        this.loadData(page - 1, this.pageSize)
     }
 
     renderBarnTable() {
@@ -219,7 +221,7 @@ class Harvest extends React.Component {
         return barnList.map((barn, i) => {
             return (
                 <tr key={i}>
-                    <td>{(this.state.currentPage * this.state.totalPages) + barn.number}</td>
+                    <td>{(this.state.currentPage * this.pageSize) + barn.number}</td>
                     <td>{barn.year}</td>
                     <td>{barn.totalCarrot}</td>
                     <td>{barn.carrotLeft}</td>
