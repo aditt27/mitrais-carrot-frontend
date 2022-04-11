@@ -1,7 +1,4 @@
-import axios from "axios";
 import apiClient from ".";
-
-// const baseURL = 'http://localhost:8081/api/v1/barn'
 
 export async function addBarn(params) {
     return apiClient.post('/barn', {
