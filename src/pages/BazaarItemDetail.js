@@ -61,18 +61,18 @@ const BazaarItemDetail = (props)=> {
             }} align="left"/>
             <h5>REWARD DETAILS</h5>
             <Row style={{paddingTop: '16px', paddingBottom: '16px'}}>
-                <Col>
+                <Col id='reward-image'>
                     <img 
                         className='float-right'
                         src={item.image}
                         alt={item.name}
                     />
                 </Col>
-                <Col className='my-auto'>
+                <Col className='my-auto' id='reward-description'>
                     <h4>{item.name}</h4>
                     <p>{item.description}</p>
                     <p>Stock Left: {item.stockAmount - item.soldAmount}</p>
-                    <p>Exchange Rate: {item.exchangeRate} Carrots</p>
+                    <p>Exchange Rate: <span>{item.exchangeRate}</span> Carrots</p>
                     <Button variant='success' onClick={()=> setShowModal(true)}>Exchange</Button>
                 </Col>
             </Row>

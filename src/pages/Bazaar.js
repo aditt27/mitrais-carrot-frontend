@@ -114,7 +114,7 @@ class Bazaar extends React.Component {
         return(
             <Container>
                 <Row style={rowCardStyle}>
-                    <Col style={profileCardStyle} className=''>
+                    <Col style={profileCardStyle} id='bazaar-profile-card'>
                         <Row>
                             <Col xs={5}>
                                 <Image
@@ -130,7 +130,7 @@ class Bazaar extends React.Component {
                             </Col>
                         </Row>
                     </Col>
-                    <Col style={pointsCardStyle}>
+                    <Col style={pointsCardStyle} id='bazaar-carrot-card'>
                         <Row>
                             <Col xs={5}>
                                 <Image
@@ -146,7 +146,7 @@ class Bazaar extends React.Component {
                             </Col>
                         </Row>
                     </Col>
-                    <Col style={transactionCardStyle}>
+                    <Col style={transactionCardStyle} id='bazaar-transaction-card'>
                         <Row>
                             <Col xs={5}>
                                 <Image

@@ -81,8 +81,8 @@ class CarrotHistory extends React.Component {
         return(
             <div style={{padding: '1em'}}>
                 
-                <Row style={rowCardStyle}>
-                    <Col style={transactionEarnedStyle}>
+                <Row style={rowCardStyle} >
+                    <Col style={transactionEarnedStyle} id='carrot-history-earned-card'>
                         <Row>
                             <Col xs={5}>
                                 <Image
@@ -114,7 +114,7 @@ class CarrotHistory extends React.Component {
                             </Col>
                         </Row>
                     </Col> */}
-                    <Col style={transactionBazaarStyle}>
+                    <Col style={transactionBazaarStyle} id='carrot-history-bazaar-card'>
                         <Row>
                             <Col xs={5}>
                                 <Image

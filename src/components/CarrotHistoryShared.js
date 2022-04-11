@@ -45,7 +45,7 @@ class CarrotHistoryShared extends React.Component {
                     </tbody>
                 </Table>
                 <div style={{justifyContent:'end', display: 'flex', paddingBottom: '1em'}} >
-                    <Pagination
+                    <Pagination id='pagination'
                         color='primary'
                         count={0}
                         page={2}

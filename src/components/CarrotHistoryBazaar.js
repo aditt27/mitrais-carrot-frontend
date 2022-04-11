@@ -107,7 +107,7 @@ class CarrotHistoryBazaar extends React.Component {
                     </tbody>
                 </Table>
                 <div style={{justifyContent:'end', display: 'flex', paddingBottom: '1em'}} >
-                    <Pagination
+                    <Pagination id='pagination'
                         color='primary'
                         count={this.props.totalPages}
                         page={this.props.currentPage + 1}
