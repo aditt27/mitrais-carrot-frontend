@@ -59,7 +59,7 @@ const AdminSetting = ()=> {
 
                   <Form.Group className="mb-3" >
                     <Form.Label>CARROT AMOUNT</Form.Label>
-                    <Form.Control type="number" value={parameter.value} onChange={(e) => setParameter({...parameter, value: e.target.value})} />
+                    <Form.Control type="number" min={1} value={parameter.value} onChange={(e) => setParameter({...parameter, value: e.target.value})} />
                   </Form.Group>
                 </Form>
               </Modal.Body>
