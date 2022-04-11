@@ -86,7 +86,7 @@ class MainNavbar extends React.Component {
                     />
                 </Navbar.Brand>
                 <Navbar.Toggle />
-                <Navbar.Collapse>
+                <Navbar.Collapse className="justify-content-end">
                     <Nav>
                         <NavDropdown title={<FontAwesomeIcon icon="bell" className='notif-icon' />}>
                             {notificationItem}
