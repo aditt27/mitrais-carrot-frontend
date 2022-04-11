@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Card, Col, Row, Tab, Form, Table, Button, ButtonGroup, Modal, FormGroup, FormLabel } from "react-bootstrap";
 import { IconButton } from "@mui/material";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { Link, useLocation } from "react-router-dom";
 import apiClient from "../apis";
 import axios from "axios";
 import { addToGroup, removeFromGroup } from "../apis/group";
 import Multiselect from "multiselect-react-dropdown";
 import { getAllUsers } from "../apis/user";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 
 const GroupDetails = (props) => {
@@ -20,6 +21,7 @@ const GroupDetails = (props) => {
     const [disableButton, setDisableButton] = useState(false)
     const [modalType, setModalType] = useState('')
     const [removeId, setRemoveId] = useState(-1)
+    const [groupInfo, setGroupInfo] = useState({})
     const [modalTitle, setModalTitle] = useState('')
     const currentPath = window.location.pathname.split("/")
 
@@ -33,14 +35,14 @@ const GroupDetails = (props) => {
             groupId: id,
             userIds: [removeId]
         })
-        .then(res => {
-            setShowModal(false)
-            setRemoveId(-1)
-            setModalType('')
-            setModalTitle('')
-            setDisableButton(false)
-            getGroupInfo(id)
-        })
+            .then(res => {
+                setShowModal(false)
+                setRemoveId(-1)
+                setModalType('')
+                setModalTitle('')
+                setDisableButton(false)
+                getGroupInfo(id)
+            })
     }
 
     const handleSubmit = () => {
@@ -49,17 +51,17 @@ const GroupDetails = (props) => {
             groupId: id,
             userIds: addStaff
         })
-        .then(res => {
-            setShowModal(false)
-            setAddStaff([])
-            setDropdownList([])
-            setModalType('')
-            setModalTitle('')
-            setDisableButton(false)
-            getGroupInfo(id)
-        })
+            .then(res => {
+                setShowModal(false)
+                setAddStaff([])
+                setDropdownList([])
+                setModalType('')
+                setModalTitle('')
+                setDisableButton(false)
+                getGroupInfo(id)
+            })
     }
-    
+
 
     const handleModalOpen = (e, id = undefined) => {
         switch (e.target.name) {
@@ -77,22 +79,29 @@ const GroupDetails = (props) => {
         setShowModal(true)
     }
 
-    const getStaffToBeAdded = async() => {
+    const getStaffToBeAdded = async () => {
         await getAllUsers().then(res => {
             setDropdownList(res)
         })
-        
+
     }
     const getGroupInfo = async (groupId) => {
-        
+
         let result = {
             staffList: []
         }
 
-        axios.get(`http://localhost:8081/api/v1/group/${groupId}`).then(res => {
+        apiClient.get(`/group/${groupId}`).then(res => {
             const data = res.data.result
-            console.log(data)
-            
+            // console.log(data)
+            setGroupInfo({
+                groupName: res.data.result.groupName,
+                groupManager: res.data.result.manager,
+                groupCarrot: res.data.result.points,
+                groupNote: res.data.result.notes
+            })
+            console.log(groupInfo)
+
             if (data.users) {
                 // console.log(data.currentPageContent)
                 const st = data.users.filter(s => s.role === "Staff")
@@ -126,7 +135,9 @@ const GroupDetails = (props) => {
                     <td>{staff.role}</td>
                     <td>{staff.office}</td>
                     <td>
-                        <Button onClick={(e) => { handleModalOpen(e, staff.id) }} name='removeUser' variant="danger">Delete</Button>
+                        <Button onClick={(e) => { handleModalOpen(e, staff.id) }} name='removeUser' variant="danger">
+                        <FontAwesomeIcon icon={faTrashCan} />
+                        </Button>
                     </td>
                 </tr>
             )
@@ -140,33 +151,32 @@ const GroupDetails = (props) => {
                 modalBody = <div>
                     <p>Are you sure want to remove this user ?</p>
                     <Button variant="danger" disabled={disableButton} className='float-right' onClick={handleDelete}>
-                    Delete
-                </Button>
+                        Delete
+                    </Button>
                 </div>
                 break;
             case 'form':
-                let toBeAdded = []
-                modalBody = 
-                <FormGroup>
-                    <FormLabel>Select staff(s) :</FormLabel>
-                    <Multiselect 
+                modalBody =
+                    <FormGroup className="mb-3">
+                        <FormLabel>Select staff(s) :</FormLabel>
+                        <Multiselect
                             // isObject={false}
                             displayValue="name"
                             options={dropdownList}
                             onSelect={(dropdownList, e) => {
                                 setAddStaff([...addStaff, e.id])
-                                }
+                            }
                             }
                             onRemove={(dropdown, e) => {
                                 const idx = addStaff.findIndex(i => i == e.id)
                                 addStaff.splice(idx, 1)
-                            } }
-                    />
-                    <Button variant="primary" disabled={disableButton} className='float-right' onClick={handleSubmit}>
-                    Submit
-                    </Button>
-                </FormGroup>
-                
+                            }}
+                        />
+                        <Button variant="primary" disabled={disableButton} className='float-right' onClick={handleSubmit}>
+                            Submit
+                        </Button>
+                    </FormGroup>
+
         }
         return modalBody
     }
@@ -182,16 +192,13 @@ const GroupDetails = (props) => {
                 </Modal.Body>
             </Modal>
             <Card style={{ padding: "1.5em" }}>
-                <Row>
                     <Col md={12} className="align-self-start my-2">
                         <Row>
-
                             <Button as={Link} to={`/${currentPath[1]}/group`}>
-                                Back
+                                <FontAwesomeIcon icon={faArrowLeft} />
                             </Button>
                         </Row>
                     </Col>
-                </Row>
                 <Row>
                     <Col md={12} className="align-self-start my-2">
                         <hr style={{
@@ -199,38 +206,34 @@ const GroupDetails = (props) => {
                             backgroundColor: "orange",
                             height: "0.2em"
                         }} align="left" />
-                        <h4 className="box-title">STAFF GROUP</h4>
-                    </Col>
-                    {/* <Col md={12} className="align-self-start my-2">
-                        <Table striped hover>
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Username</th>
-                                    <th>Name</th>
-                                    <th>JF</th>
-                                    <th>Grade</th>
-                                    <th>Office</th>
-                                </tr>
-                            </thead>
+                        <h2>Group Info</h2>
+                        <Table>
                             <tbody>
+                                <tr>
+                                    <td>Group Name</td>
+                                    <td>{groupInfo.groupName}</td>
+                                </tr>
+                                <tr>
+                                    <td>Manager</td>
+                                    <td>{groupInfo.groupManager}</td>
+                                </tr>
+                                <tr>
+                                    <td>Carrot</td>
+                                    <td>{groupInfo.groupCarrot}</td>
+                                </tr>
+                                <tr>
+                                    <td>Notes</td>
+                                    <td>{groupInfo.groupNote}</td>
+                                </tr>
                             </tbody>
                         </Table>
-                    </Col> */}
+                    </Col>
                 </Row>
                 <Row>
                     <Col md={12} className="align-self-start my-2">
                         <Button onClick={handleModalOpen} name='addUser' variant="primary">
                             Add New
                         </Button>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col md="12" className="my-2">
-                        <Form.Group className="float-right form-inline">
-                            <Form.Label>SEARCH: &nbsp;</Form.Label>
-                            <Form.Control type="text" style={{ width: "15vw" }} />
-                        </Form.Group>
                     </Col>
                 </Row>
                 <Row>
@@ -256,97 +259,5 @@ const GroupDetails = (props) => {
         </Tab.Content>
     )
 }
-// class GroupDetails extends React.Component {
-//     constructor(props) {
-//         super(props)
-//         // this.state = {
-//         //     groupId: this.props.location.state.id
-//         // }
-//     }
-
-//     alertMsg() {
-//         console.log(this.state.groupId);
-//     }
-//     render() {
-//         const id = this.props.location.state
-//         console.log(id)
-//         const currentPath = window.location.pathname.split("/")
-//         return (
-//             <Tab.Content className="search-box">
-//                 <Card style={{ padding: "1.5em" }}>
-//                     <Row>
-//                         <Col md={12} className="align-self-start my-2">
-//                             <Row>
-
-//                                 <Button as={Link} to={`/${currentPath[1]}/group`}>
-//                                     Back
-//                                 </Button>
-//                             </Row>
-//                         </Col>
-//                     </Row>
-//                     <Row>
-//                         <Col md={12} className="align-self-start my-2">
-//                             <hr style={{
-//                                 width: "2em",
-//                                 backgroundColor: "orange",
-//                                 height: "0.2em"
-//                             }} align="left" />
-//                             <h4 className="box-title">STAFF GROUP</h4>
-//                         </Col>
-//                         <Col md={12} className="align-self-start my-2">
-//                             <Table striped hover>
-//                                 <thead>
-//                                     <tr>
-//                                         <th>#</th>
-//                                         <th>Username</th>
-//                                         <th>Name</th>
-//                                         <th>JF</th>
-//                                         <th>Grade</th>
-//                                         <th>Office</th>
-//                                     </tr>
-//                                 </thead>
-//                                 <tbody>
-//                                 </tbody>
-//                             </Table>
-//                         </Col>
-//                     </Row>
-//                     <Row>
-//                         <Col md={12} className="align-self-start my-2">
-//                             <Button onClick={() => this.alertMsg()}>
-//                                 Add New
-//                             </Button>
-//                         </Col>
-//                     </Row>
-//                     <Row>
-//                         <Col md="12" className="my-2">
-//                             <Form.Group className="float-right form-inline">
-//                                 <Form.Label>SEARCH: &nbsp;</Form.Label>
-//                                 <Form.Control type="text" style={{ width: "15vw" }} />
-//                             </Form.Group>
-//                         </Col>
-//                     </Row>
-//                     <Row>
-//                         <Col md="12" className="my-2">
-//                             <Table striped bordered hover>
-//                                 <thead>
-//                                     <tr>
-//                                         <th>#</th>
-//                                         <th>Username</th>
-//                                         <th>Name</th>
-//                                         <th>JF</th>
-//                                         <th>Grade</th>
-//                                         <th>Office</th>
-//                                     </tr>
-//                                 </thead>
-//                                 <tbody>
-//                                 </tbody>
-//                             </Table>
-//                         </Col>
-//                     </Row>
-//                 </Card>
-//             </Tab.Content>
-//         )
-//     }
-// }
 
 export default GroupDetails
