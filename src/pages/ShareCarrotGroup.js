@@ -1,13 +1,72 @@
 import { faPaperPlane, faPeopleGroup } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import axios from 'axios'
-import { Component } from 'react'
-import { Container, Row, Table, Col, Modal, Button, Form, Alert } from 'react-bootstrap'
+import { Component, useState } from 'react'
+import { Container, Row, Table, Col, Modal, Button, Form, Alert, Spinner } from 'react-bootstrap'
 import { createNewGroupTransaction } from '../apis/transaction'
 import store from '../stores'
 import { btnRewardStyle } from './ShareCarrotStaff'
 import { Pagination } from '@mui/material'
+import apiClient from '../apis'
+import { getTableStartIndexByTen } from '../utils/HelperFunctions'
 
+function SendCarrotModal(props) {
+    const group = props.group
+    const [sendCarrotMsg, setSendCarrotMsg] = useState("")
+    const [isLoading, setLoading] = useState(false)
+
+    function handleSendCarrotSubmit(e) {
+        setSendCarrotMsg("")
+        setLoading(true)
+        e.preventDefault()
+        const groupId = e.target.groupid.value
+        createNewGroupTransaction(groupId, props.managerId).then(res => {
+            setSendCarrotMsg(res)
+            if (res === 'Success') {
+                props.onHideModal()
+                props.updateBarn()
+            }
+        }).finally(() => setLoading(false))
+    }
+    
+    return (
+        <Modal show={props.show} onHide={props.onHideModal} keyboard={false} backdrop="static" centered>
+            <Modal.Header className="m-2">
+                <Modal.Title>
+                    SEND CARROT
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="mx-4">
+                <Table bordered>
+                    <tbody>
+                        <tr>
+                            <th>Group Name</th>
+                            <td>{group.groupName}</td>
+                        </tr>
+                        <tr>
+                            <th>Total Carrot</th>
+                            <td>{group.points}</td>
+                        </tr>
+                        <tr>
+                            <th>Year</th>
+                            <td>2022</td>
+                        </tr>
+                    </tbody>
+                </Table>
+                <p>Are you sure you want to send now?</p>
+                {isLoading && <div className="text-center"><Spinner variant="primary" animation="border" /></div>}
+                {sendCarrotMsg.length > 0 && sendCarrotMsg !== 'Success' && (<Alert variant="danger">{sendCarrotMsg}</Alert>)}
+                {sendCarrotMsg.length > 0 && sendCarrotMsg === 'Success' && (<Alert variant="success">{sendCarrotMsg}</Alert>)}
+            </Modal.Body>
+            <Modal.Footer className="m-2">
+                <Form onSubmit={handleSendCarrotSubmit}>
+                    <Button variant="link" className="mr-4" onClick={() => props.onHideModal()}>CANCEL</Button>
+                    <Button type="submit" style={btnRewardStyle}>SEND NOW</Button>
+                    <input type="hidden" name="groupid" value={group.id} />
+                </Form>
+            </Modal.Footer>
+        </Modal>
+    )
+}
 class ShareCarrotGroup extends Component {
 
     state = {
@@ -26,9 +85,10 @@ class ShareCarrotGroup extends Component {
     }
 
     fetchGroupList = async (page = 0) => {
+        this.props.onLoading(true)
         let init = {}
         const { profile } = store.getState().userReducer
-        await axios.get(`http://localhost:8081/api/v1/group?page=${page}`).then(res => {
+        await apiClient.get(`/group?page=${page}`).then(res => {
             if (res.data.message === 'Success') {
                 const data = res.data.result
                 init.currentPage = data.currentPage
@@ -36,7 +96,7 @@ class ShareCarrotGroup extends Component {
                 init.groupList = data.currentPageContent.filter(it => it.manager === profile.id.toString())
             }
         })
-        
+        this.props.onLoading(false)
         this.setState({
             currentPage: init.currentPage,
             totalPages: init.totalPages,
@@ -46,11 +106,13 @@ class ShareCarrotGroup extends Component {
     }
 
     GroupListRow = () => {
-        const { groupList } = this.state
+        const { groupList, currentPage } = this.state
+        let index = getTableStartIndexByTen(currentPage + 1)
+
         return groupList.map((group, i) => {
             return (
                 <tr key={i}>
-                    <td>{i + 1}</td>
+                    <td>{index++}</td>
                     <td>{group.groupName}</td>
                     <td>{Math.floor(group.points / group.users.length)}</td>
                     <td>{group.users.length}</td>
@@ -136,63 +198,10 @@ class ShareCarrotGroup extends Component {
         )
     }
 
-    handleSendCarrotSubmit = (e) => {
-        e.preventDefault()
-        const groupId = e.target.groupid.value
-        const managerId = this.state.manager.id
-        createNewGroupTransaction(groupId, managerId).then(res => {
-            this.setState({sendCarrotMsg: res})
-            if (res === 'Success') {
-                this.onHideModal()
-                this.props.updateBarn()
-            }
-        })
-    }
-
-    SendCarrotModal = () => {
+    render() {
         const { selectedGroupId, groupList } = this.state
         const group = groupList[selectedGroupId]
-        
-        return (
-            <Modal show={this.state.showSendCarrotModal} onHide={this.onHideModal} keyboard={false} backdrop="static" centered>
-                <Modal.Header className="m-2">
-                    <Modal.Title>
-                        SEND CARROT
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body className="mx-4">
-                    <Table bordered>
-                        <tbody>
-                            <tr>
-                                <th>Group Name</th>
-                                <td>{group.groupName}</td>
-                            </tr>
-                            <tr>
-                                <th>Total Carrot</th>
-                                <td>{group.points}</td>
-                            </tr>
-                            <tr>
-                                <th>Year</th>
-                                <td>2022</td>
-                            </tr>
-                        </tbody>
-                    </Table>
-                    <p>Are you sure you want to send now?</p>
-                    {this.state.sendCarrotMsg.length > 0 && this.state.sendCarrotMsg !== 'Success' && (<Alert variant="danger">{this.state.sendCarrotMsg}</Alert>)}
-                    {this.state.sendCarrotMsg.length > 0 && this.state.sendCarrotMsg === 'Success' && (<Alert variant="success">{this.state.sendCarrotMsg}</Alert>)}
-                </Modal.Body>
-                <Modal.Footer className="m-2">
-                    <Form onSubmit={this.handleSendCarrotSubmit}>
-                        <Button variant="link" className="mr-4" onClick={() => this.onHideModal()}>CANCEL</Button>
-                        <Button type="submit" style={btnRewardStyle}>SEND NOW</Button>
-                        <input type="hidden" name="groupid" value={group.id} />
-                    </Form>
-                </Modal.Footer>
-            </Modal>
-        )
-    }
 
-    render() {
         return (
             <Container className="p-4">
                 <Row>
@@ -214,10 +223,10 @@ class ShareCarrotGroup extends Component {
                             </tbody>
                         </Table>
                         {this.state.showGroupMemberModal && (<this.GroupMemberModal />)}
-                        {this.state.showSendCarrotModal && (<this.SendCarrotModal />)}
+                        {this.state.showSendCarrotModal && (<SendCarrotModal group={group} show={this.state.showSendCarrotModal} onHideModal={this.onHideModal} updateBarn={this.updateBarn} managerId={this.props.manager.id} />)}
                     </Col>
                     <Col md="12">
-                        <Pagination className="float-right" count={this.state.totalPages} page={this.state.currentPage + 1} onChange={(e, page) => this.fetchGroupList(e, page - 1)} />
+                        <Pagination color="primary" className="float-right mb-2" count={this.state.totalPages} page={this.state.currentPage + 1} onChange={(_, page) => this.fetchGroupList(page - 1)} />
                     </Col>
                 </Row>
             </Container>
