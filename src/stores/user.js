@@ -23,14 +23,14 @@ export const changePassword = createAsyncThunk('user/changePassword', async (pay
       payload.navigate('/', {replace: true});
       return response.data;
   }catch(e){
-      removeToken();
-      return rejectWithValue('');
+      return rejectWithValue('Old password not match');
   }
 });
 
 
 const initialState = {
-    profile: {}
+    profile: {},
+    rejected: false
 };
 
 export const userSlice = createSlice({
@@ -43,6 +43,9 @@ export const userSlice = createSlice({
     },
     extraReducers: {
         [changePassword.fulfilled]: (state, action) => {},
+        [changePassword.rejected]: (state, action) => {
+          state.rejected = true;
+        }
     },
 })
 
