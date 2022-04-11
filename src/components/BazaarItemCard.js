@@ -12,7 +12,7 @@ const BazaarItemCard = (props)=> {
     }
 
     return (
-        <Card style={{ width: '262px', margin: '4px' }}>
+        <Card style={{ width: '262px', margin: '4px' }} className='bazaar-item-card'>
             <Card.Img variant="top" src={props.image} style={imageStyle} />
             <Card.Body>
                 <Card.Title>{props.title}</Card.Title>
