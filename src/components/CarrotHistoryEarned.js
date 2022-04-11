@@ -92,7 +92,7 @@ class CarrotHistoryEarned extends Component {
                 </Row>
                 <Row>
                     <Col>
-                        <Pagination className='float-right'
+                        <Pagination className='float-right' id='pagination'
                             color='primary'
                             count={totalPages}
                             page={currentPage+1}
