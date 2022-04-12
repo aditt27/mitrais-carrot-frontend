@@ -19,6 +19,7 @@ export default function Distribution() {
   const [totalPage, setTotalPage] = useState(1);
   const [validated, setValidated] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   const handleClose = () => {
     setShow(false);
@@ -37,19 +38,22 @@ export default function Distribution() {
 
     if (form.checkValidity() === true) {
       postDistribution(userId, amount)
-        .then(res => {
-          setSuccess(true);
-          handleReset();
-        })
-        .then(async (res) => {
-          await getBarnTransaction(page)
-          await getActiveBarn();
-        })
-        .then(() => {
-          setTimeout(() => {
-            setSuccess(false);
-            setShow(false);
-          }, 500);
+        .then( async (res) => {
+          if(res.message === "Insufficient Barn Amount") {
+            setFailed(true)
+          } else {
+            await getBarnTransaction(page)
+            await getActiveBarn();
+            
+            setSuccess(true);
+            setFailed(false)
+            handleReset();
+
+            setTimeout(() => {
+              setSuccess(false);
+              setShow(false);
+            }, 500);
+          }
         });
     }
 
@@ -165,6 +169,10 @@ export default function Distribution() {
                 <Modal.Body>
                   <Alert show={success} variant="success">
                     Carrot share success
+                  </Alert>
+
+                  <Alert show={failed} variant="danger">
+                    Insufficient Barn Amount
                   </Alert>
 
                   <Form.Group className="mb-3">
