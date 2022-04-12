@@ -272,7 +272,8 @@ class ManageBazaar extends React.Component {
             formCarrot,
             formStock,
             formExpiredDate,
-            formValidated
+            formValidated,
+            editId
         } = this.state
 
         let formImageComponent
@@ -307,7 +308,7 @@ class ManageBazaar extends React.Component {
                             disabled={formDisable} 
                             value={formDescription} 
                             onChange={this.handleFormValueChange}
-                            required
+                            
                         />
                     </Form.Group>
                     <Form.Group className="mb-3">
@@ -322,7 +323,7 @@ class ManageBazaar extends React.Component {
                             onChange={this.handleFormValueChange}
                             isInvalid={false}
                             accept='image/png, image/jpeg'
-                            required
+                            required={editId===-1}
                         />
                         <Form.Text className="text-muted">
                             Allowed extension: jpg/jpeg/png. Maximum size: 1000KB
