@@ -28,7 +28,6 @@ export default function Distribution() {
     setUserId(undefined);
     setAmount(1);
     setValidated(false);
-    setSuccess(false);
   }
 
   const handleShare = (e) => {
@@ -37,13 +36,21 @@ export default function Distribution() {
     e.stopPropagation();
 
     if (form.checkValidity() === true) {
-      postDistribution(userId, amount).then(res => {
-        setSuccess(true);
-        handleReset();
-        getBarnTransaction(page)
-        getActiveBarn();
-        setShow(false);
-      });
+      postDistribution(userId, amount)
+        .then(res => {
+          setSuccess(true);
+          handleReset();
+        })
+        .then(async (res) => {
+          await getBarnTransaction(page)
+          await getActiveBarn();
+        })
+        .then(() => {
+          setTimeout(() => {
+            setSuccess(false);
+            setShow(false);
+          }, 500);
+        });
     }
 
     setValidated(true);
