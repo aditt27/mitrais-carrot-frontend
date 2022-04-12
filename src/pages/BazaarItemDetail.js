@@ -113,6 +113,11 @@ const BazaarItemDetail = (props)=> {
                     <p>
                         {exchangeStatus==='success'? 'Please check your transaction history for more info' : 'Make sure you there is enough stock or you have sufficient carrot to exchange'}
                     </p>
+                    <div className="d-flex justify-content-end">
+                        <Button onClick={() => setShowModalExchangeStatus(false)} variant={exchangeStatus==='success'? 'outline-success' : 'outline-danger'}>
+                            Close
+                        </Button>
+                    </div>
                 </Alert>
             </Modal>
         </div>
