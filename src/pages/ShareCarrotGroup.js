@@ -20,12 +20,15 @@ function SendCarrotModal(props) {
         e.preventDefault()
         const groupId = e.target.groupid.value
         createNewGroupTransaction(groupId, props.managerId).then(res => {
+            setLoading(false)
             setSendCarrotMsg(res)
             if (res === 'Success') {
-                props.onHideModal()
-                props.updateBarn()
+                setTimeout(() => {
+                    props.onHideModal()
+                    props.updateBarn()
+                }, 1000);
             }
-        }).finally(() => setLoading(false))
+        })
     }
     
     return (

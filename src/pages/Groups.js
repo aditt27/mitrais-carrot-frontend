@@ -28,6 +28,9 @@ export default class Groups extends React.Component {
         }
 
     }
+    
+    pageSize = 5
+
     async loadData(page = 0, size = 2) {
         let result = {
             groups: [],
@@ -57,11 +60,11 @@ export default class Groups extends React.Component {
     }
 
     async componentDidMount() {
-        this.loadData()
+        this.loadData(undefined, this.pageSize)
 
     }
     handlePagination = (e, page) => {
-        this.loadData(page-1)
+        this.loadData(page-1, this.pageSize)
     }
 
     handleModalOpen = (e, groupId = undefined) => {
@@ -141,7 +144,7 @@ export default class Groups extends React.Component {
                                 formCarrot: 0,
                                 formNote: ''
                             })
-                            this.loadData(this.state.currentPage)
+                            this.loadData(this.state.currentPage, this.pageSize)
                         })
                     break;
                 case 'editGroup':
@@ -166,7 +169,7 @@ export default class Groups extends React.Component {
                                 formNote: '',
                                 editId: -1
                             })
-                            this.loadData(this.state.currentPage)
+                            this.loadData(this.state.currentPage, this.pageSize)
                         })
                     break;
                 default:
@@ -183,7 +186,7 @@ export default class Groups extends React.Component {
                     modalShow: false,
                     deleteId: -1
                 })
-                this.loadData(this.state.currentPage)
+                this.loadData(this.state.currentPage, this.pageSize)
             })
     }
 
@@ -193,7 +196,7 @@ export default class Groups extends React.Component {
         return groupList.map((group, i) => {
             return (
                 <tr key={i}>
-                    <td>{(this.state.currentPage * this.state.totalPages) + group.number}</td>
+                    <td>{(this.state.currentPage * this.pageSize) + group.number}</td>
                     <td>{group.groupName}</td>
                     <td>{group.manager}</td>
                     <td>{group.points}</td>
