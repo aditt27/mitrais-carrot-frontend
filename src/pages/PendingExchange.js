@@ -92,6 +92,13 @@ const PendingExchange = (props)=> {
 
     return (
         <div style={{padding: '1em'}}>
+            <hr style={{
+                width: "2em",
+                backgroundColor: "orange",
+                height: "0.2em"
+            }} align="left"/>
+            <h4>PENDING EXCHANGE</h4>
+            <br />
             <Table striped bordered hover>
                 <thead>
                     <tr>
@@ -127,7 +134,7 @@ const PendingExchange = (props)=> {
             </Table>
 
             <div style={{justifyContent:'end', display: 'flex'}} >
-                <Pagination
+                <Pagination id='pagination'
                     color='primary'
                     count={props.totalPages}
                     page={props.currentPage + 1}

@@ -226,7 +226,8 @@ class ManageBazaar extends React.Component {
             case 'toggleActive':
                 editBazaarItem({
                     id: itemId,
-                    isActive: toggleValue
+                    isActive: toggleValue,
+                    userId: this.props.userId
                 })
                 .then(result=> {
                     console.log(result)
@@ -236,7 +237,8 @@ class ManageBazaar extends React.Component {
             case 'toggleAutoApprove':
                 editBazaarItem({
                     id: itemId,
-                    isAutoApprove: toggleValue
+                    isAutoApprove: toggleValue,
+                    userId: this.props.userId
                 })
                 .then(result=> {
                     console.log(result)
@@ -382,6 +384,13 @@ class ManageBazaar extends React.Component {
         
         return (
             <div style={{padding: '16px'}}>
+                <hr style={{
+                    width: "2em",
+                    backgroundColor: "orange",
+                    height: "0.2em"
+                }} align="left"/>
+                <h4>MANAGE BAZAAR</h4>
+                <br />
                 <Button style={{marginBottom: '16px'}} onClick={this.handleModalOpen} name='addItem'>Add New Item</Button>
                 <Table striped bordered hover>
                     <thead>
