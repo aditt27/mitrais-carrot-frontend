@@ -96,7 +96,11 @@ class ShareCarrotGroup extends Component {
                 const data = res.data.result
                 init.currentPage = data.currentPage
                 init.totalPages = data.totalPages
-                init.groupList = data.currentPageContent.filter(it => it.manager === profile.id.toString())
+                const g = data.currentPageContent.filter(it => it.manager === profile.id.toString())
+                g.forEach((data, _) => {
+                    data.users = data.users.filter(it => it.role === 'Staff')
+                })
+                init.groupList = g
             }
         })
         this.props.onLoading(false)
@@ -122,10 +126,10 @@ class ShareCarrotGroup extends Component {
                     <td>{group.points}</td>
                     <td>{group.notes}</td>
                     <td className="text-center">
-                        <Button style={{marginRight: "0.25em"}} onClick={() => this.handleShowGroupMemberModal(i)}>
+                        <Button id={`group-member-btn-${group.id}`} style={{marginRight: "0.25em"}} onClick={() => this.handleShowGroupMemberModal(i)}>
                             <FontAwesomeIcon icon={faPeopleGroup}  />
                         </Button>
-                        <Button variant="success" style={{marginLeft: "0.25em"}} onClick={() => this.handleShowSendCarrotModal(i)}>
+                        <Button id={`send-carrot-btn-${group.id}`} variant="success" style={{marginLeft: "0.25em"}} onClick={() => this.handleShowSendCarrotModal(i)}>
                             <FontAwesomeIcon icon={faPaperPlane}  />
                         </Button>
                     </td>
@@ -226,7 +230,7 @@ class ShareCarrotGroup extends Component {
                             </tbody>
                         </Table>
                         {this.state.showGroupMemberModal && (<this.GroupMemberModal />)}
-                        {this.state.showSendCarrotModal && (<SendCarrotModal group={group} show={this.state.showSendCarrotModal} onHideModal={this.onHideModal} updateBarn={this.updateBarn} managerId={this.props.manager.id} />)}
+                        {this.state.showSendCarrotModal && (<SendCarrotModal group={group} show={this.state.showSendCarrotModal} onHideModal={this.onHideModal} updateBarn={this.props.updateBarn} managerId={this.props.manager.id} />)}
                     </Col>
                     <Col md="12">
                         <Pagination color="primary" className="float-right mb-2" count={this.state.totalPages} page={this.state.currentPage + 1} onChange={(_, page) => this.fetchGroupList(page - 1)} />
