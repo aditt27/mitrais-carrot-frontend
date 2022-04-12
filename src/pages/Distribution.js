@@ -44,7 +44,7 @@ export default function Distribution() {
           } else {
             await getBarnTransaction(page)
             await getActiveBarn();
-            
+
             setSuccess(true);
             setFailed(false)
             handleReset();
@@ -242,7 +242,7 @@ export default function Distribution() {
                 color='primary'
                 count={totalPage}
                 page={page}
-                onChange={(e, page) => getBarnTransaction(page)}
+                onChange={(e, page) => getBarnTransactionData(page)}
               />
             </div>
           </Col>
