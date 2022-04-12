@@ -13,7 +13,10 @@ export async function exchangeBazaarItem(userId, itemId) {
             }
             return false
         }))
-        .catch(err => console.log(err))
+        .catch(err => {
+            console.log(err)
+            return false
+        })
 }
 
 export async function getExchangeHistoryBazaarItem(isPaginated, currentPage, itemPerPage, filterBy, filterValue) {

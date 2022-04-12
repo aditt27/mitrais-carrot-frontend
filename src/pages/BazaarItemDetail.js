@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Col, Image, Modal, Row } from 'react-bootstrap'
+import { Alert, Button, Col, Image, Modal, Row } from 'react-bootstrap'
 import { connect } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { exchangeBazaarItem } from '../apis/BazaarExchangeApi'
@@ -10,6 +10,8 @@ const BazaarItemDetail = (props)=> {
     const [item, setItem] = useState({})
     const [showModal, setShowModal] = useState(false)
     const [isLoading, setLoading] = useState(false)
+    const [exchangeStatus, setExchangeStatus] = useState('')
+    const [showModalExchangeStatus, setShowModalExchangeStatus] = useState(false)
     const itemId = location.state.itemId
 
     const loadItemDetails = ()=> {
@@ -24,6 +26,13 @@ const BazaarItemDetail = (props)=> {
                 console.log(result)
                 setLoading(false)
                 setShowModal(false)
+                if(result) {
+                    setExchangeStatus('success')
+                    loadItemDetails()
+                } else {
+                    setExchangeStatus('error')
+                }
+                setShowModalExchangeStatus(true)
             })
     }
 
@@ -88,6 +97,23 @@ const BazaarItemDetail = (props)=> {
                         {isLoading ? 'Loading…' : 'Exchange'}
                     </Button>
                 </Modal.Body>
+            </Modal>
+
+            <Modal show={showModalExchangeStatus} onHide={()=> setShowModalExchangeStatus(false)}>
+                <Alert style={{
+                    marginTop: '14px', 
+                    marginLeft: '14px', 
+                    marginRight: '14px'
+                }}
+                    variant={exchangeStatus==='success'? 'success' : 'danger'}>
+                    <Alert.Heading>
+                        {exchangeStatus==='success'? 'Exchange Item Success' : 'Exchange Item Fail'}
+                    </Alert.Heading>
+                    <hr/>
+                    <p>
+                        {exchangeStatus==='success'? 'Please check your transaction history for more info' : 'Make sure you there is enough stock or you have sufficient carrot to exchange'}
+                    </p>
+                </Alert>
             </Modal>
         </div>
     )
