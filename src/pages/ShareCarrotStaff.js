@@ -42,12 +42,15 @@ function RewardCarrotModal(props) {
             notes: e.target.note.value
         }
         createNewTransaction(data).then(res => {
+            setLoading(false)
             setShareCarrotMsg(res)
             if (res === "Success") {
-                props.onHideModal(false)
-                props.updateBarn()
+                setTimeout(() => {
+                    props.onHideModal(false)
+                    props.updateBarn()
+                }, 1000);
             }
-        }).finally(() => setLoading(false))
+        })
     }
 
     return (

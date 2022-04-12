@@ -1,7 +1,4 @@
-import axios from "axios";
 import apiClient from ".";
-
-// const baseURL = 'http://localhost:8081/api/v1/group'
 
 export async function addGroup(params) {
     return apiClient.post('/group', {

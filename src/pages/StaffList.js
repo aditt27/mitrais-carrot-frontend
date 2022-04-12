@@ -26,12 +26,15 @@ function AddStaffModal(props) {
             "role": e.target.role.value
         }
         addUser(data).then(res => {
+            setLoading(false)
             setMsg(res)
             if (res === 'Success') {
-                setLoading(false)                
-                props.onClose(false)
+                setTimeout(() => {
+                    setLoading(false)
+                    props.onClose(false)
+                }, 1000);
             }
-        }).finally(() => setLoading(false))
+        })
     }
     
     return (
