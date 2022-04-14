@@ -117,3 +117,7 @@ export async function totalSpentForBazaar(userId) {
         })
         .catch(err => console.log(err))
 }
+
+export async function getTotalEarnedCarrot(userId) {
+    return await apiClient.get(`/user/total_earn/${userId}`).then(res => res.data)
+}
