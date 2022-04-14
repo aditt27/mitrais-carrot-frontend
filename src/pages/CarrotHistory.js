@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Col, Image, Row } from 'react-bootstrap'
 import { connect } from 'react-redux'
-import { totalSpentForBazaar } from '../apis/user'
+import { totalSpentForBazaar, getTotalEarnedCarrot } from '../apis/user'
 import CarrotTransPicture from '../assets/img/mc-icon-transaction.png'
 import CarrotHistoryBazaar from '../components/CarrotHistoryBazaar'
 import CarrotHistoryEarned from '../components/CarrotHistoryEarned'
@@ -14,7 +14,8 @@ class CarrotHistory extends React.Component {
 
         this.state = {
             tableView: 'bazaar',
-            totalSpent: 0
+            totalSpent: 0,
+            totalEarn: 0
         }
     }
 
@@ -28,6 +29,13 @@ class CarrotHistory extends React.Component {
     componentDidMount() {
         this.getTotalSpentForBazaar()
         console.log(this.props.userId)
+        this.getTotalEarned()
+    }
+
+    async getTotalEarned() {
+        getTotalEarnedCarrot(this.props.userId).then(res => {
+            this.setState({totalEarn: res.result})
+        })
     }
 
     render() {
@@ -93,7 +101,8 @@ class CarrotHistory extends React.Component {
                                 />
                             </Col>
                             <Col className='my-auto'>
-                                <h4>Earned</h4>
+                                <h5>Earned</h5>
+                                <h4>{this.state.totalEarn} Carrot(s)</h4>
                                 <Button size='sm' name='earned' variant='secondary' onClick={(e)=>this.setState({tableView: e.target.name})}>View</Button>
                             </Col>
                         </Row>

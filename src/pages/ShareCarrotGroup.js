@@ -1,7 +1,7 @@
 import { faPaperPlane, faPeopleGroup } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Component, useState } from 'react'
-import { Container, Row, Table, Col, Modal, Button, Form, Alert, Spinner } from 'react-bootstrap'
+import { Container, Row, Table, Col, Modal, Button, Form, Alert, Spinner, ButtonGroup } from 'react-bootstrap'
 import { createNewGroupTransaction } from '../apis/transaction'
 import store from '../stores'
 import { btnRewardStyle } from './ShareCarrotStaff'
@@ -126,12 +126,14 @@ class ShareCarrotGroup extends Component {
                     <td>{group.points}</td>
                     <td>{group.notes}</td>
                     <td className="text-center">
-                        <Button id={`group-member-btn-${group.id}`} style={{marginRight: "0.25em"}} onClick={() => this.handleShowGroupMemberModal(i)}>
-                            <FontAwesomeIcon icon={faPeopleGroup}  />
-                        </Button>
-                        <Button id={`send-carrot-btn-${group.id}`} variant="success" style={{marginLeft: "0.25em"}} onClick={() => this.handleShowSendCarrotModal(i)}>
-                            <FontAwesomeIcon icon={faPaperPlane}  />
-                        </Button>
+                        <ButtonGroup>
+                            <Button id={`group-member-btn-${group.id}`} style={{marginRight: "0.25em"}} onClick={() => this.handleShowGroupMemberModal(i)}>
+                                <FontAwesomeIcon icon={faPeopleGroup}  />
+                            </Button>
+                            <Button id={`send-carrot-btn-${group.id}`} variant="success" style={{marginLeft: "0.25em"}} onClick={() => this.handleShowSendCarrotModal(i)}>
+                                <FontAwesomeIcon icon={faPaperPlane}  />
+                            </Button>
+                        </ButtonGroup>
                     </td>
                 </tr>
             )
