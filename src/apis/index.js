@@ -25,6 +25,7 @@ apiClient.interceptors.response.use((response) => {
       }
     }).catch((error) => {
       removeToken();
+      window.location.reload();
     });
 
     if (res.status === 200) {
