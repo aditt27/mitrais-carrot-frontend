@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { getAccessToken, getRefreshToken, removeToken, setToken } from '../utils/HelperFunctions'
 
-const baseURL = 'http://localhost:8081/api/v1'
+const baseURL = 'https://mcarrot-be-run-wprlmo75qa-et.a.run.app/api/v1'
 
 
 let apiClient = axios.create({
