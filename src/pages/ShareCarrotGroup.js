@@ -24,9 +24,8 @@ function SendCarrotModal(props) {
             setSendCarrotMsg(res)
             if (res === 'Success') {
                 setTimeout(() => {
-                    props.onHideModal()
-                    props.updateBarn()
-                }, 1000);
+                    props.onHideModal(false)
+                }, 600);
             }
         })
     }
@@ -61,7 +60,7 @@ function SendCarrotModal(props) {
                 </Table>
                 {group.users.length === 0 ? (<Alert variant="warning">Group has empty member</Alert>) : (<p>Are you sure you want to send now?</p>)}
                 {isLoading && <div className="text-center"><Spinner variant="primary" animation="border" /></div>}
-                <Alert show={sendCarrotMsg.length > 0} variant={sendCarrotMsg === "Success" ? "success" : "danger"}>{sendCarrotMsg}</Alert>
+                {sendCarrotMsg.length > 0 && <Alert variant={sendCarrotMsg === "Success" ? "success" : "danger"}>{sendCarrotMsg}</Alert>}
             </Modal.Body>
             <Modal.Footer className="m-2">
                 <Form onSubmit={handleSendCarrotSubmit}>
@@ -82,7 +81,6 @@ class ShareCarrotGroup extends Component {
         showGroupMemberModal: false,
         showSendCarrotModal: false,
         manager: {},
-        sendCarrotMsg: '',
         selectedGroupId: 0,
     }
 
@@ -157,8 +155,12 @@ class ShareCarrotGroup extends Component {
         this.setState({showSendCarrotModal: true, selectedGroupId: i})
     }
 
-    onHideModal = () => {
-        this.setState({showGroupMemberModal: false, showSendCarrotModal: false, sendCarrotMsg: ''})
+    onHideModal = (isCancel = true) => {
+        this.setState({showGroupMemberModal: false, showSendCarrotModal: false})
+
+        if (isCancel === false) {
+            this.props.updateBarn()
+        }
     }
 
     GroupMemberModal = () => {
@@ -241,7 +243,7 @@ class ShareCarrotGroup extends Component {
                             </tbody>
                         </Table>
                         {this.state.showGroupMemberModal && (<this.GroupMemberModal />)}
-                        {this.state.showSendCarrotModal && (<SendCarrotModal group={group} show={this.state.showSendCarrotModal} onHideModal={this.onHideModal} updateBarn={this.props.updateBarn} managerId={this.props.manager.id} />)}
+                        {this.state.showSendCarrotModal && (<SendCarrotModal group={group} show={true} onHideModal={this.onHideModal} updateBarn={this.props.updateBarn} managerId={this.props.manager.id} />)}
                     </Col>
                     <Col md="12">
                         <Pagination color="primary" className="float-right mb-2" count={this.state.totalPages} page={this.state.currentPage + 1} onChange={(_, page) => this.fetchGroupList(page - 1)} />

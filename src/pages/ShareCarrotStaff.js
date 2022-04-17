@@ -47,8 +47,7 @@ function RewardCarrotModal(props) {
             if (res === "Success") {
                 setTimeout(() => {
                     props.onHideModal(false)
-                    props.updateBarn()
-                }, 1000);
+                }, 600);
             }
         })
     }
@@ -75,7 +74,7 @@ function RewardCarrotModal(props) {
                         <Form.Control as="textarea" rows="4" id="note" name="note" required disabled={isLoading} />
                     </Form.Group>
                     {isLoading && <div className="text-center"><Spinner variant="primary" animation="border" /></div>}
-                    <Alert show={shareCarrotMsg.length > 0} variant={shareCarrotMsg === "Success" ? "success" : "danger"}>{shareCarrotMsg}</Alert>
+                    {shareCarrotMsg.length > 0 && <Alert variant={shareCarrotMsg === "Success" ? "success" : "danger"}>{shareCarrotMsg}</Alert>}
                 </Modal.Body>
                 <Modal.Footer>
                     <div className="float-right">
@@ -103,17 +102,15 @@ class ShareCarrotStaff extends Component {
         this.fetchTransaction(0)
     }
 
-
-    handleShowShareCarrotModal = async (isCancel) => {
-        const transactionList = this.state.transactionList
-        if (isCancel === false) {
-            const { transactions, page } = await getTransactionsByManager(0)
-            transactionList.transactions = transactions
-            transactionList.currentPage = page
-        }
+    onHideShareCarrotModal = async (isCancel = true) => {
         this.setState(prev => {
-            return {showShareCarrotModal: !prev.showShareCarrotModal, transactionList: transactionList}
+            return {showShareCarrotModal: !prev.showShareCarrotModal}
         })
+        
+        if (isCancel === false) {
+            this.props.updateBarn()
+            this.fetchTransaction(0)
+        }
     }
 
     TransactionListRow = () => {
@@ -152,8 +149,8 @@ class ShareCarrotStaff extends Component {
             <Container className="px-4">
                 <Row>
                     <Col md="12" className="my-2 text-center">
-                        <Button onClick={() => this.handleShowShareCarrotModal(true)}>REWARD CARROT</Button>
-                        {this.state.showShareCarrotModal && <RewardCarrotModal showShareCarrotModal={true} onHideModal={this.handleShowShareCarrotModal} updateBarn={this.props.updateBarn} onLoading={this.props.onLoading} />}
+                        <Button onClick={() => this.setState({showShareCarrotModal: true})}>REWARD CARROT</Button>
+                        {this.state.showShareCarrotModal && <RewardCarrotModal showShareCarrotModal={true} onHideModal={this.onHideShareCarrotModal} onLoading={this.props.onLoading} />}
                     </Col>
                 </Row>
                 <Row>
