@@ -75,8 +75,7 @@ function RewardCarrotModal(props) {
                         <Form.Control as="textarea" rows="4" id="note" name="note" required disabled={isLoading} />
                     </Form.Group>
                     {isLoading && <div className="text-center"><Spinner variant="primary" animation="border" /></div>}
-                    {shareCarrotMsg.length > 0 && shareCarrotMsg !== 'Success' && (<Alert variant="danger">{shareCarrotMsg}</Alert>)}
-                    {shareCarrotMsg.length > 0 && shareCarrotMsg === 'Success' && (<Alert variant="success">{shareCarrotMsg}</Alert>)}
+                    <Alert show={shareCarrotMsg.length > 0} variant={shareCarrotMsg === "Success" ? "success" : "danger"}>{shareCarrotMsg}</Alert>
                 </Modal.Body>
                 <Modal.Footer>
                     <div className="float-right">

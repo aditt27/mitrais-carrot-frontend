@@ -50,20 +50,23 @@ function SendCarrotModal(props) {
                             <td>{group.points}</td>
                         </tr>
                         <tr>
+                            <th>Members</th>
+                            <td>{group.users.length}</td>
+                        </tr>
+                        <tr>
                             <th>Year</th>
                             <td>2022</td>
                         </tr>
                     </tbody>
                 </Table>
-                <p>Are you sure you want to send now?</p>
+                {group.users.length === 0 ? (<Alert variant="warning">Group has empty member</Alert>) : (<p>Are you sure you want to send now?</p>)}
                 {isLoading && <div className="text-center"><Spinner variant="primary" animation="border" /></div>}
-                {sendCarrotMsg.length > 0 && sendCarrotMsg !== 'Success' && (<Alert variant="danger">{sendCarrotMsg}</Alert>)}
-                {sendCarrotMsg.length > 0 && sendCarrotMsg === 'Success' && (<Alert variant="success">{sendCarrotMsg}</Alert>)}
+                <Alert show={sendCarrotMsg.length > 0} variant={sendCarrotMsg === "Success" ? "success" : "danger"}>{sendCarrotMsg}</Alert>
             </Modal.Body>
             <Modal.Footer className="m-2">
                 <Form onSubmit={handleSendCarrotSubmit}>
                     <Button variant="link" className="mr-4" onClick={() => props.onHideModal()}>CANCEL</Button>
-                    <Button type="submit" style={btnRewardStyle}>SEND NOW</Button>
+                    <Button type="submit" style={btnRewardStyle} disabled={group.users.length === 0}>SEND NOW</Button>
                     <input type="hidden" name="groupid" value={group.id} />
                 </Form>
             </Modal.Footer>
