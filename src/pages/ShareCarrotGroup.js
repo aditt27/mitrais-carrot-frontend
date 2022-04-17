@@ -89,18 +89,24 @@ class ShareCarrotGroup extends Component {
 
     fetchGroupList = async (page = 0) => {
         this.props.onLoading(true)
-        let init = {}
+        let init = {
+            currentPage: this.state.currentPage,
+            totalPages: this.state.totalPages,
+            groupList: this.state.groupList
+        }
         const { profile } = store.getState().userReducer
         await apiClient.get(`/group?page=${page}`).then(res => {
             if (res.data.message === 'Success') {
                 const data = res.data.result
-                init.currentPage = data.currentPage
-                init.totalPages = data.totalPages
                 const g = data.currentPageContent.filter(it => it.manager === profile.id.toString())
-                g.forEach((data, _) => {
-                    data.users = data.users.filter(it => it.role === 'Staff')
-                })
-                init.groupList = g
+                if (g.length > 0) {
+                    g.forEach((data, _) => {
+                        data.users = data.users.filter(it => it.role === 'Staff')
+                    })
+                    init.currentPage = data.currentPage
+                    init.totalPages = data.totalPages
+                    init.groupList = g
+                }
             }
         })
         this.props.onLoading(false)
