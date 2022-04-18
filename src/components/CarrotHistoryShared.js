@@ -35,12 +35,7 @@ class CarrotHistoryShared extends React.Component {
                     </thead>
                     <tbody>
                         <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td colSpan={6}>Table Empty</td>
                         </tr>
                     </tbody>
                 </Table>

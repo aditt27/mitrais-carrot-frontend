@@ -1,6 +1,6 @@
 import { Pagination } from '@mui/material'
 import { Component }  from 'react'
-import { Col, Container, Row, Table } from 'react-bootstrap'
+import { Col, Row, Table } from 'react-bootstrap'
 import { getAllTransactions } from '../apis/transaction'
 
 class CarrotHistoryEarned extends Component {
@@ -59,6 +59,17 @@ class CarrotHistoryEarned extends Component {
 
         const { totalPages, currentPage } = this.state
 
+        let tbodyContent = <tbody>
+            <tr>
+                <td colSpan={5} className='text-center'>Table Empty</td>
+            </tr>
+        </tbody>
+        if(this.state.transactionList.length > 0) {
+            tbodyContent = <tbody>
+                <this.TransactionListRow />
+            </tbody>
+        }
+
         return (
             <div>
                 <Row>
@@ -84,9 +95,7 @@ class CarrotHistoryEarned extends Component {
                                     <th>Note</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <this.TransactionListRow />
-                            </tbody>
+                            {tbodyContent}
                         </Table>
                     </Col>
                 </Row>
