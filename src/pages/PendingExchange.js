@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Modal, Table } from 'react-bootstrap'
+import { Alert, Button, Modal, Table } from 'react-bootstrap'
 import { connect } from 'react-redux'
 import { saveExchangeHistoryCurrentPage } from '../stores/exchangeHistory'
 import { getExchangeHistoryBazaarItem, updateStatusExchangeRequest } from '../apis/BazaarExchangeApi'
@@ -7,12 +7,14 @@ import { Pagination } from '@mui/material'
 
 const PendingExchange = (props)=> {
 
-    const [itemPerPage, setItemPerPage] = useState(10)
+    const [itemPerPage] = useState(10)
     const [modalShow, setModalShow] = useState(false)
     const [modalTitle, setModalTitle] = useState('')
     const [modalType, setModalType] = useState('')
     const [loading, setLoading] = useState(false)
     const [itemId, setItemId] = useState(-1)
+    const [exchangeStatus, setExchangeStatus] = useState('')
+    const [showModalExchangeStatus, setShowModalExchangeStatus] = useState(false)
 
     const loadExchangeHistory = ()=> {
         getExchangeHistoryBazaarItem(
@@ -83,12 +85,43 @@ const PendingExchange = (props)=> {
             setLoading(false)
             handleModalClose()
             loadExchangeHistory()
+            setShowModalExchangeStatus(true)
+            setExchangeStatus(status)
         })
     }
 
     useEffect(()=> {
         loadExchangeHistory()
     }, [])
+
+    let tbodyContent = <tbody>
+        <tr>
+            <td colSpan={6} className='text-center'>Table Empty</td>
+        </tr>
+    </tbody>
+    if(props.data.length > 0) {
+        tbodyContent = <tbody>
+        {
+            props.data.map(item=>{
+                return <tr key={item.id}>
+                    <td>{item.id}</td>
+                    <td>{item.username}</td>
+                    <td>{item.itemName} <br/>itemId: {item.itemId}</td>
+                    <td>{item.exchangeRate}</td>
+                    <td>{item.exchangeDate}</td>
+                    <td className='text-center'>
+                            <Button className='btn-block' variant='success' onClick={(e)=>{handleModalOpen(e, item.id)}} name='approveRequest' >
+                                Approve
+                            </Button>
+                            <Button className='btn-block' variant='danger' onClick={(e)=>{handleModalOpen(e, item.id)}} name='denyRequest' >
+                                Deny
+                            </Button>
+                        </td>
+                </tr>
+            })
+        }
+        </tbody>
+    }
 
     return (
         <div style={{padding: '1em'}}>
@@ -110,27 +143,7 @@ const PendingExchange = (props)=> {
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                {
-                    props.data.map(item=>{
-                        return <tr key={item.id}>
-                            <td>{item.id}</td>
-                            <td>{item.username}</td>
-                            <td>{item.itemName} <br/>itemId: {item.itemId}</td>
-                            <td>{item.exchangeRate}</td>
-                            <td>{item.exchangeDate}</td>
-                            <td className='text-center'>
-                                    <Button className='btn-block' variant='success' onClick={(e)=>{handleModalOpen(e, item.id)}} name='approveRequest' >
-                                        Approve
-                                    </Button>
-                                    <Button className='btn-block' variant='danger' onClick={(e)=>{handleModalOpen(e, item.id)}} name='denyRequest' >
-                                        Deny
-                                    </Button>
-                                </td>
-                        </tr>
-                    })
-                }
-                </tbody>
+                {tbodyContent}
             </Table>
 
             <div style={{justifyContent:'end', display: 'flex'}} >
@@ -153,6 +166,28 @@ const PendingExchange = (props)=> {
                         {loading? 'loading..': modalType}
                     </Button>
                 </Modal.Body>
+            </Modal>
+
+            <Modal show={showModalExchangeStatus} onHide={()=> setShowModalExchangeStatus(false)}>
+                <Alert style={{
+                    marginTop: '14px', 
+                    marginLeft: '14px', 
+                    marginRight: '14px'
+                }}
+                    variant='success'>
+                    <Alert.Heading>
+                        {exchangeStatus==='approved'? 'Exchange Request Approved' : 'Exchange Request Denied'}
+                    </Alert.Heading>
+                    <hr/>
+                    <p>
+                        Check Bazaar Claimed tab for more info
+                    </p>
+                    <div className="d-flex justify-content-end">
+                        <Button onClick={() => setShowModalExchangeStatus(false)} variant='outline-success'>
+                            Close
+                        </Button>
+                    </div>
+                </Alert>
             </Modal>
         </div>
     )

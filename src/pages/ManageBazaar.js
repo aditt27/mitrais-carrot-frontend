@@ -1,7 +1,7 @@
 import { Pagination } from '@mui/material'
 import Multiselect from 'multiselect-react-dropdown'
 import React from 'react'
-import { Button, Form, Modal, Table } from 'react-bootstrap'
+import { Button, Form, Modal , Spinner, Table } from 'react-bootstrap'
 import { connect } from 'react-redux'
 import { addBazaarItem, addGroupToItem, deleteBazaarItem, editBazaarItem, getBazaarItem } from '../apis/BazaarItemApi'
 import { getGroups } from '../apis/group'
@@ -270,6 +270,9 @@ class ManageBazaar extends React.Component {
 
     handleItemToggle = (e, itemId = undefined)=> {
 
+        const currentSpinner = document.getElementById(`sp-toggle-${itemId}`)
+        currentSpinner.hidden = false
+
         let toggleValue = e.target.checked
 
         switch(e.target.name) {
@@ -282,6 +285,7 @@ class ManageBazaar extends React.Component {
                 .then(result=> {
                     console.log(result)
                     this.loadBazaarItem()
+                    currentSpinner.hidden = true
                 })
                 break;
             case 'toggleAutoApprove':
@@ -293,6 +297,7 @@ class ManageBazaar extends React.Component {
                 .then(result=> {
                     console.log(result)
                     this.loadBazaarItem()
+                    currentSpinner.hidden = true
                 })
                 break;
             default:
@@ -446,19 +451,75 @@ class ManageBazaar extends React.Component {
                             }
                             }
                             onRemove={(groupList, e) => {
-                                const idx = addedGroups.findIndex(i => i == e.id)
+                                const idx = addedGroups.findIndex(i => i === e.id)
                                 addedGroups.splice(idx, 1)
                                 console.log(addedGroups)
                             }}
                         />
+                        <br/>
                         <Button variant="primary" disabled={formDisable} className='float-right' onClick={this.handleSubmitForm}>
                             Submit
                         </Button>
                     </Form.Group>
+                break;
             default:
                 break;
         }
         
+        let tbodyContent = <tbody>
+            <tr>
+                <td colSpan={6} className='text-center'>Table Empty</td>
+            </tr>
+        </tbody>
+        if(this.props.data.length > 0) {
+            tbodyContent = <tbody>
+            {
+                this.props.data.map(item=> {
+                    return <tr key={item.id}>
+                        <td>{item.id}</td>
+                        <td>
+                            <img 
+                                src={item.image} 
+                                width={100} 
+                                alt='Item'>
+                            </img>
+                        </td>
+                        <td>{item.name}<br/><small>{item.description}</small></td>
+                        <td>{item.stockAmount}</td>
+                        <td>{item.soldAmount}</td>
+                        <td>{item.exchangeRate}</td>
+                        <td>
+                            <Form.Check 
+                                label='Active'
+                                checked={item.active}
+                                name='toggleActive'
+                                onChange={(e)=> this.handleItemToggle(e, item.id)}
+                            />                                    
+                            <Form.Check 
+                                label='Auto Approve'
+                                checked={item.autoApprove}
+                                name='toggleAutoApprove'
+                                onChange={(e)=> this.handleItemToggle(e, item.id)}
+                            />
+                            <Spinner animation="border" variant="primary" size='sm' id={`sp-toggle-${item.id}`} hidden />
+
+                        </td>
+                        <td className='text-center'>
+                            <Button className='btn-block' onClick={(e)=>{this.handleModalOpen(e, item.id)}} name='editItem' >
+                                Edit
+                            </Button>
+                            <Button className='btn-block' variant='danger' onClick={(e)=>{this.handleModalOpen(e, item.id)}} name='deleteItem' >
+                                Delete
+                            </Button>
+                            <Button className='btn-block' variant='warning' onClick={(e)=>{this.handleModalOpen(e, item.id)}} name='editGroup'>
+                                Group
+                            </Button>
+                        </td>
+                    </tr>
+                })
+            }
+            </tbody>
+        }
         return (
             <div style={{padding: '16px'}}>
                 <hr style={{
@@ -482,51 +543,7 @@ class ManageBazaar extends React.Component {
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
-                    {
-                        this.props.data.map(item=> {
-                            return <tr key={item.id}>
-                                <td>{item.id}</td>
-                                <td>
-                                    <img 
-                                        src={item.image} 
-                                        width={100} 
-                                        alt='Item'>
-                                    </img>
-                                </td>
-                                <td>{item.name}<br/><small>{item.description}</small></td>
-                                <td>{item.stockAmount}</td>
-                                <td>{item.soldAmount}</td>
-                                <td>{item.exchangeRate}</td>
-                                <td>
-                                    <Form.Check 
-                                        label='Active'
-                                        checked={item.active}
-                                        name='toggleActive'
-                                        onChange={(e)=> this.handleItemToggle(e, item.id)}
-                                    />
-                                    <Form.Check 
-                                        label='Auto Approve'
-                                        checked={item.autoApprove}
-                                        name='toggleAutoApprove'
-                                        onChange={(e)=> this.handleItemToggle(e, item.id)}
-                                    />
-                                </td>
-                                <td className='text-center'>
-                                    <Button className='btn-block' onClick={(e)=>{this.handleModalOpen(e, item.id)}} name='editItem' >
-                                        Edit
-                                    </Button>
-                                    <Button className='btn-block' variant='danger' onClick={(e)=>{this.handleModalOpen(e, item.id)}} name='deleteItem' >
-                                        Delete
-                                    </Button>
-                                    <Button className='btn-block' variant='warning' onClick={(e)=>{this.handleModalOpen(e, item.id)}} name='editGroup'>
-                                        Group
-                                    </Button>
-                                </td>
-                            </tr>
-                        })
-                    }
-                    </tbody>
+                    {tbodyContent}
                 </Table>
                 
                 <div style={{justifyContent:'end', display: 'flex'}} >

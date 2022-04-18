@@ -1,7 +1,6 @@
 import React from 'react'
 import { Route } from 'react-router-dom'
 import Bazaar from '../pages/Bazaar'
-import Dashboard from '../pages/Dashboard'
 import PrivateRoute from './PrivateRoute'
 import { Admin } from '../utils/Role'
 import Groups from '../pages/Groups'
@@ -17,62 +16,57 @@ import GroupDetails from '../pages/GroupDetails'
 
 const routesAdmin = [
   {
-    key: 1,
+    key: 'bazaar',
     path: '',
-    element: <Dashboard roles={[Admin]} />
-  },
-  {
-    key: 2,
-    path: 'bazaar',
     element: <Bazaar roles={[Admin]} />
   },
   {
-    key: 4,
+    key: 'group',
     path: 'group',
     element: <Groups roles={[Admin]} />
   },
   {
-    key: 5,
+    key: 'barn',
     path: 'barn',
     element: <Harvest roles={[Admin]} />
   },
   {
-    key: 6,
+    key: 'staff-in-group',
     path: 'staff-in-group',
     element: <StaffInGroup roles={[Admin]} />
   },
   {
-    key: 7,
+    key: 'staff-list',
     path: 'staff-list',
     element: <StaffList roles={[Admin]} />
   },
   {
-    key: 8,
+    key: 'distribution',
     path: 'distribution',
     element: <Distribution roles={[Admin]} />
   },
   {
-    key: 9,
+    key: 'carrotHistory',
     path: 'carrotHistory',
     element: <CarrotHistory roles={[Admin]} />
   },
   {
-    key: 10,
+    key: 'rewardDetail',
     path: 'bazaar/rewardDetail',
     element: <BazaarItemDetail roles={[Admin]} />
   },
   {
-    key: 11,
+    key: 'setting',
     path: 'setting',
     element: <AdminSetting roles={[Admin]} />
   },
   {
-    key: 12,
+    key: 'notification',
     path: 'notification',
     element: <Notification roles={[Admin]} />
   },
   {
-    key: 13,
+    key: 'groupDetails',
     path: 'groupDetails',
     element: <GroupDetails roles={[Admin]}/>
   }
