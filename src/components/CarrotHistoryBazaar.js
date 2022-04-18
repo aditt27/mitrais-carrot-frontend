@@ -57,18 +57,40 @@ class CarrotHistoryBazaar extends React.Component {
 
     render() {
 
-        const transactionCardStyle = {
-            borderRadius: '5px',
-            backgroundColor: '#523bf0',
-            color: 'white',
-            padding: '15px',
+        // const transactionCardStyle = {
+        //     borderRadius: '5px',
+        //     backgroundColor: '#523bf0',
+        //     color: 'white',
+        //     padding: '15px',
 
-        }
+        // }
 
-        const rowCardStyle = {
-            paddingLeft: '1em',
-            paddingRight: '1em',
-            paddingBottom: '1em'
+        // const rowCardStyle = {
+        //     paddingLeft: '1em',
+        //     paddingRight: '1em',
+        //     paddingBottom: '1em'
+        // }
+
+        let tbodyContent = <tbody>
+            <tr>
+                <td colSpan={6} className='text-center'>Table Empty</td>
+            </tr>
+        </tbody>
+        if(this.props.data.length > 0) {
+            tbodyContent = <tbody>
+            {
+                this.props.data.map(item=> {
+                    return <tr key={item.id}>
+                        <td>{item.id}</td>
+                        <td>{item.itemName}</td>
+                        <td>{item.itemDescription}</td>
+                        <td>{item.exchangeRate}</td>
+                        <td>{item.exchangeStatus}</td>
+                        <td>{item.exchangeDate}</td>
+                    </tr>
+                })
+            }
+            </tbody>
         }
 
         return(
@@ -91,20 +113,7 @@ class CarrotHistoryBazaar extends React.Component {
                             <th>Date</th>
                         </tr>
                     </thead>
-                    <tbody>
-                    {
-                        this.props.data.map(item=> {
-                            return <tr key={item.id}>
-                                <td>{item.id}</td>
-                                <td>{item.itemName}</td>
-                                <td>{item.itemDescription}</td>
-                                <td>{item.exchangeRate}</td>
-                                <td>{item.exchangeStatus}</td>
-                                <td>{item.exchangeDate}</td>
-                            </tr>
-                        })
-                    }
-                    </tbody>
+                    {tbodyContent}
                 </Table>
                 <div style={{justifyContent:'end', display: 'flex', paddingBottom: '1em'}} >
                     <Pagination id='pagination'

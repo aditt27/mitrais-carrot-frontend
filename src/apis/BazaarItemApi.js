@@ -89,3 +89,18 @@ export async function editBazaarItem(req) {
         }))
         .catch(err => console.log(err))
 }
+
+export async function addGroupToItem(params) {
+    return apiClient.post(`/item/${params.itemId}/add-group`, {
+        groupIds: params.groupIds
+    })
+    .then((response=> {
+        if(response) {     
+            console.log(response)   
+            return response.data
+        }
+        return false
+    }))
+    .catch(err => console.log(err))
+
+}

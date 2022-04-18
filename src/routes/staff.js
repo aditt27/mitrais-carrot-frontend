@@ -9,22 +9,22 @@ import Notification from '../pages/Notification'
 
 const routesStaff = [
   {
-    key: 1,
+    key: 'bazaar',
     path: '',
     element: <Bazaar roles={[Staff]} />
   },
   {
-    key: 2,
+    key: 'carrotHistory',
     path: 'carrotHistory',
     element: <CarrotHistory roles={[Staff]} />
   },
   {
-    key: 3,
+    key: 'rewardDetail',
     path: 'rewardDetail',
     element: <BazaarItemDetail roles={[Staff]} />
   },
   {
-    key: 4,
+    key: 'notification',
     path: 'notification',
     element: <Notification roles={[Staff]} />
   }
