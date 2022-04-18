@@ -1,5 +1,20 @@
 import apiClient from ".";
 
+export async function getGroups(isPaginated) {
+    return apiClient.get('/group', {
+        params: {
+            isPaginated: isPaginated
+        }
+    }
+    )
+    .then((response => {
+        if (response) {
+            return response.data
+        }
+    }))
+    .catch(err => console.log(err))
+}
+
 export async function addGroup(params) {
     return apiClient.post('/group', {
         groupName: params.groupName,
@@ -41,7 +56,7 @@ export async function deleteGroup(deleteId) {
 }
 
 export async function addToGroup(params) {
-    console.log(params.userIds)
+    // console.log(params.userIds)
     return apiClient.post(`/group/${params.groupId}/add-user`, {
         userIds: params.userIds
     })
@@ -54,7 +69,7 @@ export async function addToGroup(params) {
 }
 
 export async function removeFromGroup(params) {
-    console.log(params.userIds)
+    // console.log(params.userIds)
     return apiClient.delete(`/group/${params.groupId}/remove-user`, {
         data: {userIds: params.userIds}
     })
