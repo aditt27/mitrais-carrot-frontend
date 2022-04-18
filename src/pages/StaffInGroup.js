@@ -24,7 +24,7 @@ class StaffInGroup extends Component {
             for (const i in data) {
                 groups.push(data[i].groupName)
             }
-        })
+        }).catch(_ => {})
 
         const { staffList, totalPages } = await this.filterStaffByGroup()
 

@@ -109,7 +109,7 @@ class ShareCarrotGroup extends Component {
                     init.groupList = g
                 }
             }
-        })
+        }).catch(_ => {})
         this.props.onLoading(false)
         this.setState({
             currentPage: init.currentPage,
