@@ -36,6 +36,9 @@ class ShareCarrot extends Component {
         await apiClient.get('/barn?filterBy=active-only').then(res => {
             const data = res.data.result.currentPageContent
             year = data[0].year
+        }).catch(_ => {
+            user.result.totalCarrot = 0
+            user.result.rewardedCarrot = 0
         })
         
         this.setState({
