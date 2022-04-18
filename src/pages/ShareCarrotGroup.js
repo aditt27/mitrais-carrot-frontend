@@ -24,9 +24,8 @@ function SendCarrotModal(props) {
             setSendCarrotMsg(res)
             if (res === 'Success') {
                 setTimeout(() => {
-                    props.onHideModal()
-                    props.updateBarn()
-                }, 1000);
+                    props.onHideModal(false)
+                }, 600);
             }
         })
     }
@@ -50,20 +49,23 @@ function SendCarrotModal(props) {
                             <td>{group.points}</td>
                         </tr>
                         <tr>
+                            <th>Members</th>
+                            <td>{group.users.length}</td>
+                        </tr>
+                        <tr>
                             <th>Year</th>
                             <td>2022</td>
                         </tr>
                     </tbody>
                 </Table>
-                <p>Are you sure you want to send now?</p>
+                {group.users.length === 0 ? (<Alert variant="warning">Group has empty member</Alert>) : (<p>Are you sure you want to send now?</p>)}
                 {isLoading && <div className="text-center"><Spinner variant="primary" animation="border" /></div>}
-                {sendCarrotMsg.length > 0 && sendCarrotMsg !== 'Success' && (<Alert variant="danger">{sendCarrotMsg}</Alert>)}
-                {sendCarrotMsg.length > 0 && sendCarrotMsg === 'Success' && (<Alert variant="success">{sendCarrotMsg}</Alert>)}
+                {sendCarrotMsg.length > 0 && <Alert variant={sendCarrotMsg === "Success" ? "success" : "danger"}>{sendCarrotMsg}</Alert>}
             </Modal.Body>
             <Modal.Footer className="m-2">
                 <Form onSubmit={handleSendCarrotSubmit}>
                     <Button variant="link" className="mr-4" onClick={() => props.onHideModal()}>CANCEL</Button>
-                    <Button type="submit" style={btnRewardStyle}>SEND NOW</Button>
+                    <Button type="submit" style={btnRewardStyle} disabled={group.users.length === 0}>SEND NOW</Button>
                     <input type="hidden" name="groupid" value={group.id} />
                 </Form>
             </Modal.Footer>
@@ -79,7 +81,6 @@ class ShareCarrotGroup extends Component {
         showGroupMemberModal: false,
         showSendCarrotModal: false,
         manager: {},
-        sendCarrotMsg: '',
         selectedGroupId: 0,
     }
 
@@ -89,20 +90,26 @@ class ShareCarrotGroup extends Component {
 
     fetchGroupList = async (page = 0) => {
         this.props.onLoading(true)
-        let init = {}
+        let init = {
+            currentPage: this.state.currentPage,
+            totalPages: this.state.totalPages,
+            groupList: this.state.groupList
+        }
         const { profile } = store.getState().userReducer
         await apiClient.get(`/group?page=${page}`).then(res => {
             if (res.data.message === 'Success') {
                 const data = res.data.result
-                init.currentPage = data.currentPage
-                init.totalPages = data.totalPages
                 const g = data.currentPageContent.filter(it => it.manager === profile.id.toString())
-                g.forEach((data, _) => {
-                    data.users = data.users.filter(it => it.role === 'Staff')
-                })
-                init.groupList = g
+                if (g.length > 0) {
+                    g.forEach((data, _) => {
+                        data.users = data.users.filter(it => it.role === 'Staff')
+                    })
+                    init.currentPage = data.currentPage
+                    init.totalPages = data.totalPages
+                    init.groupList = g
+                }
             }
-        })
+        }).catch(_ => {})
         this.props.onLoading(false)
         this.setState({
             currentPage: init.currentPage,
@@ -148,8 +155,12 @@ class ShareCarrotGroup extends Component {
         this.setState({showSendCarrotModal: true, selectedGroupId: i})
     }
 
-    onHideModal = () => {
-        this.setState({showGroupMemberModal: false, showSendCarrotModal: false, sendCarrotMsg: ''})
+    onHideModal = (isCancel = true) => {
+        this.setState({showGroupMemberModal: false, showSendCarrotModal: false})
+
+        if (isCancel === false) {
+            this.props.updateBarn()
+        }
     }
 
     GroupMemberModal = () => {
@@ -232,7 +243,7 @@ class ShareCarrotGroup extends Component {
                             </tbody>
                         </Table>
                         {this.state.showGroupMemberModal && (<this.GroupMemberModal />)}
-                        {this.state.showSendCarrotModal && (<SendCarrotModal group={group} show={this.state.showSendCarrotModal} onHideModal={this.onHideModal} updateBarn={this.props.updateBarn} managerId={this.props.manager.id} />)}
+                        {this.state.showSendCarrotModal && (<SendCarrotModal group={group} show={true} onHideModal={this.onHideModal} updateBarn={this.props.updateBarn} managerId={this.props.manager.id} />)}
                     </Col>
                     <Col md="12">
                         <Pagination color="primary" className="float-right mb-2" count={this.state.totalPages} page={this.state.currentPage + 1} onChange={(_, page) => this.fetchGroupList(page - 1)} />
