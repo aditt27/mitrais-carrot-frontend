@@ -1,5 +1,4 @@
 import { Pagination } from "@mui/material";
-import axios from "axios";
 import React from "react"
 import { Card, Col, Row, Tab, Form, Table, Button, ButtonGroup, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -81,7 +80,7 @@ export default class Groups extends React.Component {
                 })
                 break;
             case 'editGroup':
-                const idx = this.state.groupList.findIndex(i => i.groupId == groupId)
+                const idx = this.state.groupList.findIndex(i => i.groupId === groupId)
                 const toEdit = this.state.groupList[idx]
                 this.setState({
                     modalTitle: 'Edit Group',
@@ -100,6 +99,7 @@ export default class Groups extends React.Component {
                     modalType: 'confirmation',
                     deleteId: groupId
                 })
+                break;
             default:
                 break;
         }
@@ -225,7 +225,7 @@ export default class Groups extends React.Component {
             modalTitle,
             modalType,
             formDisable,
-            formValidated: formValidated,
+            formValidated,
             formName,
             formManager,
             formCarrot,
@@ -288,6 +288,8 @@ export default class Groups extends React.Component {
                         Delete
                     </Button>
                 </div>
+                break;
+            default:
                 break;
         }
         return (

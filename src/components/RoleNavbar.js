@@ -10,42 +10,37 @@ const RoleNavbar = (props) => {
 
   const adminNavbarItems = [
     {
-      key: 1,
-      name: 'Dashboard',
+      key: 'Bazaar',
+      name: 'Bazaar',
       href: '/admin'
     },
     {
-      key: 2,
-      name: 'Bazaar',
-      href: '/admin/bazaar'
-    },
-    {
-      key: 4,
+      key: 'Group',
       name: 'Group',
       href: '/admin/group'
     },
     {
-      key: 5,
+      key: 'Harvest',
       name: 'Harvest',
       href: '/admin/barn'
     },
     {
-      key: 6,
+      key: 'Distribution',
       name: 'Distribution',
       href: '/admin/distribution'
     },
     {
-      key: 7,
+      key: 'StaffInGroup',
       name: 'Staff In Group',
       href: '/admin/staff-in-group'
     },
     {
-      key: 8,
+      key: 'StaffList',
       name: 'Staff List',
       href: '/admin/staff-list'
     },
     {
-      key: 9,
+      key: 'Setting',
       name: 'Setting',
       href: '/admin/setting'
     }
@@ -53,17 +48,17 @@ const RoleNavbar = (props) => {
 
   const merchantNavbarItems = [
     {
-      key: 1,
+      key: 'ManageBazaar',
       name: 'Manage Bazaar',
       href: '/merchant'
     },
     {
-      key: 2,
+      key: 'PendingExchange',
       name: 'Pending Exchange',
       href: '/merchant/bazaar/pending'
     },
     {
-      key: 3,
+      key: 'BazaarClaimed',
       name: 'Bazaar Claimed',
       href: '/merchant/bazaar/claimed'
     },
@@ -71,12 +66,12 @@ const RoleNavbar = (props) => {
 
   const managerNavbarItems = [
     {
-      key: 1,
+      key: 'Bazaar',
       name: 'Bazaar',
       href: '/manager'
     },
     {
-      key: 2,
+      key: 'ShareCarrot',
       name: 'Share Carrot',
       href: '/manager/share-carrot'
     }
@@ -84,7 +79,7 @@ const RoleNavbar = (props) => {
 
   const staffNavbarItems = [
     {
-      key: 1,
+      key: 'Bazaar',
       name: 'Bazaar',
       href: '/staff'
     },

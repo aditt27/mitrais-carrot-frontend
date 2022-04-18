@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, Button, Col, Image, Modal, Row } from 'react-bootstrap'
+import { Alert, Button, Col, Modal, Row } from 'react-bootstrap'
 import { connect } from 'react-redux'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { exchangeBazaarItem } from '../apis/BazaarExchangeApi'
 
 const BazaarItemDetail = (props)=> {
@@ -36,11 +36,11 @@ const BazaarItemDetail = (props)=> {
             })
     }
 
-    const titleStyle = {
-        color: '#838e9b',
-        fontFamily: 'Verdana',
-        textTransform: 'uppercase'
-    }
+    // const titleStyle = {
+    //     color: '#838e9b',
+    //     fontFamily: 'Verdana',
+    //     textTransform: 'uppercase'
+    // }
 
     useEffect(() => {
         loadItemDetails()

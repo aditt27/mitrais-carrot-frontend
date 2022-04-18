@@ -7,7 +7,7 @@ import { saveExchangeHistoryCurrentPage } from '../stores/exchangeHistory'
 
 const BazaarClaimed = (props)=> {
 
-    const [itemPerPage, setItemPerPage] = useState(10)
+    const [itemPerPage] = useState(10)
 
     const loadExchangeHistory = ()=> {
         getExchangeHistoryBazaarItem(
@@ -47,6 +47,28 @@ const BazaarClaimed = (props)=> {
         loadExchangeHistory()
     }, [])
 
+    let tbodyContent = <tbody>
+        <tr>
+            <td colSpan={6} className='text-center'>Table Empty</td>
+        </tr>
+    </tbody>
+    if(props.data.length > 0) {
+        tbodyContent = <tbody>
+        {
+            props.data.map(item=>{
+                return <tr key={item.id}>
+                    <td>{item.id}</td>
+                    <td>{item.username}</td>
+                    <td>{item.itemName} <br/>itemId: {item.itemId}</td>
+                    <td>{item.exchangeRate}</td>
+                    <td>{item.exchangeDate}</td>
+                    <td>{item.exchangeStatus}</td>
+                </tr>
+            })
+        }
+        </tbody>
+    }
+
     return (
         <div style={{padding: '1em'}}>
             <hr style={{
@@ -67,20 +89,7 @@ const BazaarClaimed = (props)=> {
                         <th>Request Status</th>
                     </tr>
                 </thead>
-                <tbody>
-                {
-                    props.data.map(item=>{
-                        return <tr key={item.id}>
-                            <td>{item.id}</td>
-                            <td>{item.username}</td>
-                            <td>{item.itemName} <br/>itemId: {item.itemId}</td>
-                            <td>{item.exchangeRate}</td>
-                            <td>{item.exchangeDate}</td>
-                            <td>{item.exchangeStatus}</td>
-                        </tr>
-                    })
-                }
-                </tbody>
+                {tbodyContent}
             </Table>
 
             <div style={{justifyContent:'end', display: 'flex'}} >

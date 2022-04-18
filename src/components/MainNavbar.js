@@ -75,7 +75,6 @@ class MainNavbar extends React.Component {
         }
 
         const location = window.location
-        const path  = location.pathname.split('/')
 
         return(
             <Navbar bg="light" expand="lg" style={navbarStyle}>
