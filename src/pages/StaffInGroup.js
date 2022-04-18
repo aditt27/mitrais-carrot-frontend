@@ -19,7 +19,7 @@ class StaffInGroup extends Component {
     async componentDidMount() {
         this.setState({isLoading: true})
         let groups = []
-        await apiClient.get("/group").then(res => {
+        await apiClient.get("/group?isPaginated=false").then(res => {
             const data = res.data.result.currentPageContent
             for (const i in data) {
                 groups.push(data[i].groupName)
