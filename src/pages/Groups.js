@@ -3,6 +3,7 @@ import React from "react"
 import { Card, Col, Row, Tab, Form, Table, Button, ButtonGroup, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import apiClient from "../apis";
+import { getManager } from "../apis/Distribution";
 import { addGroup, deleteGroup, editGroup } from "../apis/group";
 
 export default class Groups extends React.Component {
@@ -23,11 +24,12 @@ export default class Groups extends React.Component {
             deleteId: -1,
             currentPage: 0,
             totalPages: 0,
-            formValidated: false
+            formValidated: false,
+            manager: []
         }
 
     }
-    
+
     pageSize = 5
 
     async loadData(page = 0, size = 2) {
@@ -58,12 +60,24 @@ export default class Groups extends React.Component {
         this.setState({ groupList: result.groups, currentPage: result.currentPage, totalPages: result.totalPages })
     }
 
+    renderManagerOptions = () => {
+        return this.state.manager.map((manager) => {
+            return (
+                <option value={manager.id} key={manager.id}>{manager.name}</option>
+            )
+        })
+    }
+
     async componentDidMount() {
         this.loadData(undefined, this.pageSize)
+        getManager().then(res => {
+            const data = res.result.currentPageContent;
+            this.setState({ manager: data });
+        })
 
     }
     handlePagination = (e, page) => {
-        this.loadData(page-1, this.pageSize)
+        this.loadData(page - 1, this.pageSize)
     }
 
     handleModalOpen = (e, groupId = undefined) => {
@@ -120,7 +134,7 @@ export default class Groups extends React.Component {
         if (form.checkValidity() === false) {
             event.preventDefault()
             event.stopPropagation()
-            this.setState({formValidated: true})
+            this.setState({ formValidated: true })
         } else {
             event.preventDefault()
             switch (this.state.formType) {
@@ -128,7 +142,7 @@ export default class Groups extends React.Component {
                     this.setState({ formDisable: true })
                     addGroup({
                         groupName: this.state.formName,
-                        managerId: this.state.formManager,
+                        managerId: this.state.formManager.toString(),
                         notes: this.state.formNote,
                         points: this.state.formCarrot
                     })
@@ -152,7 +166,7 @@ export default class Groups extends React.Component {
                     editGroup({
                         groupId: this.state.editId,
                         groupName: this.state.formName,
-                        managerId: this.state.formManager,
+                        managerId: this.state.formManager.toString(),
                         notes: this.state.formNote,
                         points: this.state.formCarrot
                     })
@@ -194,11 +208,13 @@ export default class Groups extends React.Component {
         const currentPath = window.location.pathname.split("/")
         const { groupList } = this.state
         return groupList.map((group, i) => {
+            const manager = this.state.manager.find(element => element.id === parseInt(group.manager)) 
+            // console.log(manager)
             return (
                 <tr key={i}>
                     <td>{(this.state.currentPage * this.pageSize) + group.number}</td>
                     <td>{group.groupName}</td>
-                    <td>{group.manager}</td>
+                    <td>{manager.name}</td>
                     <td>{group.points}</td>
                     <td>{group.notes}</td>
                     <td>
@@ -250,13 +266,11 @@ export default class Groups extends React.Component {
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Manager: </Form.Label>
-                            <Form.Control
-                                required
-                                type="text"
-                                name='formManager'
-                                disabled={formDisable}
-                                value={formManager}
-                                onChange={this.handleValueChange} />
+                            <Form.Control as="select" required name='formManager'
+                                disabled={formDisable} value={formManager} onChange={this.handleValueChange}>
+                                <option></option>
+                                {this.renderManagerOptions()}
+                            </Form.Control>
                             <Form.Control.Feedback type='invalid'>Enter group manager</Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group className="mb-3">
@@ -266,12 +280,12 @@ export default class Groups extends React.Component {
                         <Form.Group className="mb-3">
                             <Form.Label>Notes: </Form.Label>
                             <Form.Control
-                                required 
-                                as="textarea" 
-                                rows={3} 
-                                name='formNote' 
-                                disabled={formDisable} 
-                                value={formNote} 
+                                required
+                                as="textarea"
+                                rows={3}
+                                name='formNote'
+                                disabled={formDisable}
+                                value={formNote}
                                 onChange={this.handleValueChange} />
                             <Form.Control.Feedback type='invalid'>Enter group notes</Form.Control.Feedback>
                         </Form.Group>
