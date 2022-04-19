@@ -54,7 +54,7 @@ export async function getActiveBarn() {
                 const contents = data.currentPageContent
                 return contents[0]
             }
-            return false
+            return response.data
         })
         .catch(err => console.log(err))
 }
