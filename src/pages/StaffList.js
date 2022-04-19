@@ -5,6 +5,7 @@ import { btnRewardStyle } from './ShareCarrotStaff'
 import { addUser } from '../apis/user'
 import { Pagination } from '@mui/material'
 import { getTableStartIndexByTen } from '../utils/HelperFunctions'
+import { getActiveBarn } from '../apis/Distribution'
 
 function AddStaffModal(props) {
     const [msg, setMsg] = useState('')
@@ -32,8 +33,10 @@ function AddStaffModal(props) {
                 setTimeout(() => {
                     setLoading(false)
                     props.onClose(false)
-                }, 1000);
+                }, 600);
             }
+        }).catch(e => {
+            console.log(e)
         })
     }
     
@@ -125,11 +128,19 @@ class StaffList extends Component {
         totalPages: 0,
         currentFilter: 'default',
         isShowModal: false,
-        isLoading: false
+        isLoading: false,
+        isActiveBarn: true
     }
 
     componentDidMount() {
         this.fetchStaff()
+        getActiveBarn().then(res => {
+            if (res) {
+                this.setState({isActiveBarn: true})
+            } else {
+                this.setState({isActiveBarn: false})
+            }
+        }).catch(_ => {})
     }
 
     fetchStaff(filter = 'default', page = 0) {
@@ -189,8 +200,13 @@ class StaffList extends Component {
                             <h4 className="box-title">STAFF LIST</h4>
                         </Col>
                         <Col md={12} className="align-self-start my-2">
-                            <Button onClick={this.handleAddStaffBtn}>ADD STAFF</Button>
-                            <AddStaffModal showModal={this.state.isShowModal} onClose={this.onModalClose} />
+                            <Button onClick={this.handleAddStaffBtn} disabled={!this.state.isActiveBarn}>ADD STAFF</Button>
+                            <br/>
+                            {this.state.isActiveBarn ? (
+                                <AddStaffModal showModal={this.state.isShowModal} onClose={this.onModalClose} />
+                            ) : (
+                                <small>Cannot add new staff when there is no active barn</small>
+                            )}
                         </Col>
                         <Col md="12" className="my-2">
                             <Form.Group className="float-right">
