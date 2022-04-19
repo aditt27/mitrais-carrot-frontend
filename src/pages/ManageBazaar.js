@@ -468,7 +468,7 @@ class ManageBazaar extends React.Component {
         
         let tbodyContent = <tbody>
             <tr>
-                <td colSpan={6} className='text-center'>Table Empty</td>
+                <td colSpan={8} className='text-center'>Table Empty</td>
             </tr>
         </tbody>
         if(this.props.data.length > 0) {
