@@ -52,7 +52,7 @@ const routesAdmin = [
   },
   {
     key: 'rewardDetail',
-    path: 'bazaar/rewardDetail',
+    path: 'rewardDetail',
     element: <BazaarItemDetail roles={[Admin]} />
   },
   {
