@@ -76,12 +76,11 @@ class Harvest extends React.Component {
                 let allBarns = []
                 this.getAllBarns(false)
                 // console.log(active)
-                // console.log(this.state.activeBarn);
                 this.setState({
                     modalTitle: 'Set Active Barn',
                     modalType: 'setActiveBarn',
                     formType: e.target.name,
-                    formYear: this.state.activeBarn.year
+                    formYear: (this.state.activeBarn === undefined)? 'No current active barn' : this.state.activeBarn.year 
                 })
 
         }
