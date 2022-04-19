@@ -1,8 +1,8 @@
 import axios from "axios";
 import React from "react";
 import { Pagination } from "@mui/material";
-import { Card, Col, Row, Tab, Form, Table, Button, Modal } from "react-bootstrap";
-import { addBarn, addMoreCarrot, extendExpiryDate } from "../apis/barn";
+import { Card, Col, Row, Tab, Form, Table, Button, Modal, Dropdown } from "react-bootstrap";
+import { addBarn, addMoreCarrot, extendExpiryDate, getActiveBarn, getBarns, setActiveBarn } from "../apis/barn";
 import { connect } from "react-redux";
 import apiClient from "../apis";
 
@@ -23,10 +23,13 @@ class Harvest extends React.Component {
             editId: -1,
             currentPage: 0,
             totalPages: 0,
-            formValidated: false
+            formValidated: false,
+            dropdownList: [],
+            activeId: -1,
+            activeBarn: undefined
         }
     }
-    
+
     pageSize = 5
 
     handleModalOpen = (e, barnId = undefined) => {
@@ -45,9 +48,9 @@ class Harvest extends React.Component {
                 const idx = this.state.barnList.findIndex(i => i.id === barnId)
                 const toExtend = this.state.barnList[idx]
                 let shareExpireDate = new Date(toExtend.shareExpireDate).toISOString()
-                shareExpireDate = shareExpireDate.slice(0,16)
+                shareExpireDate = shareExpireDate.slice(0, 16)
                 let exchangeExpireDate = new Date(toExtend.exchangeExpireDate).toISOString()
-                exchangeExpireDate = exchangeExpireDate.slice(0,16)
+                exchangeExpireDate = exchangeExpireDate.slice(0, 16)
                 this.setState({
                     modalTitle: 'Extend Expiry Date',
                     modalType: 'extendDate',
@@ -68,9 +71,34 @@ class Harvest extends React.Component {
                     formYear: barn.year,
                     editId: barnId
                 })
+                break;
+            case 'setActiveBarn':
+                let allBarns = []
+                this.getAllBarns(false)
+                // console.log(active)
+                // console.log(this.state.activeBarn);
+                this.setState({
+                    modalTitle: 'Set Active Barn',
+                    modalType: 'setActiveBarn',
+                    formType: e.target.name,
+                    formYear: this.state.activeBarn.year
+                })
 
         }
         this.setState({ modalShow: true })
+    }
+
+    async getActiveBarn() {
+        await getActiveBarn().then( res => {
+            this.setState({activeBarn: res})
+        }
+    )}
+
+    async getAllBarns(paginated) {
+        await getBarns(paginated)
+            .then(res => {
+                this.setState({ dropdownList: res })
+            })
     }
 
     handleModalClose = () => {
@@ -172,10 +200,38 @@ class Harvest extends React.Component {
                         })
                     break;
 
+                case 'setActiveBarn':
+                    // console.log(this.state.activeId);
+                    this.setState({ formDisable: true })
+                    // console.log(this.state.activeId)
+                    setActiveBarn(this.state.activeId)
+                        .then(res => {
+                            this.setState({
+                                modalShow: false,
+                                modalTitle: '',
+                                modalType: '',
+                                formType: '',
+                                formDisable: false,
+                                formYear: new Date().getFullYear(),
+                                activeId: -1,
+                                formValidated: false
+                            })
+                            this.loadData(this.state.currentPage, this.pageSize)
+                            this.getActiveBarn()
+                        })
+                    break;
                 default:
                     break;
             }
         }
+    }
+
+    renderDropdownOptions = () => {
+        return this.state.dropdownList.map((barn) => {
+            return (
+                <option value={barn.id} key={barn.id}>{barn.year}</option>
+            )
+        })
     }
 
     async loadData(page = 0, size = 5) {
@@ -209,6 +265,7 @@ class Harvest extends React.Component {
     }
     async componentDidMount() {
         this.loadData(undefined, this.pageSize)
+        this.getActiveBarn()
     }
 
     handlePagination = (e, page) => {
@@ -246,7 +303,8 @@ class Harvest extends React.Component {
             formCarrot,
             formShareExpDate,
             formExchangeExpDate,
-            formValidated
+            formValidated,
+            activeId
         } = this.state
 
         let modalBody
@@ -256,12 +314,12 @@ class Harvest extends React.Component {
                     <Form noValidate validated={formValidated} onSubmit={this.handleSubmit} >
                         <Form.Group className="mb-3">
                             <Form.Label>Year</Form.Label>
-                            <Form.Control 
+                            <Form.Control
                                 required
-                                type="number" 
-                                name='formYear' 
-                                disabled={formDisable} 
-                                value={formYear} 
+                                type="number"
+                                name='formYear'
+                                disabled={formDisable}
+                                value={formYear}
                                 onChange={this.handleValueChange} />
                             <Form.Control.Feedback type='invalid'>Enter a valid barn year</Form.Control.Feedback>
                         </Form.Group>
@@ -328,6 +386,24 @@ class Harvest extends React.Component {
                     </Form>
                 )
                 break;
+            case 'setActiveBarn':
+                modalBody = (
+                    <Form noValidate validated={formValidated} onSubmit={this.handleSubmit}>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Current Active Barn</Form.Label>
+                            <Form.Control plaintext readOnly name='formYear' disabled={formDisable} value={formYear} />
+                        </Form.Group>
+                        <Form.Control className="mb-3" required as='select' value={activeId} placeholder='--select barn--' onChange={(e) => this.setState({ activeId: parseInt(e.target.value) })}>
+                            <option>-- select barn --</option>
+                            {this.renderDropdownOptions()}
+                        </Form.Control>
+                        <Button variant="primary" type='submit' className="float-right" disabled={formDisable}>
+                            Save
+                        </Button>
+                    </Form>
+                )
+            default:
+                break;
         }
         return (
             <Tab.Content className="search-box">
@@ -352,11 +428,19 @@ class Harvest extends React.Component {
                     </Row>
                     <Row>
                         <Col md={12} className="align-self-start my-2">
-                            <Button onClick={this.handleModalOpen} name='addBarn'>
+                            <Button onClick={this.handleModalOpen} name='addBarn' className="mr-2">
                                 Add New
+                            </Button>
+                            <Button variant='warning' onClick={this.handleModalOpen} name='setActiveBarn'>
+                                Set Active Barn
                             </Button>
 
                         </Col>
+                        <Col md={12} className="align-self-start my-2">
+
+
+                        </Col>
+
                     </Row>
                     <Row>
                         <Col md="12" className="my-2">
