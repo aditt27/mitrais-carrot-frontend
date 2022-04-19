@@ -52,6 +52,9 @@ export default function Distribution() {
             setTimeout(() => {
               setSuccess(false);
               setShow(false);
+              getActiveBarnData();
+              setPage(1);
+              getBarnTransactionData(1);
             }, 500);
           }
         });
