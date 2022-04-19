@@ -22,7 +22,10 @@ class StaffInGroup extends Component {
         await apiClient.get("/group?isPaginated=false").then(res => {
             const data = res.data.result.currentPageContent
             for (const i in data) {
-                groups.push(data[i].groupName)
+                groups.push({
+                    id: data[i].id,
+                    name: data[i].groupName
+                })
             }
         }).catch(_ => {})
 
@@ -31,14 +34,14 @@ class StaffInGroup extends Component {
         this.setState({groupList: groups, staffList:  staffList, totalPageStaff: totalPages, isLoading: false})
     }
 
-    async filterStaffByGroup(groupName = "no_group", page = 0) {
+    async filterStaffByGroup(groupId = -99, page = 0) {
         this.setState({isLoading: true})
         let result = {
             staffList: [],
             currentPage: 0
         }
         
-        const filter = groupName === "no_group" ? "filterBy=no_group" : `filterBy=group&filterValue=${groupName}`
+        const filter = groupId < 0 ? "filterBy=no_group" : `filterBy=group&filterValue=${groupId}`
         await apiClient.get(`/user?${filter}&page=${page}`).then(res => {
             const data = res.data.result
             if (data.currentPageContent) {
@@ -78,7 +81,7 @@ class StaffInGroup extends Component {
 
     GroupListOptions = () => {
         const { groupList } = this.state
-        return groupList.map((g, i) => <option key={i} value={g}>{g}</option>)
+        return groupList.map((g, i) => <option key={i} value={g.id}>{g.name}</option>)
     }
 
     StaffListRow = () => {
@@ -116,23 +119,13 @@ class StaffInGroup extends Component {
                         <Col md="12" className="my-2">
                             <Form.Group className="float-right">
                                 <Form.Label htmlFor="#group-filter">STAFF GROUP</Form.Label>
-                                <Form.Control id="group-filter" as="select" defaultValue="no_group" className="mx-auto" onChange={this.handleGroupSelect}>
-                                    <option value="no_group">No Group</option>
+                                <Form.Control id="group-filter" as="select" defaultValue={-99} className="mx-auto" onChange={this.handleGroupSelect}>
+                                    <option value={-99}>No Group</option>
                                     <this.GroupListOptions />
                                 </Form.Control>
                             </Form.Group>
                         </Col>
                     </Row>
-                    {/* <Row>
-                        <Col md="12" className="my-2">
-                        <Form>
-                            <Form.Group className="float-right form-inline">
-                                <Form.Label>SEARCH: &nbsp;</Form.Label>
-                                    <Form.Control type="text" className="w-auto" />
-                                </Form.Group>
-                            </Form>
-                        </Col>
-                    </Row> */}
                     <Row>
                         <Col md="12" className="my-2">
                             <Table striped bordered hover>
