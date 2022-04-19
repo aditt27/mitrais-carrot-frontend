@@ -9,22 +9,22 @@ import Notification from '../pages/Notification'
 
 const routesMerchant = [
   {
-    key: 1,
+    key: 'manageBazaar',
     path: '',
     element: <ManageBazaar roles={[Merchant]} />
   },
   {
-    key: 2,
+    key: 'bazaarPending',
     path: 'bazaar/pending',
     element: <PendingExchange roles={[Merchant]} />
   },
   {
-    key: 3,
+    key: 'bazaarClaimed',
     path: 'bazaar/claimed',
     element: <BazaarClaimed roles={[Merchant]} />
   },
   {
-    key: 4,
+    key: 'notification',
     path: 'notification',
     element: <Notification roles={[Merchant]} />
   }

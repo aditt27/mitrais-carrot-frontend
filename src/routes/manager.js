@@ -10,27 +10,27 @@ import Notification from '../pages/Notification'
 
 const routesManager = [
   {
-    key: 1,
+    key: 'bazaar',
     path: '',
     element: <Bazaar roles={[Manager]} />
   },
   {
-    key: 2,
+    key: 'share-carrot',
     path: 'share-carrot',
     element: <ShareCarrot roles={[Manager]} />
   },
   {
-    key: 3,
+    key: 'carrotHistory',
     path: 'carrotHistory',
     element: <CarrotHistory roles={[Manager]} />
   },
   {
-    key: 4,
+    key: 'rewardDetail',
     path: 'rewardDetail',
     element: <BazaarItemDetail roles={[Manager]} />
   },
   {
-    key: 5,
+    key: 'notification',
     path: 'notification',
     element: <Notification roles={[Manager]} />
   }

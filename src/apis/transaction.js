@@ -15,7 +15,6 @@ async function getAllTransactions(page, isManager = true) {
         if (res.data.message === 'Success') {
             const data = res.data.result
             const tr = data.currentPageContent
-            let i = 1
             if (isManager) {
                 tr.forEach((t) => {
                     result.transactions.push({
