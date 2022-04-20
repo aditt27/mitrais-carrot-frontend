@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { getAccessToken, getRefreshToken, removeToken, setToken } from '../utils/HelperFunctions'
 
-const baseURL = 'https://localhost:8081/api/v1'
+const baseURL = 'http://localhost:8081/api/v1'
 
 
 let apiClient = axios.create({
